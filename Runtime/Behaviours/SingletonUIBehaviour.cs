@@ -1,16 +1,22 @@
-﻿using UnityEngine;
+﻿using System.Reflection;
+using UnityEngine;
 
 namespace Akela.Behaviours
 {
-	public abstract class SingletonUIBehaviour<T> : AbstractInitialisableBehaviour where T : SingletonUIBehaviour<T>
+	public abstract class SingletonUIBehaviour<T> : MonoBehaviour where T : SingletonUIBehaviour<T>
 	{
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "Field hiding")]
-		protected new RectTransform transform => (RectTransform)base.transform;
+		private static readonly MethodInfo CurrentThreadIsMainThread = typeof(Object).GetMethod("CurrentThreadIsMainThread", BindingFlags.NonPublic | BindingFlags.Static);
 
 		public static T Main { get; private set; }
 
-		protected internal sealed override void InitialiseBehaviour()
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "Field hiding")]
+		public new RectTransform transform => (RectTransform)base.transform;
+
+		public SingletonUIBehaviour() : base()
 		{
+			if (!(bool)CurrentThreadIsMainThread.Invoke(null, null))
+				return;
+
 			Main = (T)this;
 		}
 	}
