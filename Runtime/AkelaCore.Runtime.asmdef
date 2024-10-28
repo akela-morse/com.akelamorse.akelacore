@@ -8,8 +8,7 @@
         "GUID:f06555f75b070af458a003d92f9efb00",
         "GUID:02f771204943f4a40949438e873e3eff",
         "GUID:75469ad4d38634e559750d17036d5f7c",
-        "GUID:e0cd26848372d4e5c891c569017e11f1",
-        "GUID:6071c9f2ce0a4407c93af459fa416e54"
+        "GUID:e0cd26848372d4e5c891c569017e11f1"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -43,11 +42,6 @@
             "name": "com.unity.inputsystem",
             "expression": "1.1.0",
             "define": "AKELA_INPUTSYSTEM"
-        },
-        {
-            "name": "com.acegikmo.mathfs",
-            "expression": "0.1.0",
-            "define": "AKELA_MATHFS"
         }
     ],
     "noEngineReferences": false
