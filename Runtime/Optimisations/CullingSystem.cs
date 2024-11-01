@@ -22,6 +22,8 @@ namespace Akela.Optimisations
 		private float[] _boundingDistances;
 		private CullingGroup _cullingGroup;
 
+		public int TopDistanceBand => _boundingDistances.Length;
+
 		public int RegisterElement(ICullingElement element, Vector4 shape)
 		{
 			var index = _elementCount++;

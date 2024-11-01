@@ -2,7 +2,7 @@
 
 namespace Akela.Globals
 {
-	[CreateAssetMenu(fileName = "New Vector3", menuName = "Globals/Vector3", order = 3)]
+	[CreateAssetMenu(fileName = "New Vector3", menuName = "Globals/Vector3", order = 5)]
 	public sealed class GlobalVector3 : GlobalBase<Vector3>
 	{
 

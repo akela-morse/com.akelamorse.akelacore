@@ -2,7 +2,7 @@
 
 namespace Akela.Globals
 {
-	[CreateAssetMenu(fileName = "New Transform Reference", menuName = "Globals/References/Transform", order = 1)]
+	[CreateAssetMenu(fileName = "New Transform Reference", menuName = "Globals/References/Transform", order = 9)]
 	public sealed class GlobalTransformReference : GlobalReferenceBase<Transform>
 	{
 

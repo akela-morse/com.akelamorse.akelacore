@@ -2,7 +2,7 @@
 
 namespace Akela.Globals
 {
-	[CreateAssetMenu(fileName = "New Integer", menuName = "Globals/Integer", order = 0)]
+	[CreateAssetMenu(fileName = "New Integer", menuName = "Globals/Integer", order = 1)]
 	public sealed class GlobalInt : GlobalBase<int>
 	{
 
