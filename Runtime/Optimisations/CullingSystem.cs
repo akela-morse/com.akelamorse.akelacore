@@ -22,7 +22,7 @@ namespace Akela.Optimisations
 		private float[] _boundingDistances;
 		private CullingGroup _cullingGroup;
 
-		public int TopDistanceBand => _boundingDistances.Length;
+		public int TopDistanceBand => _distanceBands.Length;
 
 		public int RegisterElement(ICullingElement element, Vector4 shape)
 		{
@@ -31,7 +31,7 @@ namespace Akela.Optimisations
 			_boundingSpheres[index] = new BoundingSphere(shape);
 			_elements[index] = element;
 
-			if (didStart)
+			if (didAwake)
 				_cullingGroup.SetBoundingSphereCount(_elementCount);
 
 			return index;
@@ -54,7 +54,7 @@ namespace Akela.Optimisations
 		}
 
 		#region Component Messages
-		private void Start()
+		private void Awake()
 		{
 			ComputeBoundingDistances();
 
@@ -68,16 +68,11 @@ namespace Akela.Optimisations
 			_cullingGroup.SetBoundingSphereCount(_elementCount);
 
 			_cullingGroup.SetBoundingDistances(_boundingDistances);
-			_cullingGroup.SetDistanceReferencePoint(_distanceReferenceOverride ? _distanceReferenceOverride : _targetCamera.Value.transform);
-
-			_cullingGroup.enabled = true;
+			_cullingGroup.SetDistanceReferencePoint(_distanceReferenceOverride ? _distanceReferenceOverride : _cullingGroup.targetCamera.transform);
 		}
 
 		private void OnEnable()
 		{
-			if (!didStart)
-				return;
-
 			_cullingGroup.enabled = true;
 		}
 
@@ -124,8 +119,6 @@ namespace Akela.Optimisations
 
 		private void OnStateChanged(CullingGroupEvent e)
 		{
-			Debug.Log("Hello");
-
 			_elements[e.index].StateChanged(e);
 		}
 		#endregion

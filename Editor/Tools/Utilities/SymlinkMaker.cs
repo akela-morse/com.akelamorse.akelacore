@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
@@ -12,7 +11,7 @@ namespace AkelaEditor.Tools
 	{
 		const string LAST_DIR_KEY = "AkelaSymlinkMakerLastDir";
 
-		[MenuItem("Assets/Create/Symlink...", false, -30)]
+		[MenuItem("Assets/Import as Symlink...", false, 20)]
 		static void MakeSymlink()
 		{
 			var lastDirectoryPath = EditorPrefs.GetString(LAST_DIR_KEY, Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));

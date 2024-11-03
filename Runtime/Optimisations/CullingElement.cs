@@ -22,6 +22,8 @@ namespace Akela.Optimisations
 		public bool IsVisible { get; set; }
 		public int CurrentDistanceBand { get; set; }
 
+		public CullingSystem CullingSystem => _system;
+
 		public void IndexChanged(int index)
 		{
 			_elementId = index;

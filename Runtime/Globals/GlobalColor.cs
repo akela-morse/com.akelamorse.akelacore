@@ -2,7 +2,7 @@
 
 namespace Akela.Globals
 {
-	[CreateAssetMenu(fileName = "New Color", menuName = "Globals/Color", order = 6)]
+	[CreateAssetMenu(fileName = "New Color", menuName = "Globals/Color", order = -95)]
 	public sealed class GlobalColor : GlobalBase<Color>
 	{
 
