@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Akela.Optimisations
 {
+	[AddComponentMenu("Optimisation/Culling Element", 1)]
 	public class CullingElement : TickBehaviour, ICullingElement
 	{
 		private const string MESSAGE_BECOME_VISIBLE = "OnCullingElementVisible";

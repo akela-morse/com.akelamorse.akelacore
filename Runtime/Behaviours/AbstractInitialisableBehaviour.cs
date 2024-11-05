@@ -5,6 +5,8 @@ namespace Akela.Behaviours
 {
 	public abstract class AbstractInitialisableBehaviour : MonoBehaviour
 	{
+		public bool didInitialise;
+
 		internal abstract protected void InitialiseBehaviour();
 
 		internal AbstractInitialisableBehaviour() : base() { }
@@ -36,8 +38,14 @@ namespace Akela.Behaviours
 
 		private void SceneLoaded(Scene scene, LoadSceneMode mode)
 		{
-			foreach (var initialisableObjects in FindObjectsByType<AbstractInitialisableBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None))
-				initialisableObjects.InitialiseBehaviour();
+			foreach (var initialisableObject in FindObjectsByType<AbstractInitialisableBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+			{
+				if (initialisableObject.didInitialise)
+					continue;
+
+				initialisableObject.InitialiseBehaviour();
+				initialisableObject.didInitialise = true;
+			}
 		}
 	}
 }

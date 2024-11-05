@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace Akela.Optimisations
 {
+	[AddComponentMenu("Optimisation/Culling System", 0)]
 	public class CullingSystem : MonoBehaviour
 	{
 		private const int MAX_ELEMENT_COUNT = 30;
