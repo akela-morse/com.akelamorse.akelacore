@@ -8,7 +8,10 @@
         "GUID:f06555f75b070af458a003d92f9efb00",
         "GUID:02f771204943f4a40949438e873e3eff",
         "GUID:75469ad4d38634e559750d17036d5f7c",
-        "GUID:e0cd26848372d4e5c891c569017e11f1"
+        "GUID:e0cd26848372d4e5c891c569017e11f1",
+        "GUID:7f7d1af65c2641843945d409d28f2e20",
+        "GUID:57a6d82589ae03c4cabdc058f719f231",
+        "GUID:0c752da273b17c547ae705acf0f2adf2"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -35,13 +38,23 @@
         },
         {
             "name": "com.unity.timeline",
-            "expression": "1.1.0",
+            "expression": "1.0.0",
             "define": "AKELA_TIMELINE"
         },
         {
             "name": "com.unity.inputsystem",
-            "expression": "1.1.0",
+            "expression": "1.0.0",
             "define": "AKELA_INPUTSYSTEM"
+        },
+        {
+            "name": "com.unity.animation.rigging",
+            "expression": "1.2.0",
+            "define": "AKELA_ANIMATION_RIGGING"
+        },
+        {
+            "name": "com.kybernetik.ultevents",
+            "expression": "1.0.0",
+            "define": "AKELA_ULTEVENTS"
         }
     ],
     "noEngineReferences": false
