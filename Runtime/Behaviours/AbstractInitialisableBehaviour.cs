@@ -1,11 +1,12 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Akela.Behaviours
 {
 	public abstract class AbstractInitialisableBehaviour : MonoBehaviour
 	{
-		public bool didInitialise;
+		[NonSerialized] public bool didInitialise;
 
 		internal abstract protected void InitialiseBehaviour();
 
