@@ -138,8 +138,11 @@ namespace AkelaToolsEditor
 
 						Graphics.CopyTexture(tex, outTex);
 
-
-						File.WriteAllBytes(path, outTex.EncodeToPNG());
+						try
+						{
+							File.WriteAllBytes(path, outTex.EncodeToPNG());
+						}
+						catch (Exception) { }
 					}
 				}
 			}
