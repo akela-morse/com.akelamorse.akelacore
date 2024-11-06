@@ -1,7 +1,9 @@
+using System;
 using UnityEngine;
 
 namespace Akela.Bridges
 {
+	[Serializable]
     public class BridgedEvent : IBridge
     {
 #if AKELA_ULTEVENTS
@@ -13,6 +15,7 @@ namespace Akela.Bridges
         public void Invoke() => _internalValue.Invoke();
 	}
 
+	[Serializable]
 	public class BridgedEvent<T0> : IBridge
 	{
 #if AKELA_ULTEVENTS
@@ -24,6 +27,7 @@ namespace Akela.Bridges
 		public void Invoke(T0 arg0) => _internalValue.Invoke(arg0);
 	}
 
+	[Serializable]
 	public class BridgedEvent<T0, T1> : IBridge
 	{
 #if AKELA_ULTEVENTS
@@ -35,6 +39,7 @@ namespace Akela.Bridges
 		public void Invoke(T0 arg0, T1 arg1) => _internalValue.Invoke(arg0, arg1);
 	}
 
+	[Serializable]
 	public class BridgedEvent<T0, T1, T2> : IBridge
 	{
 #if AKELA_ULTEVENTS
@@ -46,6 +51,7 @@ namespace Akela.Bridges
 		public void Invoke(T0 arg0, T1 arg1, T2 arg2) => _internalValue.Invoke(arg0, arg1, arg2);
 	}
 
+	[Serializable]
 	public class BridgedEvent<T0, T1, T2, T3> : IBridge
 	{
 #if AKELA_ULTEVENTS

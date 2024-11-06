@@ -3,7 +3,8 @@ using UnityEngine;
 
 namespace Akela.Optimisations
 {
-	[AddComponentMenu("Optimisation/Culling System", 0)]
+	[AddComponentMenu("Optimisation/Culling System", 1)]
+	[DisallowMultipleComponent]
 	public class CullingSystem : MonoBehaviour
 	{
 		private const int MAX_ELEMENT_COUNT = 30;
@@ -14,7 +15,7 @@ namespace Akela.Optimisations
 		[SerializeField] Var<Transform> _distanceReferenceOverride;
 		[Space]
 		[SerializeField] float[] _distanceBands;
-		[SerializeField] float _maxiumCullingDistance;
+		[SerializeField] Var<float> _maxiumCullingDistance;
 		#endregion
 
 		private readonly BoundingSphere[] _boundingSpheres = new BoundingSphere[MAX_ELEMENT_COUNT];

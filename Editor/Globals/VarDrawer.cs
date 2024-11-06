@@ -10,11 +10,11 @@ using UnityEngine;
 namespace AkelaEditor.Globals
 {
 	[CustomPropertyDrawer(typeof(Var<>))]
-	internal class VarEditor : PropertyDrawer
+	internal class VarDrawer : PropertyDrawer
 	{
 		private static readonly Dictionary<Type, Type> containerTypes;
 		
-		static VarEditor()
+		static VarDrawer()
 		{
 			containerTypes = AppDomain.CurrentDomain
 				.GetAssemblies()

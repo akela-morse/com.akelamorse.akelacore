@@ -6,6 +6,7 @@ namespace Akela.Behaviours
 	{
 		public enum TickUpdateType
 		{
+			None,
 			Update,
 			LateUpdate,
 			FixedUpdate,
@@ -13,7 +14,7 @@ namespace Akela.Behaviours
 		}
 
 		#region Component Fields
-		[SerializeField] TickUpdateType _updateType;
+		[SerializeField] TickUpdateType _updateType = TickUpdateType.Update;
 		#endregion
 
 		protected abstract void Tick(float deltaTime);

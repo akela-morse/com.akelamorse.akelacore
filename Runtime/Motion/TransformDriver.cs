@@ -4,7 +4,9 @@ using UnityEngine;
 
 namespace Akela.Motion
 {
-	[ExecuteInEditMode, AddComponentMenu("Motion/Transform Driver", 1)]
+	[AddComponentMenu("Motion/Transform Driver", 1)]
+	[TickOptions(TickUpdateType.Update, TickUpdateType.LateUpdate, TickUpdateType.LateUpdate, TickUpdateType.AnimatorMove)]
+	[ExecuteInEditMode]
 	public class TransformDriver : TickBehaviour
 	{
 		public enum TransformProperty
