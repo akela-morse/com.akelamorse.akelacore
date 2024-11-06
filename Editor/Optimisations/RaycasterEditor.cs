@@ -57,7 +57,7 @@ namespace AkelaEditor.Optimisations
 					break;
 
 				case Raycaster.RaycastShape.Box:
-					EditorGUILayout.PropertyField(serializedObject.FindProperty("_boxSize"), new GUIContent("Half Extents"));
+					EditorGUILayout.PropertyField(serializedObject.FindProperty("_boxSize"), new GUIContent("Size"));
 					EditorGUILayout.PropertyField(serializedObject.FindProperty("_orientation"));
 					break;
 
