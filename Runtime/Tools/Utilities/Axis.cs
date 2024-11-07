@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 
 namespace Akela.Tools
-{
+{	
 	public enum Axis
 	{
-		X,
-		Y,
-		Z
+		[InspectorName("X-Axis")] X,
+		[InspectorName("Y-Axis")] Y,
+		[InspectorName("Z-Axis")] Z
 	}
 
 	public static class AxisExtensions

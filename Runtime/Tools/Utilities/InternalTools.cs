@@ -10,7 +10,7 @@ namespace Akela.Tools
 
 		private delegate bool CurrentThreadIsMainThreadDelegate();
 
-		private static CurrentThreadIsMainThreadDelegate currentThreadIsMainThread;
+		private static readonly CurrentThreadIsMainThreadDelegate currentThreadIsMainThread;
 
 		static InternalTools()
 		{

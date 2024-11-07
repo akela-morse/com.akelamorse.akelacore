@@ -25,5 +25,17 @@ namespace Akela.Tools
 
 			obj.GetType().GetMethod(methodName).Invoke(obj, paramArray);
 		}
+
+		public static void PlaymodeAgnosticDestroy(this Object obj)
+		{
+#if UNITY_EDITOR
+			if (Application.isPlaying)
+				Object.Destroy(obj);
+			else
+				Object.DestroyImmediate(obj);
+#else
+			Object.Destroy(obj);
+#endif
+		}
 	}
 }
