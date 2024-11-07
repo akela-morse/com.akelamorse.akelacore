@@ -1,11 +1,13 @@
 using Akela.Behaviours;
+using Akela.Events;
 using Akela.Globals;
 using Akela.Tools;
+using System.Collections.Generic;
 using UnityEngine;
 
-namespace Akela
+namespace Akela.ExtendedPhysics
 {
-	[AddComponentMenu("Optimisation/Raycaster", 0)]
+	[AddComponentMenu("Physics/Raycaster", 100)]
 	[TickOptions(TickUpdateType.None, TickUpdateType.Update, TickUpdateType.LateUpdate, TickUpdateType.FixedUpdate, TickUpdateType.AnimatorMove)]
 	public class Raycaster : TickBehaviour
 	{
@@ -32,16 +34,51 @@ namespace Akela
 
 		private RaycastHit[] _hits;
 		private int _numberOfHits;
+		private bool _previousRaycastDidHit;
+		private EventBroadcaster<IRaycastEventReceiver> _eventBroadcaster;
+
+		public int NumberOfHits => _numberOfHits;
+
+		public void RaycastNow()
+		{
+			DoRaycast();
+			CheckRaycastResult();
+		}
+
+		public bool RaycastDidHit()
+		{
+			return _numberOfHits > 0;
+		}
+
+		public bool RaycastDidHit(out RaycastHit hit)
+		{
+			if (!RaycastDidHit())
+			{
+				hit = default;
+				return false;
+			}
+
+			hit = _hits[0];
+			return true;
+		}
+
+		public IEnumerable<RaycastHit> GetAllHits()
+		{
+			for (var i = 0; i < _numberOfHits; ++i)
+				yield return _hits[i];
+		}
 
 		#region Component Messages
 		private void Awake()
 		{
 			_hits = new RaycastHit[_registerMultipleHits ? _maxNumberOfHits : 1];
+			_eventBroadcaster = new(gameObject);
 		}
 
 		protected override void Tick(float deltaTime)
 		{
-			PerformRaycast();
+			DoRaycast();
+			CheckRaycastResult();
 		}
 
 #if UNITY_EDITOR
@@ -50,11 +87,12 @@ namespace Akela
 			if (!didAwake)
 				Awake();
 
-			PerformRaycast();
+			if (!Application.isPlaying)
+				DoRaycast();
 
 			var ray = new Ray(transform.position, transform.forward);
 
-			Gizmos.color = new(.1f, .55f, 1f);
+			Gizmos.color = new(.33f, .85f, 1f);
 
 			if (_maxDistance == Mathf.Infinity)
 				GizmosHelper.DrawArrow(ray.origin, ray.direction, 1f);
@@ -88,7 +126,7 @@ namespace Akela
 			switch (_shape)
 			{
 				case RaycastShape.Sphere:
-					Gizmos.color = new(.85f, .67f, 1f);
+					Gizmos.color = new(.33f, .85f, 1f);
 					Gizmos.DrawWireSphere(ray.origin, _radius);
 
 					if (_numberOfHits > 0)
@@ -101,7 +139,7 @@ namespace Akela
 					break;
 
 				case RaycastShape.Box:
-					Gizmos.color = new(.85f, .67f, 1f);
+					Gizmos.color = new(.33f, .85f, 1f);
 					Gizmos.matrix = Matrix4x4.TRS(ray.origin, _orientation, Vector3.one);
 					Gizmos.DrawWireCube(Vector3.zero, _boxSize);
 
@@ -118,7 +156,7 @@ namespace Akela
 					break;
 
 				case RaycastShape.Capsule:
-					Gizmos.color = new(.85f, .67f, 1f);
+					Gizmos.color = new(.33f, .85f, 1f);
 					Gizmos.matrix = Matrix4x4.TRS(ray.origin, _orientation, Vector3.one);
 					GizmosHelper.DrawWireCapsule(Vector3.zero, Vector3.up, _radius, _capsuleHeight);
 
@@ -162,7 +200,7 @@ namespace Akela
 		#endregion
 
 		#region Private Methods
-		private void PerformRaycast()
+		private void DoRaycast()
 		{
 			var ray = new Ray(transform.position, transform.forward);
 
@@ -202,6 +240,16 @@ namespace Akela
 						_numberOfHits = Physics.CapsuleCastNonAlloc(p1, p2, _radius, ray.direction, _hits, _maxDistance, _layerMask.Value, _triggerInteraction);
 					break;
 			}
+		}
+
+		private void CheckRaycastResult()
+		{
+			var raycastDidHit = RaycastDidHit();
+
+			if (raycastDidHit && !_previousRaycastDidHit)
+				_eventBroadcaster.Dispatch(x => x.OnRaycastHit());
+
+			_previousRaycastDidHit = raycastDidHit;
 		}
 		#endregion
 	}

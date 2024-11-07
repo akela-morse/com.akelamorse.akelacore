@@ -1,16 +1,13 @@
 ﻿using Akela.Behaviours;
+using Akela.Events;
 using Akela.Globals;
 using UnityEngine;
 
 namespace Akela.Optimisations
 {
-	[AddComponentMenu("Optimisation/Culling Element", 2)]
+	[AddComponentMenu("Optimisation/Culling Element", 1)]
 	public class CullingElement : TickBehaviour, ICullingElement
 	{
-		private const string MESSAGE_BECOME_VISIBLE = "OnCullingElementVisible";
-		private const string MESSAGE_BECOME_INVISIBLE = "OnCullingElementInvisible";
-		private const string MESSAGE_DISTANCE_CHANGE = "OnDistanceBandChanges";
-
 		#region Component Fields
 		[SerializeField] Var<CullingSystem> _system;
 		[Space]
@@ -19,6 +16,7 @@ namespace Akela.Optimisations
 		#endregion
 
 		private int _elementId;
+		private EventBroadcaster<ICullingEventReceiver> _eventBroadcaster;
 
 		public bool IsVisible { get; set; }
 		public int CurrentDistanceBand { get; set; }
@@ -36,19 +34,20 @@ namespace Akela.Optimisations
 			CurrentDistanceBand = data.currentDistance;
 
 			if (data.hasBecomeVisible)
-				SendMessage(MESSAGE_BECOME_VISIBLE, SendMessageOptions.DontRequireReceiver);
+				_eventBroadcaster.Dispatch(x => x.OnCullingElementVisible());
 
 			if (data.hasBecomeInvisible)
-				SendMessage(MESSAGE_BECOME_INVISIBLE, SendMessageOptions.DontRequireReceiver);
+				_eventBroadcaster.Dispatch(x => x.OnCullingElementInvisible());
 
 			if (data.previousDistance != data.currentDistance)
-				SendMessage(MESSAGE_DISTANCE_CHANGE, SendMessageOptions.DontRequireReceiver);
+				_eventBroadcaster.Dispatch(x => x.OnDistanceBandChanges(data.previousDistance, data.currentDistance));
 		}
 
 		#region Component Messages
 		private void Awake()
 		{
 			_elementId = _system.Value.RegisterElement(this, new(_sphereCenter.x, _sphereCenter.y, _sphereCenter.z, _sphereRadius));
+			_eventBroadcaster = new(gameObject);
 		}
 
 		protected override void Tick(float deltaTime)

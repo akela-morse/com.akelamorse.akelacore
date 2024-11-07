@@ -41,21 +41,21 @@ namespace Akela.Behaviours
 				_ => GetComponent<CullingElement>(),
 			};
 
-#if UNITY_EDITOR
+#if DEBUG
 			if (_cullingElement == null)
 			{
 				Debug.LogError(string.Format("'{0}' on gameObject '{1}' did not find a CullingElement component from '{2}'",
 					GetType().Name,
 					gameObject.name,
-					System.Enum.GetName(typeof(OptimisationSettings.CullingElementComponentSource), _optimisationSettings.useCullingElementFrom))
-				);
+					System.Enum.GetName(typeof(OptimisationSettings.CullingElementComponentSource), _optimisationSettings.useCullingElementFrom)
+				));
 
 				enabled = false;
 				return;
 			}
 #endif
 
-				var system = _cullingElement.CullingSystem;
+			var system = _cullingElement.CullingSystem;
 
 			_timeBands = new float[system.TopDistanceBand + 1];
 

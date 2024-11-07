@@ -1,8 +1,8 @@
-﻿using Akela;
+﻿using Akela.ExtendedPhysics;
 using UnityEditor;
 using UnityEngine;
 
-namespace AkelaEditor.Optimisations
+namespace AkelaEditor.ExtendedPhysics
 {
 	[CustomEditor(typeof(Raycaster))]
 	internal class RaycasterEditor : Editor

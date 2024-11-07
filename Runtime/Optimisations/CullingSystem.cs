@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Akela.Optimisations
 {
-	[AddComponentMenu("Optimisation/Culling System", 1)]
+	[AddComponentMenu("Optimisation/Culling System", 0)]
 	[DisallowMultipleComponent]
 	public class CullingSystem : MonoBehaviour
 	{
