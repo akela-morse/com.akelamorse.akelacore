@@ -1,6 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
-using System.ComponentModel;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -10,14 +10,19 @@ namespace AkelaAnalyser
 	internal class AkelaGenerator : ISourceGenerator
 	{
 		const string GLOBAL_NAMESPACE = "<global namespace>";
+		const string UNITY_NAMESPACE = "UnityEngine";
+		const string UNITYOBJECT_SYMBOL_NAME = "UnityEngine.Object";
 		const string MONOBEHAVIOUR_SYMBOL_NAME = "UnityEngine.MonoBehaviour";
 		const string SCRIPTABLEOBJECT_SYMBOL_NAME = "UnityEngine.ScriptableObject";
 		const string COMPONENT_SYMBOL_NAME = "UnityEngine.Component";
+		const string SERIALIZEFIELD_SYMBOL_NAME = "UnityEngine.SerializeField";
+		const string HIDEFIELD_SYMBOL_NAME = "UnityEngine.HideInInspector";
 
 		const string SINGLETON_SYMBOL_NAME = "Akela.Behaviours.SingletonAttribute";
 		const string DEPENDENCY_SYMBOL_NAME = "Akela.Behaviours.WithDependenciesAttribute";
 		const string FROMPARENTS_SYMBOL_NAME = "Akela.Behaviours.FromParentsAttribute";
 		const string FROMCHILDREN_SYMBOL_NAME = "Akela.Behaviours.FromChildrenAttribute";
+		const string MONITOR_SYMBOL_NAME = "Akela.Behaviours.GenerateHashForEveryFieldAttribute";
 
 		public void Initialize(GeneratorInitializationContext context)
 		{
@@ -54,6 +59,10 @@ namespace AkelaAnalyser
 								continue;
 
 							context.AddSource($"{symbol.Name}_dependencies.g.cs", SourceText.From(sourceString, Encoding.UTF8));
+							break;
+
+						case MONITOR_SYMBOL_NAME:
+							context.AddSource($"{symbol.Name}_fieldMonitoring.g.cs", SourceText.From(GenerateMonitoringHash(symbol), Encoding.UTF8));
 							break;
 					}
 				}
@@ -124,7 +133,7 @@ $@"
 					x.DeclaredAccessibility == Accessibility.Public
 				)
 				.Cast<IFieldSymbol>()
-				.Where(x => 
+				.Where(x =>
 					x.Type is INamedTypeSymbol y && SymbolIsInstantiableFrom(y, COMPONENT_SYMBOL_NAME) ||
 					x.Type is IArrayTypeSymbol z && SymbolIsInstantiableFrom((INamedTypeSymbol)z.ElementType, COMPONENT_SYMBOL_NAME)
 				);
@@ -210,10 +219,10 @@ $@"
 						methodCall = $"GetComponent<{field.Type.ToDisplayString()}>";
 				}
 
-					source.Append(
-	$@"
+				source.Append(
+$@"
 				{field.Name} = {methodCall}(),"
-					);
+				);
 			}
 
 			source.Append(
@@ -222,6 +231,69 @@ $@"
 #endif
 		}}"
 			);
+
+			AppendClassFooter(source, symbol);
+
+			return source.ToString();
+		}
+
+		private string GenerateMonitoringHash(INamedTypeSymbol symbol)
+		{
+			var source = new StringBuilder();
+
+			source.Append(
+@"using Akela.Behaviours;
+using UnityEngine;
+
+"
+			);
+
+			AppendClassHeader(source, symbol);
+
+			source.Append(
+$@"
+		public override int GetHashCode()
+		{{
+			unchecked
+			{{
+				int hash = 17;
+"
+			);
+
+			// Get all serialized fields
+			var serializedFields = EnumerateTypeHierarchy(symbol)
+				.SelectMany(x => x.GetMembers())
+				.Where(x => x.Kind == SymbolKind.Field)
+				.Cast<IFieldSymbol>()
+				.Where(FieldIsSerializable);
+
+			foreach (var field in serializedFields)
+			{
+				var fieldName = field.Name;
+
+				if (field.Type.IsReferenceType)
+				{
+					source.Append(
+$@"
+				hash = hash * 23 + (this.{fieldName} == null ? 0 : this.{fieldName}.GetHashCode());"
+					);
+				}
+				else
+				{
+					source.Append(
+$@"
+				hash = hash * 23 + this.{fieldName}.GetHashCode();"
+					);
+				}
+			}
+
+			source.Append(
+$@"
+
+				return hash;
+			}}
+		}}"
+);
 
 			AppendClassFooter(source, symbol);
 
@@ -290,6 +362,63 @@ $@"
 				return false;
 
 			return true;
+		}
+
+		private static bool FieldIsSerializable(IFieldSymbol field)
+		{
+			var attr = field.GetAttributes();
+
+			if
+			(
+				field.DeclaredAccessibility != Accessibility.Public &&
+				(
+					attr.Any(x => x.AttributeClass.ToDisplayString() == HIDEFIELD_SYMBOL_NAME) ||
+					attr.All(x => x.AttributeClass.ToDisplayString() != SERIALIZEFIELD_SYMBOL_NAME)
+				) ||
+				field.IsStatic ||
+				field.IsConst ||
+				field.IsReadOnly ||
+				!field.Type.IsType ||
+				field.Type.IsAnonymousType
+			)
+			{
+				return false;
+			}
+
+			switch (field.Type.TypeKind)
+			{
+				case TypeKind.Enum:
+					return true;
+
+				case TypeKind.Class:
+					return ((INamedTypeSymbol)field.Type).IsSerializable ||
+						SymbolIsInstantiableFrom((INamedTypeSymbol)field.Type, UNITYOBJECT_SYMBOL_NAME);
+
+				case TypeKind.Struct:
+					return (field.Type.IsUnmanagedType && !field.Type.IsTupleType && field.Type.Kind != SymbolKind.PointerType) ||
+						((INamedTypeSymbol)field.Type).IsSerializable ||
+						field.Type.ContainingNamespace.ToDisplayString() == UNITY_NAMESPACE;
+
+				case TypeKind.Array:
+					return ((IArrayTypeSymbol)field.Type).ElementType is INamedTypeSymbol elemType &&
+					(
+						elemType.IsSerializable ||
+						SymbolIsInstantiableFrom(elemType, UNITYOBJECT_SYMBOL_NAME)
+					);
+
+				default:
+					return false;
+			}
+		}
+
+		private static IEnumerable<INamedTypeSymbol> EnumerateTypeHierarchy(INamedTypeSymbol leaf)
+		{
+			do
+			{
+				yield return leaf;
+				leaf = leaf.BaseType;
+			}
+			while (leaf != null);
 		}
 		#endregion
 	}
