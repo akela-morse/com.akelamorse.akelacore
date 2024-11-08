@@ -1,3 +1,4 @@
+using Akela.Globals;
 using Akela.Optimisations;
 using System;
 using UnityEditor;
@@ -32,8 +33,9 @@ namespace AkelaEditor.Optimisations
 
 			EditorGUILayout.Space(18f);
 
+			var distanceValue = (Var<float>)serializedObject.FindProperty("_maxiumCullingDistance").boxedValue;
 			var sliderBarPosition = GUILayoutUtility.GetRect(0f, 30f, GUILayout.ExpandWidth(true));
-			DrawSlider(sliderBarPosition, serializedObject.FindProperty("_distanceBands"), serializedObject.FindProperty("_maxiumCullingDistance").floatValue);
+			DrawSlider(sliderBarPosition, serializedObject.FindProperty("_distanceBands"), distanceValue);
 
 			EditorGUILayout.Space();
 

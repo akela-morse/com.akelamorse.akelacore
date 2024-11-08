@@ -27,8 +27,6 @@ namespace AkelaEditor
 			var currentlySelectedOption = (TickUpdateType)property.enumValueIndex;
 			var currentlySelectedIndex = Array.IndexOf(allowedOptions, currentlySelectedOption);
 
-			property.serializedObject.Update();
-
 			if (!allowedOptions.Contains(currentlySelectedOption))
 			{
 				currentlySelectedOption = allowedOptions.First();

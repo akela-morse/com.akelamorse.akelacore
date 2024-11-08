@@ -11,13 +11,18 @@ namespace Akela.Events
 
         public EventBroadcaster(GameObject containerObject)
         {
-			_listeners = containerObject.GetComponents<T>();
+			_listeners = containerObject.GetComponentsInParent<T>();
 		}
 
         public void Dispatch(ListenerEvent @event)
         {
             foreach (var listener in _listeners)
+            {
+                if (listener == null)
+                    continue;
+
                 @event(listener);
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Akela.ExtendedPhysics;
+using Akela.Optimisations;
 using System;
 using System.Reflection;
 using UnityEditor;
@@ -11,7 +12,9 @@ namespace AkelaEditor.Tools
 		private static readonly Type[] _disableIconsForTypes =
 		{
 			typeof(Raycaster),
-			typeof(TorusCollider)
+			typeof(TorusCollider),
+			typeof(CullingSystem),
+			typeof(ComponentCull)
 		};
 		
 		private const int MONO_BEHAVIOR_CLASS_ID = 114; // https://docs.unity3d.com/Manual/ClassIDReference.html

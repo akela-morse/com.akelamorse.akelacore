@@ -10,7 +10,8 @@ namespace AkelaEditor
 	{
 		private static readonly (string symbol, string assembly)[] _symbolAssemblyCouple = new (string symbol, string assembly)[]
 		{
-			("AKELA_FMOD", "FMODUnity")
+			("AKELA_FMOD", "FMODUnity"),
+			("AKELA_VINSPECTOR", "VInspector")
 		};
 
 		static SetupExtraDefineSymbols()
