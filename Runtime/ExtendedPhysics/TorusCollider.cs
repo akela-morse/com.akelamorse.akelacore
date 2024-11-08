@@ -14,7 +14,7 @@ namespace Akela.ExtendedPhysics
 		public float thickness = .25f;
 		public Axis direction = Axis.Y;
 
-		[SerializeField, Range(3, 256)] int _resolution = 12;
+		[SerializeField, Range(3, 64)] int _resolution = 8;
 		#endregion
 
 		#region Component Messages
@@ -24,8 +24,8 @@ namespace Akela.ExtendedPhysics
 			if (_resolution < 3)
 				_resolution = 3;
 
-			if (_resolution > 256)
-				_resolution = 256;
+			if (_resolution > 64)
+				_resolution = 64;
 
 			if (radius < 0f)
 				radius = 0f;

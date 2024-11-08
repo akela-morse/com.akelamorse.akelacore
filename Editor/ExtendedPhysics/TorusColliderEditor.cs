@@ -13,9 +13,10 @@ namespace AkelaEditor.ExtendedPhysics
 	internal class TorusColliderEditor : EditorTool, IDrawSelectedHandles
 	{
 		private readonly SphereBoundsHandle _innerRadiusHandle = new();
-		private readonly SphereBoundsHandle _outerRadiusHandle = new();
+		private readonly BoxBoundsHandle _outerRadiusHandle = new();
 
 		private GUIContent _toolIcon;
+		private bool _toolActive;
 
 		public override GUIContent toolbarIcon => _toolIcon;
 
@@ -25,6 +26,16 @@ namespace AkelaEditor.ExtendedPhysics
 			_toolIcon.tooltip = "Edit bounding volume.";
 		}
 
+		public override void OnActivated()
+		{
+			_toolActive = true;
+		}
+
+		public override void OnWillBeDeactivated()
+		{
+			_toolActive = false;
+		}
+
 		public override void OnToolGUI(EditorWindow window)
 		{
 			if (window is not SceneView)
@@ -32,6 +43,7 @@ namespace AkelaEditor.ExtendedPhysics
 
 			foreach (TorusCollider target in targets.Cast<TorusCollider>())
 			{
+				var doubleRadius = (target.radius + target.thickness) * 2f;
 				var mainAxis = target.direction.ToVector3();
 				var rightAxis = target.direction.RightRelative();
 				var upAxis = target.direction.UpRelative();
@@ -48,10 +60,12 @@ namespace AkelaEditor.ExtendedPhysics
 					_innerRadiusHandle.center = target.center;
 					_innerRadiusHandle.radius = target.radius - target.thickness;
 					_innerRadiusHandle.axes = handleAxes;
+					_innerRadiusHandle.wireframeColor = CustomColliderEditor.TRANSPARENT;
 
 					_outerRadiusHandle.center = target.center;
-					_outerRadiusHandle.radius = target.radius + target.thickness;
+					_outerRadiusHandle.size = doubleRadius * Vector3.one;
 					_outerRadiusHandle.axes = handleAxes;
+					_outerRadiusHandle.wireframeColor = CustomColliderEditor.TRANSPARENT;
 
 					EditorGUI.BeginChangeCheck();
 
@@ -72,13 +86,18 @@ namespace AkelaEditor.ExtendedPhysics
 						}
 
 						// Outer radius
-						var outerRadiusDelta = (target.radius + target.thickness - _outerRadiusHandle.radius) / 2f;
-
-						if (target.thickness > 0f || outerRadiusDelta < 0f)
+						var movedAxis = target.direction switch
 						{
-							target.radius -= outerRadiusDelta;
-							target.thickness -= outerRadiusDelta;
-						}
+							Axis.X => _outerRadiusHandle.size.y != doubleRadius ? _outerRadiusHandle.size.y : _outerRadiusHandle.size.z,
+							Axis.Y => _outerRadiusHandle.size.x != doubleRadius ? _outerRadiusHandle.size.x : _outerRadiusHandle.size.z,
+							Axis.Z => _outerRadiusHandle.size.x != doubleRadius ? _outerRadiusHandle.size.x : _outerRadiusHandle.size.y,
+							_ => 0f
+						};
+
+						var outerRadiusDelta = (doubleRadius - movedAxis) / 2f;
+
+						target.radius -= outerRadiusDelta;
+						target.center = _outerRadiusHandle.center;
 
 						target.OnValidate();
 					}
@@ -90,7 +109,7 @@ namespace AkelaEditor.ExtendedPhysics
 		{
 			var prevZTest = Handles.zTest;
 
-			Handles.zTest = CompareFunction.LessEqual;
+			Handles.zTest = _toolActive ? CompareFunction.Always : CompareFunction.LessEqual;
 
 			foreach (TorusCollider target in targets.Cast<TorusCollider>())
 			{

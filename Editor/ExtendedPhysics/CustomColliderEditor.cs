@@ -13,6 +13,7 @@ namespace AkelaEditor.ExtendedPhysics
 	{
 		internal static Color IDLE_COLOR = new Color(145f, 244f, 139f, 210f) / 191f;
 		internal static Color DISABLED_COLOR = new Color(84f, 200f, 77f, 140f) / 191f;
+		internal static Color TRANSPARENT = new Color(0f, 0f, 0f, 0f);
 
 		private static readonly MethodInfo _getEditorToolFromType = typeof(Editor).Assembly
 			.GetType("UnityEditor.EditorTools.EditorToolUtility")
