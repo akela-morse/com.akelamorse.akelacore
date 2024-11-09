@@ -13,7 +13,8 @@ namespace AkelaEditor.ExtendedPhysics
 	internal class TorusColliderEditor : EditorTool, IDrawSelectedHandles
 	{
 		private readonly SphereBoundsHandle _innerRadiusHandle = new();
-		private readonly BoxBoundsHandle _outerRadiusHandle = new();
+		private readonly SphereBoundsHandle _outerRadiusHandle = new();
+		private readonly SphereBoundsHandle[] _heightHandles = new SphereBoundsHandle[] { new(), new(), new(), new() };
 
 		private GUIContent _toolIcon;
 		private bool _toolActive;
@@ -43,10 +44,11 @@ namespace AkelaEditor.ExtendedPhysics
 
 			foreach (TorusCollider target in targets.Cast<TorusCollider>())
 			{
-				var doubleRadius = (target.radius + target.thickness) * 2f;
 				var mainAxis = target.direction.ToVector3();
 				var rightAxis = target.direction.RightRelative();
 				var upAxis = target.direction.UpRelative();
+				var heightAxes = new[] { upAxis, rightAxis, -upAxis, -rightAxis };
+				var heightHandleAxes = (PrimitiveBoundsHandle.Axes)0.SetBit((int)target.direction);
 				var handleAxes = target.direction switch
 				{
 					Axis.X => PrimitiveBoundsHandle.Axes.Y | PrimitiveBoundsHandle.Axes.Z,
@@ -63,14 +65,25 @@ namespace AkelaEditor.ExtendedPhysics
 					_innerRadiusHandle.wireframeColor = CustomColliderEditor.TRANSPARENT;
 
 					_outerRadiusHandle.center = target.center;
-					_outerRadiusHandle.size = doubleRadius * Vector3.one;
+					_outerRadiusHandle.radius = target.radius + target.thickness;
 					_outerRadiusHandle.axes = handleAxes;
 					_outerRadiusHandle.wireframeColor = CustomColliderEditor.TRANSPARENT;
+
+					for (var i = 0; i < 4; ++i)
+					{
+						_heightHandles[i].center = target.center + heightAxes[i] * target.radius;
+						_heightHandles[i].radius = target.thickness;
+						_heightHandles[i].axes = heightHandleAxes;
+						_heightHandles[i].wireframeColor = CustomColliderEditor.TRANSPARENT;
+					}
 
 					EditorGUI.BeginChangeCheck();
 
 					_innerRadiusHandle.DrawHandle();
 					_outerRadiusHandle.DrawHandle();
+
+					for (var i = 0; i < 4; ++i)
+						_heightHandles[i].DrawHandle();
 
 					if (EditorGUI.EndChangeCheck())
 					{
@@ -79,27 +92,41 @@ namespace AkelaEditor.ExtendedPhysics
 						// Inner radius
 						var innerRadiusDelta = (target.radius - target.thickness - _innerRadiusHandle.radius) / 2f;
 
-						if (target.thickness > 0f || innerRadiusDelta > 0f)
+						if (innerRadiusDelta != 0f && (target.thickness > 0f || innerRadiusDelta > 0f))
 						{
 							target.radius -= innerRadiusDelta;
 							target.thickness += innerRadiusDelta;
+
+							target.OnValidate();
+							return;
 						}
 
 						// Outer radius
-						var movedAxis = target.direction switch
+						var outerRadiusDelta = target.radius + target.thickness - _outerRadiusHandle.radius;
+
+						if (outerRadiusDelta != 0f)
 						{
-							Axis.X => _outerRadiusHandle.size.y != doubleRadius ? _outerRadiusHandle.size.y : _outerRadiusHandle.size.z,
-							Axis.Y => _outerRadiusHandle.size.x != doubleRadius ? _outerRadiusHandle.size.x : _outerRadiusHandle.size.z,
-							Axis.Z => _outerRadiusHandle.size.x != doubleRadius ? _outerRadiusHandle.size.x : _outerRadiusHandle.size.y,
-							_ => 0f
-						};
+							target.radius -= outerRadiusDelta;
+							target.center = _outerRadiusHandle.center;
 
-						var outerRadiusDelta = (doubleRadius - movedAxis) / 2f;
+							target.OnValidate();
+							return;
+						}
 
-						target.radius -= outerRadiusDelta;
-						target.center = _outerRadiusHandle.center;
+						// Height
+						for (var i = 0; i < 4; ++i)
+						{
+							var heightDelta = target.thickness - _heightHandles[i].radius;
 
-						target.OnValidate();
+							if (heightDelta == 0f || (target.thickness <= 0f && heightDelta > 0f))
+								continue;
+
+							target.thickness -= heightDelta;
+							target.center = _heightHandles[i].center - heightAxes[i] * target.radius;
+
+							target.OnValidate();
+							return;
+						}
 					}
 				}
 			}

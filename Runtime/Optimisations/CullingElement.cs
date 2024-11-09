@@ -18,14 +18,27 @@ namespace Akela.Optimisations
 		private int _elementId;
 		private EventBroadcaster<ICullingEventReceiver> _eventBroadcaster;
 
-		public bool IsVisible { get; set; }
-		public int CurrentDistanceBand { get; set; }
+		public bool IsVisible { get; private set; }
+		public int CurrentDistanceBand { get; private set; }
 
 		public CullingSystem CullingSystem => _system;
 
 		public void IndexChanged(int index)
 		{
 			_elementId = index;
+		}
+
+		public void InitialState(bool visible, int distanceBand)
+		{
+			IsVisible = visible;
+			CurrentDistanceBand = distanceBand;
+
+			if (IsVisible)
+				_eventBroadcaster.Dispatch(x => x.OnCullingElementVisible());
+			else
+				_eventBroadcaster.Dispatch(x => x.OnCullingElementInvisible());
+
+			_eventBroadcaster.Dispatch(x => x.OnDistanceBandChanges(-1, CurrentDistanceBand));
 		}
 
 		public void StateChanged(CullingGroupEvent data)
@@ -46,8 +59,12 @@ namespace Akela.Optimisations
 		#region Component Messages
 		private void Awake()
 		{
-			_elementId = _system.Value.RegisterElement(this, new(_sphereCenter.x, _sphereCenter.y, _sphereCenter.z, _sphereRadius));
 			_eventBroadcaster = new(gameObject);
+		}
+
+		private void Start()
+		{
+			_elementId = _system.Value.RegisterElement(this, new(_sphereCenter.x, _sphereCenter.y, _sphereCenter.z, _sphereRadius));
 		}
 
 		protected override void Tick(float deltaTime)

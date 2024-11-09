@@ -1,4 +1,5 @@
 using Akela.Globals;
+using System.Collections;
 using UnityEngine;
 
 namespace Akela.Optimisations
@@ -55,6 +56,11 @@ namespace Akela.Optimisations
 			_boundingSpheres[elementId].position = position;
 		}
 
+		public (bool, int) RequestStateForElement(int index)
+		{
+			return (_cullingGroup.IsVisible(index), _cullingGroup.GetDistance(index));
+		}
+
 		#region Component Messages
 		private void Awake()
 		{
@@ -71,6 +77,11 @@ namespace Akela.Optimisations
 
 			_cullingGroup.SetBoundingDistances(_boundingDistances);
 			_cullingGroup.SetDistanceReferencePoint(_distanceReferenceOverride ? _distanceReferenceOverride : _cullingGroup.targetCamera.transform);
+		}
+
+		private void Start()
+		{
+			StartCoroutine(SetInitialStateAtFirstFrameEnd());
 		}
 
 		private void OnEnable()
@@ -123,6 +134,14 @@ namespace Akela.Optimisations
 		{
 			_elements[e.index].StateChanged(e);
 		}
+
+		private IEnumerator SetInitialStateAtFirstFrameEnd()
+		{
+			yield return new WaitForEndOfFrame();
+
+			for (var i = 0; i < _elementCount; ++i)
+				_elements[i].InitialState(_cullingGroup.IsVisible(i), _cullingGroup.GetDistance(i));
+}
 		#endregion
 	}
 }

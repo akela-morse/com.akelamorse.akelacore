@@ -2,12 +2,12 @@
 
 namespace Akela.Optimisations
 {
-	[AddComponentMenu("Optimisation/Component Cull", 2)]
+	[AddComponentMenu("Optimisation/Component Cull", 3)]
 	[RequireComponent(typeof(CullingElement))]
 	public class ComponentCull : MonoBehaviour, ICullingEventReceiver
 	{
 		#region Component Fields
-		[Tooltip("If d < x components will be active\nIf x <= d <= y components will be inactive if culled\nIf y < d components will be inactive")]
+		[Tooltip("If d < x components will be active\nIf x <= d < y components will be inactive if culled\nIf y <= d components will be inactive")]
 #if AKELA_VINSPECTOR
 		[VInspector.MinMaxSlider(0, 8)]
 #endif
@@ -28,11 +28,11 @@ namespace Akela.Optimisations
 			SetComponentState(_cullingElement.CurrentDistanceBand <= _distanceBandRange.y);
 		}
 
-		public void OnDistanceBandChanges(int previousBand, int newBand)
+		public void OnDistanceBandChanges(int _, int newBand)
 		{
 			if (newBand < _distanceBandRange.x)
 				SetComponentState(true);
-			else if (newBand <= _distanceBandRange.y)
+			else if (newBand < _distanceBandRange.y)
 				SetComponentState(_cullingElement.IsVisible);
 			else
 				SetComponentState(false);

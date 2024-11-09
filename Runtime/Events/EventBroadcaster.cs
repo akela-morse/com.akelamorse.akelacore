@@ -3,26 +3,26 @@ using UnityEngine;
 
 namespace Akela.Events
 {
-    public class EventBroadcaster<T> where T: class
-    {
-        public delegate void ListenerEvent(T listener);
+	public class EventBroadcaster<T> where T : class
+	{
+		public delegate void ListenerEvent(T listener);
 
-        private readonly T[] _listeners;
+		private readonly T[] _listeners;
 
-        public EventBroadcaster(GameObject containerObject)
-        {
+		public EventBroadcaster(GameObject containerObject)
+		{
 			_listeners = containerObject.GetComponentsInParent<T>();
 		}
 
-        public void Dispatch(ListenerEvent @event)
-        {
-            foreach (var listener in _listeners)
-            {
-                if (listener == null)
-                    continue;
+		public void Dispatch(ListenerEvent @event)
+		{
+			foreach (var listener in _listeners)
+			{
+				if (listener == null)
+					continue;
 
-                @event(listener);
-            }
-        }
-    }
+				@event(listener);
+			}
+		}
+	}
 }

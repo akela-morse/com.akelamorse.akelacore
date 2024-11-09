@@ -14,6 +14,7 @@ namespace AkelaEditor.Tools
 			typeof(Raycaster),
 			typeof(TorusCollider),
 			typeof(CullingSystem),
+			typeof(ShadowCull),
 			typeof(ComponentCull)
 		};
 		

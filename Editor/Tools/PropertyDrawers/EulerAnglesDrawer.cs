@@ -27,13 +27,10 @@ namespace AkelaEditor.Tools
 
 			EditorGUI.BeginChangeCheck();
 
-			attr.internalVector3Value = EditorGUI.Vector3Field(position, property.displayName, attr.internalVector3Value);
+			attr.internalVector3Value = EditorGUI.Vector3Field(position, label, attr.internalVector3Value);
 
 			if (EditorGUI.EndChangeCheck())
-			{
 				property.quaternionValue = Quaternion.Euler(attr.internalVector3Value);
-				property.serializedObject.ApplyModifiedProperties();
-			}
 		}
 	}
 }
