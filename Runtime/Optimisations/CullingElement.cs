@@ -1,5 +1,5 @@
 ﻿using Akela.Behaviours;
-using Akela.Events;
+using Akela.Signals;
 using Akela.Globals;
 using UnityEngine;
 
@@ -16,7 +16,7 @@ namespace Akela.Optimisations
 		#endregion
 
 		private int _elementId;
-		private EventBroadcaster<ICullingEventReceiver> _eventBroadcaster;
+		private MessageBroadcaster<ICullingMessageReceiver> _messageBroadcaster;
 
 		public bool IsVisible { get; private set; }
 		public int CurrentDistanceBand { get; private set; }
@@ -34,11 +34,11 @@ namespace Akela.Optimisations
 			CurrentDistanceBand = distanceBand;
 
 			if (IsVisible)
-				_eventBroadcaster.Dispatch(x => x.OnCullingElementVisible());
+				_messageBroadcaster.Dispatch(x => x.OnCullingElementVisible());
 			else
-				_eventBroadcaster.Dispatch(x => x.OnCullingElementInvisible());
+				_messageBroadcaster.Dispatch(x => x.OnCullingElementInvisible());
 
-			_eventBroadcaster.Dispatch(x => x.OnDistanceBandChanges(-1, CurrentDistanceBand));
+			_messageBroadcaster.Dispatch(x => x.OnDistanceBandChanges(-1, CurrentDistanceBand));
 		}
 
 		public void StateChanged(CullingGroupEvent data)
@@ -47,19 +47,19 @@ namespace Akela.Optimisations
 			CurrentDistanceBand = data.currentDistance;
 
 			if (data.hasBecomeVisible)
-				_eventBroadcaster.Dispatch(x => x.OnCullingElementVisible());
+				_messageBroadcaster.Dispatch(x => x.OnCullingElementVisible());
 
 			if (data.hasBecomeInvisible)
-				_eventBroadcaster.Dispatch(x => x.OnCullingElementInvisible());
+				_messageBroadcaster.Dispatch(x => x.OnCullingElementInvisible());
 
 			if (data.previousDistance != data.currentDistance)
-				_eventBroadcaster.Dispatch(x => x.OnDistanceBandChanges(data.previousDistance, data.currentDistance));
+				_messageBroadcaster.Dispatch(x => x.OnDistanceBandChanges(data.previousDistance, data.currentDistance));
 		}
 
 		#region Component Messages
 		private void Awake()
 		{
-			_eventBroadcaster = new(gameObject);
+			_messageBroadcaster = new(gameObject);
 		}
 
 		private void Start()

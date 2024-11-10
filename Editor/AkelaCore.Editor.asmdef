@@ -4,8 +4,7 @@
     "references": [
         "GUID:c55798574a00d6f4bab5d071720f299e",
         "GUID:f06555f75b070af458a003d92f9efb00",
-        "GUID:02f771204943f4a40949438e873e3eff",
-        "GUID:6071c9f2ce0a4407c93af459fa416e54"
+        "GUID:02f771204943f4a40949438e873e3eff"
     ],
     "includePlatforms": [
         "Editor"
@@ -41,11 +40,6 @@
             "name": "com.unity.inputsystem",
             "expression": "1.1.0",
             "define": "AKELA_INPUTSYSTEM"
-        },
-        {
-            "name": "com.acegikmo.mathfs",
-            "expression": "0.1.0",
-            "define": "AKELA_MATHFS"
         }
     ],
     "noEngineReferences": false

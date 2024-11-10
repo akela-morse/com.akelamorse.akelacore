@@ -16,7 +16,7 @@ namespace AkelaEditor.Bridges
 		{
 			var actualProperty = property.FindPropertyRelative("_internalValue");
 
-			EditorGUI.PropertyField(position, actualProperty, new GUIContent(property.displayName));
+			EditorGUI.PropertyField(position, actualProperty, label);
 		}
 	}
 }

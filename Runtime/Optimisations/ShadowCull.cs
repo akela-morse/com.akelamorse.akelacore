@@ -10,8 +10,8 @@ using UnityEngine.Rendering;
 namespace Akela.Optimisations
 {
 	[AddComponentMenu("Optimisation/Shadow Cull", 2)]
-	[RequireComponent(typeof(Light))]
-	public class ShadowCull : MonoBehaviour, ICullingEventReceiver
+	[DisallowMultipleComponent, RequireComponent(typeof(Light))]
+	public class ShadowCull : MonoBehaviour, ICullingMessageReceiver
 	{
 #if AKELA_URP
 		private static readonly FieldInfo _additionalLightsShadowResolutionTier = typeof(UniversalAdditionalLightData)

@@ -1,5 +1,5 @@
 using Akela.Behaviours;
-using Akela.Events;
+using Akela.Signals;
 using Akela.Globals;
 using Akela.Tools;
 using System.Collections.Generic;
@@ -35,7 +35,7 @@ namespace Akela.ExtendedPhysics
 		private RaycastHit[] _hits;
 		private int _numberOfHits;
 		private bool _previousRaycastDidHit;
-		private EventBroadcaster<IRaycastEventReceiver> _eventBroadcaster;
+		private MessageBroadcaster<IRaycastMessageReceiver> _messageBroadcaster;
 
 		public int NumberOfHits => _numberOfHits;
 
@@ -72,7 +72,7 @@ namespace Akela.ExtendedPhysics
 		private void Awake()
 		{
 			_hits = new RaycastHit[_registerMultipleHits ? _maxNumberOfHits : 1];
-			_eventBroadcaster = new(gameObject);
+			_messageBroadcaster = new(gameObject);
 		}
 
 		protected override void Tick(float deltaTime)
@@ -247,7 +247,7 @@ namespace Akela.ExtendedPhysics
 			var raycastDidHit = RaycastDidHit();
 
 			if (raycastDidHit && !_previousRaycastDidHit)
-				_eventBroadcaster.Dispatch(x => x.OnRaycastHit());
+				_messageBroadcaster.Dispatch(x => x.OnRaycastHit());
 
 			_previousRaycastDidHit = raycastDidHit;
 		}

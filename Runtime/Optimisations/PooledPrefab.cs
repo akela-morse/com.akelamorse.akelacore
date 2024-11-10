@@ -6,7 +6,9 @@ using UnityEngine.Pool;
 
 namespace Akela.Optimisations
 {
-	public class PooledPrefab : MonoBehaviour, ISerializationCallbackReceiver, ICullingEventReceiver
+	[AddComponentMenu("Optimisation/Pooled Prefab", 4)]
+	[DisallowMultipleComponent]
+	public class PooledPrefab : MonoBehaviour, ISerializationCallbackReceiver, ICullingMessageReceiver
 	{
 		public enum ReleaseBehaviour
 		{

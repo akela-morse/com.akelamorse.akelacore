@@ -1,6 +1,6 @@
 ﻿namespace Akela.ExtendedPhysics
 {
-	public interface IRaycastEventReceiver
+	public interface IRaycastMessageReceiver
 	{
 		void OnRaycastHit();
 	}

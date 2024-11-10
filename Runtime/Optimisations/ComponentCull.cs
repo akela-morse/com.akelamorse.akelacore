@@ -4,7 +4,7 @@ namespace Akela.Optimisations
 {
 	[AddComponentMenu("Optimisation/Component Cull", 3)]
 	[RequireComponent(typeof(CullingElement))]
-	public class ComponentCull : MonoBehaviour, ICullingEventReceiver
+	public class ComponentCull : MonoBehaviour, ICullingMessageReceiver
 	{
 		#region Component Fields
 		[Tooltip("If d < x components will be active\nIf x <= d < y components will be inactive if culled\nIf y <= d components will be inactive")]

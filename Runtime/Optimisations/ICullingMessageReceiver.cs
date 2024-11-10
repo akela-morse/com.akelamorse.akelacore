@@ -1,6 +1,6 @@
 ﻿namespace Akela.Optimisations
 {
-	public interface ICullingEventReceiver
+	public interface ICullingMessageReceiver
 	{
 		void OnCullingElementVisible();
 		void OnCullingElementInvisible();
