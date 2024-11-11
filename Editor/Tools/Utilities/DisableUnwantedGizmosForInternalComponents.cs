@@ -21,7 +21,8 @@ namespace AkelaEditor.Tools
 			typeof(ParticleSystemCull),
 			typeof(ComponentCull),
 			typeof(PooledPrefab),
-			typeof(SignalRelayer)
+			typeof(SignalRelayer),
+			typeof(ObjectFunctions)
 		};
 		
 		private const int MONO_BEHAVIOR_CLASS_ID = 114; // https://docs.unity3d.com/Manual/ClassIDReference.html
