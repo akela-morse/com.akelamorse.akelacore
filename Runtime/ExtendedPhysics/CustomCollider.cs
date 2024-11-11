@@ -88,7 +88,7 @@ namespace Akela.ExtendedPhysics
 			foreach (var collider in _subColliders)
 			{
 				var subCollider = collider.gameObject.AddComponent<SubCollider>();
-				subCollider.collider = collider;
+				subCollider.colliderComponent = collider;
 				subCollider.bindingCollider = this;
 			}
 		}

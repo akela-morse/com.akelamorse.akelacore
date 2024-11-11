@@ -4,6 +4,7 @@ using Akela.Optimisations;
 using System;
 using System.Reflection;
 using UnityEditor;
+using Akela.Tools;
 
 namespace AkelaEditor.Tools
 {
@@ -12,6 +13,7 @@ namespace AkelaEditor.Tools
 	{
 		private static readonly Type[] _disableIconsForTypes =
 		{
+			typeof(Invokable),
 			typeof(Raycaster),
 			typeof(TorusCollider),
 			typeof(CullingSystem),

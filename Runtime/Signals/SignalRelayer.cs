@@ -7,16 +7,16 @@ namespace Akela.Signals
 	public class SignalRelayer : MonoBehaviour, ISignalReceiver
 	{
 		#region Component Fields
-		[SerializeField] SignalType[] _eventTypesToListenFor;
+		[SerializeField] Signal[] _signalsToListenFor;
 		[Space]
-		[SerializeField] BridgedEvent<Signal> _onEventReceived;
+		[SerializeField] BridgedEvent<Signal> _onSignalReceived;
 		#endregion
 
-		public SignalType[] ListenFor => _eventTypesToListenFor;
+		public Signal[] ListenFor => _signalsToListenFor;
 
 		public void OnSignalReceived(Signal signal)
 		{
-			_onEventReceived.Invoke(signal);
+			_onSignalReceived.Invoke(signal);
 		}
 	}
 }

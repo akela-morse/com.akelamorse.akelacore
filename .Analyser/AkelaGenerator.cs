@@ -391,7 +391,7 @@ $@"
 					return true;
 
 				case TypeKind.Class:
-					return ((INamedTypeSymbol)field.Type).IsSerializable ||
+					return field.Type.SpecialType == SpecialType.System_String || ((INamedTypeSymbol)field.Type).IsSerializable ||
 						SymbolIsInstantiableFrom((INamedTypeSymbol)field.Type, UNITYOBJECT_SYMBOL_NAME);
 
 				case TypeKind.Struct:

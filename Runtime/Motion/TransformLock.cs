@@ -37,7 +37,7 @@ namespace Akela.Motion
 		private void Update()
 		{
 #if !UNITY_EDITOR
-			if (onlyOnStart)
+			if (_onlyOnStart)
 				return;
 #else
 			if (_onlyOnStart && Application.isPlaying)

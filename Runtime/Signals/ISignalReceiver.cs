@@ -2,7 +2,7 @@
 {
 	public interface ISignalReceiver
 	{
-		SignalType[] ListenFor {  get; }
+		Signal[] ListenFor {  get; }
 
 		void OnSignalReceived(Signal signal);
 	}

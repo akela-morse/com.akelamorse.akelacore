@@ -1,17 +1,18 @@
-﻿using System;
+﻿using Akela.Tools;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace Akela.Signals
 {
-	[CreateAssetMenu(fileName = "New Event", menuName = "Event", order = -50)]
+	[CreateAssetMenu(fileName = "New Signal", menuName = "Signal", order = -50)]
 	public class Signal : ScriptableObject
 	{
-		private ISignalReceiver[] _listeners;
+		private readonly List<ISignalReceiver> _listeners = new();
 
 		public object Payload { get; private set; }
-		public SignalType Type => name;
 
 		public void Dispatch() => DispatchToListeners<object>(null);
 
@@ -33,10 +34,13 @@ namespace Akela.Signals
 
 		private void OnEnable()
 		{
-			_listeners = FindObjectsByType<GameObject>(FindObjectsInactive.Include, FindObjectsSortMode.None)
-				.OfType<ISignalReceiver>()
-				.Where(x => x.ListenFor.Contains(Type))
-				.ToArray();
+			ComponentLoader<ISignalReceiver>.OnTypeFound += RefreshListenersList;
+		}
+
+		private void RefreshListenersList(IEnumerable<ISignalReceiver> receivers)
+		{
+			_listeners.Clear();
+			_listeners.AddRange(receivers.Where(x => x.ListenFor.Contains(this)));
 		}
 
 		private void DispatchToListeners<T>(T payload)
@@ -46,5 +50,7 @@ namespace Akela.Signals
 			foreach (var listener in _listeners)
 				listener.OnSignalReceived(this);
 		}
+
+		public static implicit operator string(Signal signal) => signal.name;
 	}
 }

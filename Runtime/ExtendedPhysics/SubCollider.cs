@@ -6,12 +6,12 @@ namespace Akela.ExtendedPhysics
 	[AddComponentMenu("")]
 	public sealed class SubCollider : MonoBehaviour
 	{
-		public new Collider collider;
+		public Collider colliderComponent;
 		public Component bindingCollider;
 
 		public void DestroyIfUnbound()
 		{
-			if (bindingCollider == null || !((ICustomCollider)bindingCollider).IsBindingCollider(collider))
+			if (bindingCollider == null || !((ICustomCollider)bindingCollider).IsBindingCollider(colliderComponent))
 				gameObject.PlaymodeAgnosticDestroy();
 		}
 
@@ -50,8 +50,8 @@ namespace Akela.ExtendedPhysics
 		{
 			hideFlags = HideFlags.NotEditable;
 
-			if (collider)
-				collider.hideFlags = HideFlags.NotEditable;
+			if (colliderComponent)
+				colliderComponent.hideFlags = HideFlags.NotEditable;
 
 			gameObject.hideFlags = HideFlags.HideInHierarchy | HideFlags.NotEditable;
 		}

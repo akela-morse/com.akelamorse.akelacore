@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Akela.Tools;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Akela.Behaviours
 {
@@ -32,6 +32,11 @@ namespace Akela.Behaviours
 			DontDestroyOnLoad(this);
 		}
 
+		private void OnEnable()
+		{
+			ComponentLoader<INotifySerializedFieldChanged>.OnTypeFound += RefreshMonitoredBehaviours;
+		}
+
 		private void Update()
 		{
 			foreach (var monitoredBehaviour in _monitoredBehaviours)
@@ -46,28 +51,14 @@ namespace Akela.Behaviours
 			}
 		}
 
-		private void OnEnable()
-		{
-			SceneManager.sceneLoaded += SceneLoaded;
-		}
-
-		private void OnDestroy()
-		{
-			SceneManager.sceneLoaded -= SceneLoaded;
-		}
-
-		private void SceneLoaded(Scene scene, LoadSceneMode mode)
+		private void RefreshMonitoredBehaviours(IEnumerable<INotifySerializedFieldChanged> behaviours)
 		{
 			_monitoredBehaviours.Clear();
-
-			foreach (var monitoredBehaviour in FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None).OfType<INotifySerializedFieldChanged>())
+			_monitoredBehaviours.AddRange(behaviours.Select(x => new MonitoredBehaviour
 			{
-				_monitoredBehaviours.Add(new MonitoredBehaviour
-				{
-					behaviour = monitoredBehaviour,
-					currentHash = monitoredBehaviour.GetHashCode()
-				});
-			}
+				behaviour = x,
+				currentHash = x.GetHashCode()
+			}));
 		}
 	}
 }
