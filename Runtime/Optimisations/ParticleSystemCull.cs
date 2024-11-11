@@ -35,7 +35,7 @@ namespace Akela.Optimisations
 		[SerializeField] bool _affectSize;
 		[Space]
 		[Tooltip("How the maximum number of particles will decrease as the distance increases")]
-		[SerializeField] AnimationCurve _particleCountFalloff = AnimationCurve.Linear(0f, 1f, 1f, .25f);
+		[SerializeField] AnimationCurve _particleCountFalloff = AnimationCurve.Linear(0f, 1f, 1f, .5f);
 #if AKELA_VINSPECTOR
 		[VInspector.EnableIf(nameof(_affectEmissionRate))]
 #endif
