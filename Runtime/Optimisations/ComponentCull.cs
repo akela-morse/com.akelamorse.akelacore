@@ -2,7 +2,7 @@
 
 namespace Akela.Optimisations
 {
-	[AddComponentMenu("Optimisation/Component Cull", 3)]
+	[AddComponentMenu("Optimisation/Component Cull", 4)]
 	[RequireComponent(typeof(CullingElement))]
 	public class ComponentCull : MonoBehaviour, ICullingMessageReceiver
 	{

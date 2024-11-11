@@ -18,6 +18,7 @@ namespace AkelaEditor.Tools
 			typeof(TorusCollider),
 			typeof(CullingSystem),
 			typeof(ShadowCull),
+			typeof(ParticleSystemCull),
 			typeof(ComponentCull),
 			typeof(PooledPrefab),
 			typeof(SignalRelayer)
