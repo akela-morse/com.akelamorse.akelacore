@@ -63,7 +63,7 @@ namespace AkelaAnalyser
                             break;
 
                         case MONITOR_SYMBOL_NAME:
-                            context.AddSource($"{symbol.Name}_hideScriptFieldEditor.g.cs", SourceText.From(GenerateMonitoringHash(symbol), Encoding.UTF8));
+                            context.AddSource($"{symbol.Name}_fieldMonitoring.g.cs", SourceText.From(GenerateMonitoringHash(symbol), Encoding.UTF8));
                             break;
                         
                         case HIDESCRIPTFIELD_SYMBOL_NAME:
@@ -397,7 +397,7 @@ using UnityEditor;
 
             source.Append(
                 $@"
-    [CustomEditor(typeof({symbol.Name}))]
+    [CustomEditor(typeof({symbol.Name}), isFallback = true)]
     internal sealed class {symbol.Name}_HideScriptFieldEditor : Editor");
 
             if (additionalInterfaces.Length > 0)

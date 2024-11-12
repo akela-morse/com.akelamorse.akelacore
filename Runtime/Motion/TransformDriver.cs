@@ -6,7 +6,7 @@ namespace Akela.Motion
 {
 	[AddComponentMenu("Motion/Transform Driver", 1)]
 	[TickOptions(TickUpdateType.Update, TickUpdateType.LateUpdate, TickUpdateType.LateUpdate, TickUpdateType.AnimatorMove)]
-	[ExecuteInEditMode]
+	[HideScriptField, ExecuteInEditMode]
 	public class TransformDriver : TickBehaviour
 	{
 		public enum TransformProperty
