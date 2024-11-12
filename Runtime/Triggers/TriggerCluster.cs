@@ -1,28 +1,17 @@
-﻿using System.Linq;
+﻿using Akela.Behaviours;
+using System.Linq;
 using UnityEngine;
 
 namespace Akela.Triggers
 {
-	public class TriggerCluster
+	[AddComponentMenu("Triggers/Trigger Cluster", 0)]
+	[DisallowMultipleComponent]
+	[TickOptions(TickUpdateType.None, TickUpdateType.Update, TickUpdateType.FixedUpdate)]
+	public class TriggerCluster : TickBehaviour
 	{
-		private readonly Collider[] _colliders;
-		private Bounds _bounds;
-
-        public TriggerCluster(GameObject obj)
-        {
-            _colliders = obj.GetComponentsInChildren<Collider>().Where(x => x.isTrigger).ToArray();
-
-			RefreshBounds();
-		}
-
-		public void RefreshBounds()
-		{
-			_bounds = _colliders[0].bounds;
-
-			for (var i = 1; i < _colliders.Length; i++)
-				_bounds.Encapsulate(_colliders[i].bounds);
-		}
-
+		private Collider[] _colliders;
+		private Bounds _bounds;		
+		
 		public float SqrDistanceFromBounds(Vector3 point)
 		{
 			return _bounds.SqrDistance(point);
@@ -70,5 +59,29 @@ namespace Akela.Triggers
 
 			return candidate;
 		}
+
+		#region Component Messages
+		private void Awake()
+		{
+			_colliders = GetComponentsInChildren<Collider>().Where(x => x.isTrigger).ToArray();
+
+			RefreshBounds();
+		}
+
+		protected override void Tick(float deltaTime)
+		{
+			RefreshBounds();
+		}
+		#endregion
+
+		#region Private Methods
+		public void RefreshBounds()
+		{
+			_bounds = _colliders[0].bounds;
+
+			for (var i = 1; i < _colliders.Length; i++)
+				_bounds.Encapsulate(_colliders[i].bounds);
+		}		
+		#endregion
 	}
 }

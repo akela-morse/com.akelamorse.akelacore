@@ -1,10 +1,11 @@
-﻿using Akela.Signals;
-using Akela.ExtendedPhysics;
+﻿using Akela.ExtendedPhysics;
 using Akela.Optimisations;
+using Akela.Signals;
+using Akela.Tools;
+using Akela.Triggers;
 using System;
 using System.Reflection;
 using UnityEditor;
-using Akela.Tools;
 
 namespace AkelaEditor.Tools
 {
@@ -22,9 +23,12 @@ namespace AkelaEditor.Tools
 			typeof(ComponentCull),
 			typeof(PooledPrefab),
 			typeof(SignalRelayer),
-			typeof(ObjectFunctions)
+			typeof(ObjectFunctions),
+			typeof(TriggerCluster),
+			typeof(VolumeTrigger),
+			typeof(CameraLookTrigger)
 		};
-		
+
 		private const int MONO_BEHAVIOR_CLASS_ID = 114; // https://docs.unity3d.com/Manual/ClassIDReference.html
 
 		private static readonly MethodInfo setIconEnabled = typeof(Editor).Assembly
