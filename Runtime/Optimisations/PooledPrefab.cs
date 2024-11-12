@@ -10,7 +10,7 @@ namespace Akela.Optimisations
 	[DisallowMultipleComponent]
 	public class PooledPrefab : MonoBehaviour, ISerializationCallbackReceiver, ICullingMessageReceiver
 	{
-		public enum ReleaseBehaviour
+		private enum ReleaseBehaviour
 		{
 			AfterTime,
 			OnDisable,
@@ -59,7 +59,6 @@ namespace Akela.Optimisations
 		{
 			_pool = pool;
 		}
-
 
 		public void OnCullingElementVisible() { }
 

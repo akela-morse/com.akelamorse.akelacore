@@ -2,15 +2,16 @@
 using Akela.Globals;
 using Akela.Tools;
 using System;
+using Akela.Behaviours;
 using UnityEngine;
 
 namespace Akela.Triggers
 {
 	[AddComponentMenu("Triggers/Volume Trigger", 1)]
+    [HideScriptField]
 	public class VolumeTrigger : MonoBehaviour, ITrigger
 	{
 		#region Component Fields
-		[Header("Parameters")]
 		[SerializeField] Var<LayerMask> _layerMask;
 		[SerializeField] Var<string> _tag;
 		[SerializeField] bool _triggerOnlyOnce;
@@ -20,10 +21,9 @@ namespace Akela.Triggers
 		[SerializeField] BridgedEvent<Collider> _onStay;
 		#endregion
 
-		private bool _triggered = false;
-		private bool _active = false;
+		private bool _triggered;
 
-		public bool IsActive => _active;
+		public bool IsActive { get; private set; }
 
 		public void AddListener(Action callback, TriggerEventType eventType = TriggerEventType.OnBecomeActive)
 		{
@@ -45,7 +45,7 @@ namespace Akela.Triggers
 				return;
 
 			_triggered = true;
-			_active = true;
+			IsActive = true;
 
 			_onEnter.Invoke(other);
 		}
@@ -55,7 +55,7 @@ namespace Akela.Triggers
 			if (!CheckConditions(other))
 				return;
 
-			_active = false;
+			IsActive = false;
 
 			_onExit.Invoke(other);
 		}
@@ -66,7 +66,7 @@ namespace Akela.Triggers
 				return;
 
 			_triggered = true;
-			_active = true;
+			IsActive = true;
 
 			_onStay.Invoke(other);
 		}
@@ -76,7 +76,7 @@ namespace Akela.Triggers
 		private bool CheckConditions(Collider other)
 		{
 			var fireTest = !_triggerOnlyOnce || _triggerOnlyOnce && !_triggered;
-			var tagTest = string.IsNullOrEmpty(_tag) || other.gameObject.CompareTag(_tag);
+			var tagTest = _tag.HasValue || other.gameObject.CompareTag(_tag);
 			var layerTest = _layerMask.Value.Contains(other.gameObject.layer);
 
 			return fireTest && tagTest && layerTest;

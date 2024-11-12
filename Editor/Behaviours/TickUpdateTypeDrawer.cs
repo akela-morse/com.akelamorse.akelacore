@@ -9,20 +9,15 @@ using static Akela.Behaviours.TickBehaviour;
 namespace AkelaEditor
 {
 	[CustomPropertyDrawer(typeof(TickUpdateType))]
-	public class TickUpdateTypeDrawer : PropertyDrawer
+	internal class TickUpdateTypeDrawer : PropertyDrawer
 	{
 		static readonly TickUpdateType[] DEFAULT_OPTIONS = new[] { TickUpdateType.Update, TickUpdateType.LateUpdate, TickUpdateType.FixedUpdate };
 
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{
-			TickUpdateType[] allowedOptions;
-
 			var optionsAttr = property.serializedObject.targetObject.GetType().GetCustomAttribute<TickOptionsAttribute>();
 
-			if (optionsAttr != null)
-				allowedOptions = optionsAttr.AllowedUpdateTypes;
-			else
-				allowedOptions = DEFAULT_OPTIONS;
+			var allowedOptions = optionsAttr != null ? optionsAttr.AllowedUpdateTypes : DEFAULT_OPTIONS;
 
 			var currentlySelectedOption = (TickUpdateType)property.enumValueIndex;
 			var currentlySelectedIndex = Array.IndexOf(allowedOptions, currentlySelectedOption);

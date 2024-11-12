@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Akela.Bridges
+﻿namespace Akela.Bridges
 {
 	public interface IBridge { }
 }

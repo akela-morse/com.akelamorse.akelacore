@@ -1,71 +1,81 @@
-﻿//using AkelaTools;
-//using SOL.Utilities;
-//using System;
-//using UltEvents;
-//using UnityEngine;
+﻿using System;
+using Akela.Behaviours;
+using Akela.Bridges;
+using Akela.Globals;
+using Akela.Tools;
+using UnityEngine;
 
-//namespace SOL.Triggers
-//{
-//	public class CollisionTrigger : MonoBehaviour, ITrigger
-//	{
-//		public event Action OnActivate;
-//		public event Action OnDeactivate;
+namespace Akela.Triggers
+{
+    [AddComponentMenu("Triggers/Collision Trigger", 2)]
+    [HideScriptField]
+    public class CollisionTrigger : MonoBehaviour, ITrigger
+    {
+        #region Component Fields
+        [SerializeField] Var<LayerMask> _layerMask;
+        [SerializeField] Var<string> _tag;
+        [SerializeField] bool _triggerOnlyOnce;
+        [Header("Events")]
+        [SerializeField] BridgedEvent<Collision> _onEnter;
+        [SerializeField] BridgedEvent<Collision> _onExit;
+        [SerializeField] BridgedEvent<Collision> _onStay;
+        #endregion
 
-//		public LayerMask layerMask = int.MaxValue;
-//		public bool fireOnce;
+        private bool _triggered;
 
-//		[Space]
+        public bool IsActive { get; private set; }
 
-//		[SerializeField] UltEvent<Collision> _onEnter;
+        public void AddListener(Action callback, TriggerEventType eventType = TriggerEventType.OnBecomeActive)
+        {
+            if (eventType == TriggerEventType.OnBecomeActive)
+                _onExit.AddListener(_ => callback());
+            else
+                _onEnter.AddListener(_ => callback());
+        }
 
-//		[SerializeField] UltEvent<Collision> _onExit;
+        #region Component Messages
+        private void OnCollisionEnter(Collision collision)
+        {
+            if (!CheckConditions(collision))
+                return;
 
-//		[SerializeField] UltEvent<Collision> _onStay;
+            _triggered = true;
+            IsActive = true;
 
-//		private bool fired = false;
-//		private bool active = false;
+            _onEnter.Invoke(collision);
+        }
 
-//		public bool IsActive() => active;
+        private void OnCollisionExit(Collision collision)
+        {
+            if (!CheckConditions(collision))
+                return;
 
-//		private void OnCollisionEnter(Collision collision)
-//		{
-//			var fireTest = !fireOnce || fireOnce && !fired;
-//			var layerTest = layerMask.Contains(collision.gameObject.layer);
+            IsActive = false;
 
-//			if (fireTest && layerTest)
-//			{
-//				fired = true;
-//				active = true;
-//				OnActivate?.Invoke();
-//				_onEnter.Invoke(collision);
-//			}
-//		}
+            _onExit.Invoke(collision);
+        }
 
-//		private void OnCollisionExit(Collision collision)
-//		{
-//			var fireTest = !fireOnce || fireOnce && !fired;
-//			var layerTest = layerMask.Contains(collision.gameObject.layer);
+        private void OnCollisionStay(Collision collision)
+        {
+            if (!CheckConditions(collision))
+                return;
+            
+            _triggered = true;
+            IsActive = true;
 
-//			if (fireTest && layerTest)
-//			{
-//				active = false;
-//				OnDeactivate?.Invoke();
-//				_onExit.Invoke(collision);
-//			}
-//		}
+            _onStay.Invoke(collision);
+        }
+        #endregion
 
-//		private void OnCollisionStay(Collision collision)
-//		{
-//			var fireTest = !fireOnce || fireOnce && !fired;
-//			var layerTest = layerMask.Contains(collision.gameObject.layer);
+        #region Private Methods
+        private bool CheckConditions(Collision collision)
+        {
+            var fireTest = !_triggerOnlyOnce || _triggerOnlyOnce && !_triggered;
+            var tagTest = _tag.HasValue || collision.gameObject.CompareTag(_tag);
+            var layerTest = _layerMask.Value.Contains(collision.gameObject.layer);
 
-//			if (fireTest && layerTest)
-//			{
-//				fired = true;
-//				active = true;
-//				OnActivate?.Invoke();
-//				_onStay.Invoke(collision);
-//			}
-//		}
-//	}
-//}
+            return fireTest && tagTest && layerTest;
+        }
+        #endregion
+    }
+}

@@ -1,5 +1,4 @@
-﻿using Akela.Optimisations;
-using Akela.Triggers;
+﻿using Akela.Triggers;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
@@ -11,7 +10,14 @@ namespace AkelaEditor.Triggers
 	{
 		private readonly SphereBoundsHandle _sphereHandle = new();
 
-		private void OnSceneGUI()
+        public override void OnInspectorGUI()
+        {
+            serializedObject.Update();
+            DrawPropertiesExcluding(serializedObject, "m_Script");
+            serializedObject.ApplyModifiedProperties();
+        }
+
+        private void OnSceneGUI()
 		{
 			var radiusProperty = serializedObject.FindProperty("_proximity");
 

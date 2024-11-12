@@ -14,7 +14,7 @@ namespace Akela.Behaviours
 		}
 
 		#region Component Fields
-		[SerializeField] TickUpdateType _updateType = TickUpdateType.Update;
+		[SerializeField] protected TickUpdateType _updateType = TickUpdateType.Update;
 		#endregion
 
 		protected abstract void Tick(float deltaTime);

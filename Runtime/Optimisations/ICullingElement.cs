@@ -1,5 +1,4 @@
-﻿using Akela.Signals;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Akela.Optimisations
 {

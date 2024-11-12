@@ -1,69 +1,71 @@
-﻿//using AkelaTools;
-//using SOL.Gameplay;
-//using System;
-//using UltEvents;
-//using UnityEngine;
+﻿using System;
+using Akela.Behaviours;
+using Akela.Bridges;
+using UnityEngine;
 
-//namespace SOL.Triggers
-//{
-//	[RequireComponent(typeof(Collider))]
-//	public class CameraVolumeTrigger : MonoBehaviour, ITrigger
-//	{
-//		public event Action OnActivate;
-//		public event Action OnDeactivate;
+namespace Akela.Triggers
+{
+    [AddComponentMenu("Triggers/Camera Volume Trigger", 3)]
+    [HideScriptField]
+    [RequireComponent(typeof(TriggerCluster))]
+    public class CameraVolumeTrigger : MonoBehaviour, ITrigger
+    {
+        #region Component Fields
+        [SerializeField] bool _triggerOnlyOnce;
+        [Header("Events")]
+        [SerializeField] BridgedEvent _onActive;
+        [SerializeField] BridgedEvent _onInactive;
+        #endregion
 
-//		#region Component Fields
-//		public bool fireOnce;
+        private Transform _camera;
+        private TriggerCluster _triggerCluster;
+        private bool _triggered;
 
-//		[Header("Events")]
+        public bool IsActive { get; private set; }
 
-//		[SerializeField] UltEvent _onActive;
-//		[SerializeField] UltEvent _onInactive;
-//		#endregion
+        public void AddListener(Action callback, TriggerEventType eventType = TriggerEventType.OnBecomeActive)
+        {
+            if (eventType == TriggerEventType.OnBecomeInactive)
+                _onInactive.AddListener(() => callback());
+            else
+                _onActive.AddListener(() => callback());
+        }
 
-//		private Transform _camera;
-//		private TriggerCluster _triggerCluster;
-//		private bool _fired = false;
-//		private bool _active = false;
+        #region Component Messages
+        private void Awake()
+        {
+            _camera = Camera.main?.transform;
+            _triggerCluster = GetComponent<TriggerCluster>();
+        }
 
-//		public bool IsActive() => _active;
+        private void Start()
+        {
+            IsActive = _triggered = _triggerCluster.Contains(_camera);
+        }
 
-//		#region Component Messages
-//		private void Awake()
-//		{
-//			_camera = Camera.main.transform;
-//		}
+        private void Update()
+        {
+            if (_triggered && _triggerOnlyOnce)
+                return;
 
-//		private void Start()
-//		{
-//			_triggerCluster = new(gameObject);
-//			_active = _fired = _triggerCluster.Contains(_camera);
-//		}
+            var state = _triggerCluster.Contains(_camera);
 
-//		private void Update()
-//		{
-//			if (!GameManager.Main.GameplayActive || (_fired && fireOnce))
-//				return;
+            if (state == IsActive)
+                return;
 
-//			var state = _triggerCluster.Contains(_camera);
+            IsActive = state;
 
-//			if (state == _active)
-//				return;
+            if (IsActive)
+            {
+                _triggered = true;
 
-//			_active = state;
-
-//			if (_active)
-//			{
-//				_fired = true;
-//				OnActivate?.Invoke();
-//				_onActive.Invoke();
-//			}
-//			else
-//			{
-//				OnDeactivate?.Invoke();
-//				_onInactive.Invoke();
-//			}
-//		}
-//		#endregion
-//	}
-//}
+                _onActive.Invoke();
+            }
+            else
+            {
+                _onInactive.Invoke();
+            }
+        }
+        #endregion
+    }
+}

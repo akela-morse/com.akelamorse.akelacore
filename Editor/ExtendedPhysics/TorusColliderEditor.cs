@@ -44,7 +44,6 @@ namespace AkelaEditor.ExtendedPhysics
 
 			foreach (TorusCollider target in targets.Cast<TorusCollider>())
 			{
-				var mainAxis = target.direction.ToVector3();
 				var rightAxis = target.direction.RightRelative();
 				var upAxis = target.direction.UpRelative();
 				var heightAxes = new[] { upAxis, rightAxis, -upAxis, -rightAxis };

@@ -1,10 +1,10 @@
-﻿using Akela.ExtendedPhysics;
+﻿using System;
+using System.Reflection;
+using Akela.ExtendedPhysics;
 using Akela.Optimisations;
 using Akela.Signals;
 using Akela.Tools;
 using Akela.Triggers;
-using System;
-using System.Reflection;
 using UnityEditor;
 
 namespace AkelaEditor.Tools
@@ -25,7 +25,9 @@ namespace AkelaEditor.Tools
 			typeof(SignalRelayer),
 			typeof(ObjectFunctions),
 			typeof(TriggerCluster),
-			typeof(VolumeTrigger),
+            typeof(VolumeTrigger),
+            typeof(CollisionTrigger),
+            typeof(CameraVolumeTrigger),
 			typeof(CameraLookTrigger)
 		};
 

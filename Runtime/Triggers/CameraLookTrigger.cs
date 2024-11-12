@@ -1,60 +1,74 @@
-﻿using Akela.Bridges;
-using System;
+﻿using System;
+using Akela.Bridges;
 using UnityEngine;
 
 namespace Akela.Triggers
 {
-	[AddComponentMenu("Triggers/Camera Look Trigger", 4)]
-	public class CameraLookTrigger : MonoBehaviour, ITrigger
-	{
-		#region Component Fields
-		[Header("Parameters")]
-		[SerializeField] float _proximity = -1f;
-		[SerializeField] float _angleThreshold = -1f;
-		[Header("Events")]
-		[SerializeField] BridgedEvent _onConditionsMeet;
-		[SerializeField] BridgedEvent _onConditionsUnmeet;
-		#endregion
+    [AddComponentMenu("Triggers/Camera Look Trigger", 4)]
+    public class CameraLookTrigger : MonoBehaviour, ITrigger
+    {
+        #region Component Fields
+        [SerializeField] float _proximity = -1f;
+        [SerializeField] float _angleThreshold = -1f;
+        [SerializeField] bool _triggerOnlyOnce;
+        [Header("Events")]
+        [SerializeField] BridgedEvent _onActive;
+        [SerializeField] BridgedEvent _onInactive;
+        #endregion
 
-		private Camera _camera;
-		private bool _active;
+        private Camera _camera;
+        private bool _triggered;
 
-		public bool IsActive => _active;
+        public bool IsActive { get; private set; }
 
-		public void AddListener(Action callback, TriggerEventType eventType = TriggerEventType.OnBecomeActive)
-		{
-			if (eventType == TriggerEventType.OnBecomeInactive)
-				_onConditionsUnmeet.AddListener(callback);
-			else
-				_onConditionsMeet.AddListener(callback);
-		}
+        public void AddListener(Action callback, TriggerEventType eventType = TriggerEventType.OnBecomeActive)
+        {
+            if (eventType == TriggerEventType.OnBecomeInactive)
+                _onInactive.AddListener(() => callback());
+            else
+                _onActive.AddListener(() => callback());
+        }
 
-		#region Component Messages
-		private void Awake()
-		{
-			_camera = Camera.main;
-		}
+        public void ResetFiringState()
+        {
+            _triggered = false;
+        }
 
-		private void LateUpdate()
-		{
-			var ok = true;
+        #region Component Messages
+        private void Awake()
+        {
+            _camera = Camera.main;
+        }
 
-			if (_proximity >= 0f)
-				ok &= (transform.position - _camera.transform.position).sqrMagnitude <= _proximity * _proximity;
+        private void Update()
+        {
+            if (_triggerOnlyOnce && _triggered)
+                return;
 
-			if (_angleThreshold >= 0f)
-				ok &= Vector3.Angle(_camera.transform.forward, transform.position - _camera.transform.position) <= _angleThreshold;
+            var state = true;
 
-			if (ok != _active)
-			{
-				_active = ok;
+            if (_proximity >= 0f)
+                state &= (transform.position - _camera.transform.position).sqrMagnitude <= _proximity * _proximity;
 
-				if (_active)
-					_onConditionsMeet.Invoke();
-				else
-					_onConditionsUnmeet.Invoke();
-			}
-		}
-		#endregion
-	}
+            if (_angleThreshold >= 0f)
+                state &= Vector3.Angle(_camera.transform.forward, transform.position - _camera.transform.position) <= _angleThreshold;
+
+            if (state == IsActive)
+                return;
+
+            IsActive = state;
+
+            if (IsActive)
+            {
+                _triggered = true;
+                
+                _onActive.Invoke();
+            }
+            else
+            {
+                _onInactive.Invoke();
+            }
+        }
+        #endregion
+    }
 }

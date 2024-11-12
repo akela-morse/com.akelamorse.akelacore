@@ -54,15 +54,23 @@ namespace Akela.Optimisations
 
 			foreach (var component in _componentsToCull)
 			{
-				if (component == null)
+				if (!component)
 					continue;
 
-				if (component is Rigidbody rigidbody)
-					rigidbody.isKinematic = !state;
-				else if (component is Collider collider)
-					collider.enabled = state;
-				else if (component is Behaviour behaviour)
-					behaviour.enabled = state;
+				switch (component)
+				{
+					case Rigidbody rb:
+						rb.isKinematic = !state;
+						break;
+
+					case Collider c:
+						c.enabled = state;
+						break;
+
+					case Behaviour behaviour:
+						behaviour.enabled = state;
+						break;
+				}
 			}
 
 			_currentStateOfComponents = state;

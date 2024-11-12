@@ -1,4 +1,5 @@
-﻿using Akela.Behaviours;
+﻿using System.Diagnostics.CodeAnalysis;
+using Akela.Behaviours;
 using Akela.Tools;
 using UnityEngine;
 
@@ -19,6 +20,7 @@ namespace Akela.ExtendedPhysics
 
 		#region Component Messages
 #if UNITY_EDITOR
+		[SuppressMessage("ReSharper","ConditionIsAlwaysTrueOrFalse")]
 		public void OnValidate()
 		{
 			if (_resolution < 3)
@@ -48,7 +50,7 @@ namespace Akela.ExtendedPhysics
 			{
 				for (var i = 0; i < _subColliders.Length; ++i)
 				{
-					if (_subColliders[i] != null)
+					if (_subColliders[i])
 						_subColliders[i].gameObject.PlaymodeAgnosticDestroy();
 				}
 			}

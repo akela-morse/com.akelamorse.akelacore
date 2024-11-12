@@ -1,87 +1,79 @@
-﻿using Akela.Behaviours;
-using System.Linq;
+﻿using System.Linq;
+using Akela.Behaviours;
 using UnityEngine;
 
 namespace Akela.Triggers
 {
-	[AddComponentMenu("Triggers/Trigger Cluster", 0)]
-	[DisallowMultipleComponent]
-	[TickOptions(TickUpdateType.None, TickUpdateType.Update, TickUpdateType.FixedUpdate)]
-	public class TriggerCluster : TickBehaviour
-	{
-		private Collider[] _colliders;
-		private Bounds _bounds;		
-		
-		public float SqrDistanceFromBounds(Vector3 point)
-		{
-			return _bounds.SqrDistance(point);
-		}
+    [AddComponentMenu("Triggers/Trigger Cluster", 0)]
+    [DisallowMultipleComponent, HideScriptField]
+    public class TriggerCluster : MonoBehaviour
+    {
+        private Collider[] _colliders;
+        private Bounds _bounds;
 
-		public bool Contains(Transform transform)
-		{
-			return Contains(transform.position);
-		}
+        public float SqrDistanceFromBounds(Vector3 point)
+        {
+            return _bounds.SqrDistance(point);
+        }
 
-		public bool Contains(Vector3 point)
-		{
-			if (!_bounds.Contains(point))
-				return false;
+        public bool Contains(Transform transform)
+        {
+            return Contains(transform.position);
+        }
 
-			foreach (var collider in _colliders)
-			{
-				if (collider.ClosestPoint(point) == point)
-					return true;
-			}
+        public bool Contains(Vector3 point)
+        {
+            if (!_bounds.Contains(point))
+                return false;
 
-			return false;
-		}
+            foreach (var collider in _colliders)
+            {
+                if (collider.ClosestPoint(point) == point)
+                    return true;
+            }
 
-		public Vector3 ClosestFrom(Vector3 point)
-		{
-			var candidate = Vector3.zero;
-			var minDistance = float.MaxValue;
+            return false;
+        }
 
-			foreach (var c in _colliders)
-			{
-				var nearest = c.ClosestPoint(point);
+        public Vector3 ClosestFrom(Vector3 point)
+        {
+            var candidate = Vector3.zero;
+            var minDistance = float.MaxValue;
 
-				if (nearest == point)
-					return point;
+            foreach (var c in _colliders)
+            {
+                var nearest = c.ClosestPoint(point);
 
-				var dist = Vector3.SqrMagnitude(point - nearest);
+                if (nearest == point)
+                    return point;
 
-				if (dist < minDistance)
-				{
-					candidate = nearest;
-					minDistance = dist;
-				}
-			}
+                var dist = Vector3.SqrMagnitude(point - nearest);
 
-			return candidate;
-		}
+                if (dist < minDistance)
+                {
+                    candidate = nearest;
+                    minDistance = dist;
+                }
+            }
 
-		#region Component Messages
-		private void Awake()
-		{
-			_colliders = GetComponentsInChildren<Collider>().Where(x => x.isTrigger).ToArray();
+            return candidate;
+        }
+        
+        public void RefreshBounds()
+        {
+            _bounds = _colliders[0].bounds;
 
-			RefreshBounds();
-		}
+            for (var i = 1; i < _colliders.Length; ++i)
+                _bounds.Encapsulate(_colliders[i].bounds);
+        }
 
-		protected override void Tick(float deltaTime)
-		{
-			RefreshBounds();
-		}
-		#endregion
+        #region Component Messages
+        private void Awake()
+        {
+            _colliders = GetComponentsInChildren<Collider>().Where(x => x.isTrigger).ToArray();
 
-		#region Private Methods
-		public void RefreshBounds()
-		{
-			_bounds = _colliders[0].bounds;
-
-			for (var i = 1; i < _colliders.Length; i++)
-				_bounds.Encapsulate(_colliders[i].bounds);
-		}		
-		#endregion
-	}
+            RefreshBounds();
+        }
+        #endregion
+    }
 }

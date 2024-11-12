@@ -39,9 +39,8 @@ namespace Akela.Signals
 					Debug.LogError($"Issue while serializing ObjectFunctions. Function name '{_keys[i]}' already exists.", this);
 					continue;
 				}
-#else
-				_functions.Add(_keys[i], _values[i]);
 #endif
+				_functions.Add(_keys[i], _values[i]);
 			}
 		}
 
