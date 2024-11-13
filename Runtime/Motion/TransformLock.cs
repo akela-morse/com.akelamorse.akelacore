@@ -1,8 +1,10 @@
-﻿using UnityEngine;
+﻿using Akela.Behaviours;
+using UnityEngine;
 
 namespace Akela.Motion
 {
-	[ExecuteInEditMode, AddComponentMenu("Motion/Transform Lock", 0)]
+	[AddComponentMenu("Motion/Transform Lock", 0)]
+    [HideScriptField, ExecuteInEditMode, DisallowMultipleComponent]
 	public class TransformLock : MonoBehaviour
 	{
 		#region Component Fields

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using Akela.ExtendedPhysics;
+using Akela.Motion;
 using Akela.Optimisations;
 using Akela.Signals;
 using Akela.Tools;
@@ -35,7 +36,14 @@ namespace AkelaEditor.Tools
             typeof(CounterTrigger),
             typeof(CombinationTrigger),
             typeof(FlipFlopTrigger),
-            typeof(ProxyTrigger)
+            typeof(ProxyTrigger),
+            typeof(TransformLock),
+            typeof(TransformDriver),
+            typeof(TransformLerp),
+            typeof(TransformAnimator),
+            typeof(ContinuousRotation),
+            typeof(RandomMotion),
+            typeof(RandomRotation)
 		};
 
 		private const int MONO_BEHAVIOR_CLASS_ID = 114; // https://docs.unity3d.com/Manual/ClassIDReference.html

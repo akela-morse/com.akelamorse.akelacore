@@ -5,11 +5,11 @@ using UnityEngine;
 namespace Akela.Motion
 {
 	[AddComponentMenu("Motion/Transform Driver", 1)]
-	[TickOptions(TickUpdateType.Update, TickUpdateType.LateUpdate, TickUpdateType.LateUpdate, TickUpdateType.AnimatorMove)]
-	[HideScriptField, ExecuteInEditMode]
+	[TickOptions(TickUpdateType.Update, TickUpdateType.LateUpdate, TickUpdateType.FixedUpdate, TickUpdateType.AnimatorMove)]
+	[HideScriptField, ExecuteInEditMode, DisallowMultipleComponent]
 	public class TransformDriver : TickBehaviour
 	{
-		public enum TransformProperty
+		private enum TransformProperty
 		{
 			LocalPositionX,
 			LocalPositionY,

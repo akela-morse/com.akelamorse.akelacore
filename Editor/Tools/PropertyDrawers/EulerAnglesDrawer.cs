@@ -1,4 +1,5 @@
-﻿using Akela.Tools;
+﻿using System.Collections.Generic;
+using Akela.Tools;
 using UnityEditor;
 using UnityEngine;
 
@@ -7,7 +8,7 @@ namespace AkelaEditor.Tools
 	[CustomPropertyDrawer(typeof(EulerAnglesAttribute))]
 	internal class EulerAnglesDrawer : PropertyDrawer
 	{
-		private bool _didInitialise;
+        private Dictionary<string, Vector3> _internalVector3Value = new();
 
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{
@@ -17,20 +18,14 @@ namespace AkelaEditor.Tools
 				return;
 			}
 
-			var attr = (EulerAnglesAttribute)attribute;
-
-			if (!_didInitialise)
-			{
-				attr.internalVector3Value = property.quaternionValue.eulerAngles;
-				_didInitialise = true;
-			}
+            _internalVector3Value.TryAdd(property.propertyPath, property.quaternionValue.eulerAngles);
 
 			EditorGUI.BeginChangeCheck();
 
-			attr.internalVector3Value = EditorGUI.Vector3Field(position, label, attr.internalVector3Value);
+            _internalVector3Value[property.propertyPath] = EditorGUI.Vector3Field(position, label, _internalVector3Value[property.propertyPath]);
 
 			if (EditorGUI.EndChangeCheck())
-				property.quaternionValue = Quaternion.Euler(attr.internalVector3Value);
+				property.quaternionValue = Quaternion.Euler(_internalVector3Value[property.propertyPath]);
 		}
 	}
 }
