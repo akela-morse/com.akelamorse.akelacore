@@ -1,88 +1,71 @@
-﻿//using SOL.Utilities;
-//using System;
-//using UltEvents;
-//using UnityEngine;
+﻿using System;
+using System.Linq;
+using Akela.Behaviours;
+using Akela.Bridges;
+using Akela.Tools;
+using UnityEngine;
 
-//namespace SOL.Triggers
-//{
-//	public class CombinationTrigger : MonoBehaviour, ITrigger
-//	{
-//		public event Action OnActivate;
-//		public event Action OnDeactivate;
+namespace Akela.Triggers
+{
+    [AddComponentMenu("Triggers/Combination Trigger", 9)]
+    [HideScriptField]
+    public class CombinationTrigger : MonoBehaviour, ITrigger
+    {
+        #region Component Fields
+        [SerializeField] string _expectedCombination;
+        [SerializeField] bool _bothWays;
+        [Header("Events")]
+        [SerializeField] BridgedEvent _onCombinationCorrect;
+        [SerializeField] BridgedEvent _onCombinationIncorrect;
+        #endregion
 
-//		#region Component Fields
-//		public int[] expectedCombination;
-//		public bool bothWays;
+        private string _currentCombination = string.Empty;
 
-//		[SerializeField] UltEvent _onCombinationCorrect;
+        public bool IsActive { get; private set; }
+        
+        public void AddListener(Action callback, TriggerEventType eventType = TriggerEventType.OnBecomeActive)
+        {
+            if (eventType == TriggerEventType.OnBecomeInactive)
+                _onCombinationIncorrect.AddListener(() => callback());
+            else
+                _onCombinationCorrect.AddListener(() => callback());
+        }
 
-//		[SerializeField] UltEvent _onCombinationIncorrect;
-//		#endregion
+        public void EnterNewMember(string member)
+        {
+            _currentCombination += member;
 
-//		private bool _active;
-//		private int[] _currentCombination;
-//		private int _currentMember;
+            if (_currentCombination.Length >= _expectedCombination.Length)
+            {
+                var state = _currentCombination == _expectedCombination;
 
-//		public bool IsActive() => _active;
+                if (!state && _bothWays)
+                    state = (string)_currentCombination.Reverse() == _expectedCombination;
 
-//		public void EnterNewMember(int member)
-//		{
-//			_currentCombination[_currentMember] = member;
+                if (state)
+                {
+                    IsActive = true;
+                    _onCombinationCorrect.Invoke();
+                }
+                else
+                {
+                    IsActive = false;
+                    _onCombinationIncorrect.Invoke();
+                }
+            }
+        }
 
-//			if (++_currentMember == expectedCombination.Length)
-//			{
-//				var ok = true;
+        public void ResetCombination()
+        {
+            _currentCombination = string.Empty;
+            IsActive = false;
+        }
 
-//				for (var i = 0; i < expectedCombination.Length; i++)
-//				{
-//					if (_currentCombination[i] != expectedCombination[i])
-//					{
-//						ok = false;
-//						break;
-//					}
-//				}
-
-//				if (!ok && bothWays)
-//				{
-//					ok = true;
-
-//					for (var i = 0; i < expectedCombination.Length; i++)
-//					{
-//						if (_currentCombination[_currentCombination.Length - i - 1] != expectedCombination[i])
-//						{
-//							ok = false;
-//							break;
-//						}
-//					}
-//				}
-
-//				if (ok)
-//				{
-//					_active = true;
-//					_onCombinationCorrect.Invoke();
-//					OnActivate?.Invoke();
-//				}
-//				else
-//				{
-//					_active = false;
-//					_onCombinationIncorrect.Invoke();
-//					OnDeactivate?.Invoke();
-//				}
-//			}
-//		}
-
-//		public void ResetCombination()
-//		{
-//			_currentCombination = new int[expectedCombination.Length];
-//			_currentMember = 0;
-//			_active = false;
-//		}
-
-//		#region Component Messages
-//		private void Awake()
-//		{
-//			ResetCombination();
-//		}
-//		#endregion
-//	}
-//}
+        #region Component Messages
+        private void Awake()
+        {
+            ResetCombination();
+        }
+        #endregion
+    }
+}

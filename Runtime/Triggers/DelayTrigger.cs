@@ -1,58 +1,76 @@
-﻿//using SOL.Utilities;
-//using System;
-//using System.Collections;
-//using UltEvents;
-//using UnityEngine;
+﻿using System;
+using System.Collections;
+using Akela.Behaviours;
+using Akela.Bridges;
+using UnityEngine;
 
-//namespace SOL.Triggers
-//{
-//	public class DelayTrigger : MonoBehaviour, ITrigger
-//	{
-//		public event Action OnActivate;
-//		public event Action OnDeactivate { add { } remove { } } // unused in this context
+namespace Akela.Triggers
+{
+    [AddComponentMenu("Triggers/Delay Trigger", 6)]
+    [HideScriptField]
+    public class DelayTrigger : MonoBehaviour, ITrigger
+    {
+        #region Component Fields
+        [SerializeField] float _time;
+        [SerializeField] bool _startTimerImmediately;
+        [Header("Events")]
+        [SerializeField] BridgedEvent _onTimer;
+        #endregion
 
-//		public float time;
-//		public bool fireImmediately;
+        private Coroutine coroutine;
 
-//		[SerializeField] UltEvent _onTimer;
+        public bool IsActive { get; private set; }
 
-//		private Coroutine coroutine;
-//		private bool active = false;
+        public void AddListener(Action callback, TriggerEventType eventType = TriggerEventType.OnBecomeActive)
+        {
+            if (eventType != TriggerEventType.OnBecomeActive)
+                return;
+            
+            _onTimer.AddListener(() => callback());
+        }
 
-//		public bool IsActive() => active;
+        public void StartTimer()
+        {
+            if (_time <= 0f)
+            {
+                IsActive = true;
+                _onTimer.Invoke();
+                return;
+            }
 
-//		private void OnEnable()
-//		{
-//			if (fireImmediately)
-//				StartTimer();
-//		}
+            coroutine = StartCoroutine(Timer());
+        }
 
-//		public void StartTimer()
-//		{
-//			if (time <= 0f)
-//			{
-//				active = true;
-//				OnActivate?.Invoke();
-//				_onTimer.Invoke();
+        public void StopTimer()
+        {
+            if (coroutine != null)
+                StopCoroutine(coroutine);
+        }
 
-//				return;
-//			}
+        #region Component Messages
+        private void OnEnable()
+        {
+            if (_startTimerImmediately)
+                StartTimer();
+        }
 
-//			coroutine = StartCoroutine(Timer());
-//		}
+#if  UNITY_EDITOR
+        private void OnValidate()
+        {
+            if (_time < 0f)
+                _time = 0f;
+        }
+#endif
+        #endregion
 
-//		public void StopTimer()
-//		{
-//			if (coroutine != null)
-//				StopCoroutine(coroutine);
-//		}
+        #region Private Methods
+        private IEnumerator Timer()
+        {
+            yield return new WaitForSeconds(_time);
 
-//		private IEnumerator Timer()
-//		{
-//			yield return new WaitForSeconds(time);
-//			active = true;
-//			OnActivate?.Invoke();
-//			_onTimer.Invoke();
-//		}
-//	}
-//}
+            IsActive = true;
+            _onTimer.Invoke();
+        }
+        #endregion
+    }
+}

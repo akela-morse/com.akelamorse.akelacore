@@ -1,26 +1,20 @@
-﻿//using MalbersAnimations;
-//using System;
-//using UnityEngine;
+﻿using System;
+using Akela.Behaviours;
+using UnityEngine;
 
-//namespace SOL.Triggers
-//{
-//	public class ProxyTrigger : MonoBehaviour, ITrigger
-//	{
-//		public event Action OnActivate
-//		{
-//			add => ((ITrigger)proxy).OnActivate += value;
-//			remove => ((ITrigger)proxy).OnActivate -= value;
-//		}
+namespace Akela.Triggers
+{
+    [AddComponentMenu("Triggers/Proxy Trigger", 11)]
+    [HideScriptField]
+    public class ProxyTrigger : MonoBehaviour, ITrigger
+    {
+        [SerializeField] MonoBehaviour _proxy;
 
-//		public event Action OnDeactivate
-//		{
-//			add => ((ITrigger)proxy).OnDeactivate += value;
-//			remove => ((ITrigger)proxy).OnDeactivate -= value;
-//		}
+        public bool IsActive => ((ITrigger)_proxy).IsActive;
 
-//		[EnforceType(typeof(ITrigger))]
-//		public MonoBehaviour proxy;
-
-//		public bool IsActive() => ((ITrigger)proxy).IsActive();
-//	}
-//}
+        public void AddListener(Action callback, TriggerEventType eventType = TriggerEventType.OnBecomeActive)
+        {
+            ((ITrigger)_proxy).AddListener(callback, eventType);
+        }
+    }
+}

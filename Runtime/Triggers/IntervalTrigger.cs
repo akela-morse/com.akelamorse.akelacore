@@ -1,48 +1,48 @@
-﻿//using SOL.Utilities;
-//using System;
-//using UltEvents;
-//using UnityEngine;
+﻿using System;
+using Akela.Behaviours;
+using Akela.Bridges;
+using UnityEngine;
 
-//namespace SOL.Triggers
-//{
-//	public class IntervalTrigger : MonoBehaviour, ITrigger
-//	{
-//		public event Action OnActivate;
-//		public event Action OnDeactivate { add { } remove { } } // unused in this context
+namespace Akela.Triggers
+{
+    [AddComponentMenu("Triggers/Interval Trigger", 7)]
+    [HideScriptField]
+    public class IntervalTrigger : MonoBehaviour, ITrigger
+    {
+        #region Component Fields
+        [SerializeField] float _interval = 1f;
+        [Header("Events")]
+        [SerializeField] BridgedEvent _onInterval;
+        #endregion
 
-//		#region Component Fields
-//		public float interval;
-//		public float maxActivationDistance = 100f;
+        private float _time;
 
-//		[SerializeField] UltEvent _onInterval;
-//		#endregion
+        public bool IsActive { get; private set; }
 
-//		private bool _active;
-//		private float _time;
+        public void AddListener(Action callback, TriggerEventType eventType = TriggerEventType.OnBecomeActive)
+        {
+            if (eventType != TriggerEventType.OnBecomeActive)
+                return;
 
-//		public bool IsActive() => _active;
+            _onInterval.AddListener(() => callback());
+        }
 
-//		#region Component Methods
-//		private void OnEnable()
-//		{
-//			_time = Time.time;
-//		}
+        #region Component Methods
+        private void OnEnable()
+        {
+            _time = Time.time;
+        }
 
-//		private void Update()
-//		{
-//			if (Vector3.Distance(Camera.main.transform.position, transform.position) >= maxActivationDistance)
-//				return;
+        private void Update()
+        {
+            IsActive = (Time.time - _time) >= _interval;
 
-//			_active = (Time.time - _time) >= interval;
-
-//			if (_active)
-//			{
-//				OnActivate?.Invoke();
-//				_onInterval.Invoke();
-
-//				_time = Time.time;
-//			}
-//		}
-//		#endregion
-//	}
-//}
+            if (IsActive)
+            {
+                _onInterval.Invoke();
+                _time = Time.time;
+            }
+        }
+        #endregion
+    }
+}

@@ -47,11 +47,13 @@ namespace Akela.Triggers
 
             var state = true;
 
+            var cameraToTarget = transform.position - _camera.transform.position;
+            
             if (_proximity >= 0f)
-                state &= (transform.position - _camera.transform.position).sqrMagnitude <= _proximity * _proximity;
+                state &= cameraToTarget.sqrMagnitude <= _proximity * _proximity;
 
             if (_angleThreshold >= 0f)
-                state &= Vector3.Angle(_camera.transform.forward, transform.position - _camera.transform.position) <= _angleThreshold;
+                state &= Vector3.Angle(_camera.transform.forward, cameraToTarget) <= _angleThreshold;
 
             if (state == IsActive)
                 return;

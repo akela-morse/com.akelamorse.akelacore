@@ -27,7 +27,7 @@ namespace Akela.Triggers
 
         public void AddListener(Action callback, TriggerEventType eventType = TriggerEventType.OnBecomeActive)
         {
-            if (eventType == TriggerEventType.OnBecomeActive)
+            if (eventType == TriggerEventType.OnBecomeInactive)
                 _onExit.AddListener(_ => callback());
             else
                 _onEnter.AddListener(_ => callback());
@@ -71,7 +71,7 @@ namespace Akela.Triggers
         private bool CheckConditions(Collision collision)
         {
             var fireTest = !_triggerOnlyOnce || _triggerOnlyOnce && !_triggered;
-            var tagTest = _tag.HasValue || collision.gameObject.CompareTag(_tag);
+            var tagTest = _tag != string.Empty || collision.gameObject.CompareTag(_tag);
             var layerTest = _layerMask.Value.Contains(collision.gameObject.layer);
 
             return fireTest && tagTest && layerTest;

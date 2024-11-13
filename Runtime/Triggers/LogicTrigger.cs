@@ -1,100 +1,109 @@
-﻿//using SOL.Utilities;
-//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using UltEvents;
-//using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using Akela.Behaviours;
+using Akela.Bridges;
+using UnityEngine;
 
-//namespace SOL.Triggers
-//{
-//	public class LogicTrigger : MonoBehaviour, ITrigger
-//	{
-//		public enum LogicOperator
-//		{
-//			AND,
-//			OR,
-//			XOR
-//		}
+namespace Akela.Triggers
+{
+    [AddComponentMenu("Triggers/Logic Trigger", 5)]
+    [HideScriptField]
+    public class LogicTrigger : MonoBehaviour, ITrigger, ISerializationCallbackReceiver
+    {
+        private enum LogicOperator
+        {
+            AND,
+            OR,
+            XOR
+        }
 
-//		public event Action OnActivate;
-//		public event Action OnDeactivate;
+        #region Component Fields
+        [SerializeField] LogicOperator _operation;
+        [SerializeField] bool _onlyTriggerOnStateChange = true;
+        [SerializeField] List<MonoBehaviour> _members = new();
+        [Header("Events")]
+        [SerializeField] BridgedEvent _onActive;
+        [SerializeField] BridgedEvent _onInactive;
+        #endregion
 
-//		public LogicOperator operation;
-//		public List<MonoBehaviour> members;
-//		public bool onlyFireOnStateChange = true;
+        private List<ITrigger> _triggers = new();
 
-//		[Header("Events")]
+        public bool IsActive { get; private set; }
 
-//		[SerializeField] UltEvent _onConditionMeet;
+        public void AddListener(Action callback, TriggerEventType eventType = TriggerEventType.OnBecomeActive)
+        {
+            if (eventType == TriggerEventType.OnBecomeInactive)
+                _onInactive.AddListener(() => callback());
+            else
+                _onActive.AddListener(() => callback());
+        }
 
-//		[SerializeField] UltEvent _onConditionUnmeet;
+        public void OnBeforeSerialize()
+        {
+            _members.Clear();
 
-//		private bool state = false;
-//		private List<ITrigger> _triggers;
+            foreach (var trigger in _triggers)
+                _members.Add((MonoBehaviour)trigger);
+        }
 
-//		public bool IsActive() => state;
+        public void OnAfterDeserialize()
+        {
+            _triggers.Clear();
 
-//		private void Awake()
-//		{
-//			_triggers = members.Cast<ITrigger>().ToList();
-//			_triggers.ForEach(x =>
-//			{
-//				x.OnActivate += RefreshState;
-//				x.OnDeactivate += RefreshState;
-//			});
+            foreach (var member in _members)
+                _triggers.Add((ITrigger)member);
+        }
 
-//			RefreshState();
-//		}
+        #region Component Messages
+        private void Awake()
+        {
+            foreach (var t in _triggers)
+            {
+                // ReSharper disable once RedundantArgumentDefaultValue
+                t.AddListener(RefreshState, TriggerEventType.OnBecomeActive);
+                t.AddListener(RefreshState, TriggerEventType.OnBecomeInactive);
+            }
 
-//		private void OnDestroy()
-//		{
-//			_triggers.ForEach(x =>
-//			{
-//				x.OnActivate -= RefreshState;
-//				x.OnDeactivate -= RefreshState;
-//			});
-//		}
+            RefreshState();
+        }
+        #endregion
 
-//		private void RefreshState()
-//		{
-//			var allOk = operation == LogicOperator.AND;
+        #region Private Methods
+        private void RefreshState()
+        {
+            var state = _operation == LogicOperator.AND;
 
-//			foreach (ITrigger t in _triggers)
-//			{
-//				if (t == null)
-//					continue;
+            foreach (var t in _triggers)
+            {
+                if (t == null)
+                    continue;
 
-//				switch (operation)
-//				{
-//					case LogicOperator.AND:
-//						allOk = allOk && t.IsActive();
-//						break;
+                switch (_operation)
+                {
+                    case LogicOperator.AND:
+                        state = state && t.IsActive;
+                        break;
 
-//					case LogicOperator.OR:
-//						allOk = allOk || t.IsActive();
-//						break;
+                    case LogicOperator.OR:
+                        state = state || t.IsActive;
+                        break;
 
-//					case LogicOperator.XOR:
-//						allOk = allOk != t.IsActive();
-//						break;
-//				}
-//			}
+                    case LogicOperator.XOR:
+                        state = state != t.IsActive;
+                        break;
+                }
+            }
 
-//			if (state == allOk && onlyFireOnStateChange)
-//				return;
-				
-//			state = allOk;
+            if (IsActive == state && _onlyTriggerOnStateChange)
+                return;
 
-//			if (allOk)
-//			{
-//				OnActivate?.Invoke();
-//				_onConditionMeet.Invoke();
-//			}
-//			else
-//			{
-//				OnDeactivate?.Invoke();
-//				_onConditionUnmeet.Invoke();
-//			}
-//		}
-//	}
-//}
+            IsActive = state;
+
+            if (state)
+                _onActive.Invoke();
+            else
+                _onInactive.Invoke();
+        }
+        #endregion
+    }
+}

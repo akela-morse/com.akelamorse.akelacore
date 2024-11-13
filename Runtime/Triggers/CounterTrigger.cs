@@ -1,106 +1,106 @@
-﻿//using System;
-//using UltEvents;
-//using UnityEngine;
+﻿using System;
+using Akela.Behaviours;
+using Akela.Bridges;
+using UnityEngine;
+using UnityEngine.Serialization;
 
-//namespace SOL.Triggers
-//{
-//	public class CounterTrigger : MonoBehaviour, ITrigger
-//	{
-//		public enum CounterOperator
-//		{
-//			Equals,
-//			GreaterThan,
-//			LessThan
-//		}
+namespace Akela.Triggers
+{
+    [AddComponentMenu("Triggers/Counter Trigger", 8)]
+    [HideScriptField]
+    public class CounterTrigger : MonoBehaviour, ITrigger
+    {
+        private enum CounterOperator
+        {
+            Equals,
+            GreaterThan,
+            LessThan
+        }
 
-//		public event Action OnActivate;
-//		public event Action OnDeactivate;
+        #region Component Fields
+        [SerializeField] int _startValue;
+        [SerializeField] int _targetValue;
+        [SerializeField] CounterOperator _checkOperation;
+        [SerializeField] bool _triggerOnlyOnce = true;
+        [Header("Events")]
+        [SerializeField] BridgedEvent _onReachTarget;
+        [SerializeField] BridgedEvent _onMissTarget;
+        #endregion
 
-//		#region Component Fields
-//		public int startValue;
-//		public int targetValue;
-//		public CounterOperator @operator;
-//		public bool fireOnce;
+        private int _value;
+        private bool _triggered;
 
+        public bool IsActive { get; private set; }
 
-//		[SerializeField] UltEvent _onReachTarget;
+        public void AddListener(Action callback, TriggerEventType eventType = TriggerEventType.OnBecomeActive)
+        {
+            if (eventType == TriggerEventType.OnBecomeInactive)
+                _onMissTarget.AddListener(() => callback());
+            else
+                _onReachTarget.AddListener(() => callback());
+        }
 
-//		[SerializeField] UltEvent _onFailTarget;
-//		#endregion
+        public void Increment()
+        {
+            _value++;
+            TestCounter();
+        }
 
-//		private int _value;
-//		private bool _active;
-//		private bool _fired;
+        public void Decrement()
+        {
+            if (_value > 0)
+                _value--;
 
-//		public bool IsActive() => _active;
+            TestCounter();
+        }
 
-//		public void Increment()
-//		{
-//			_value++;
+        public void Set(int value)
+        {
+            _value = value;
+            TestCounter();
+        }
 
-//			TestCounter();
-//		}
+        #region Component Messages
+        private void Start()
+        {
+            _value = _startValue;
+            TestCounter();
+        }
+        #endregion
 
-//		public void Decrement()
-//		{
-//			if (_value > 0)
-//				_value--;
+        #region Private Methods
+        private void TestCounter()
+        {
+            var success = _checkOperation switch
+            {
+                CounterOperator.Equals => _value == _targetValue,
+                CounterOperator.GreaterThan => _value > _targetValue,
+                CounterOperator.LessThan => _value < _targetValue,
+                _ => false,
+            };
 
-//			TestCounter();
-//		}
+            bool runEvents;
 
-//		public void Set(int value)
-//		{
-//			_value = value;
+            if (!success)
+            {
+                runEvents = IsActive;
 
-//			TestCounter();
-//		}
+                IsActive = false;
 
-//		#region Component Messages
-//		private void Start()
-//		{
-//			_value = startValue;
-//			TestCounter();
-//		}
-//		#endregion
+                if (runEvents)
+                    _onMissTarget.Invoke();
+            }
+            else if (!_triggerOnlyOnce || !_triggered)
+            {
+                runEvents = !IsActive;
 
-//		private void TestCounter()
-//		{
-//			var success = @operator switch
-//			{
-//				CounterOperator.Equals => _value == targetValue,
-//				CounterOperator.GreaterThan => _value > targetValue,
-//				CounterOperator.LessThan => _value < targetValue,
-//				_ => false,
-//			};
+                _triggered = true;
+                IsActive = true;
 
-//			bool runEvents;
-
-//			if (!success)
-//			{
-//				runEvents = _active;
-
-//				_active = false;
-
-//				if (runEvents)
-//				{
-//					OnDeactivate?.Invoke();
-//					_onFailTarget.Invoke();
-//				}
-//			}
-//			else if (!fireOnce || !_fired)
-//			{
-//				runEvents = !_active;
-
-//				_fired = true;
-//				_active = true;
-
-//				if (runEvents)
-//				{
-//					OnActivate?.Invoke();
-//					_onReachTarget.Invoke();
-//				}
-//			}
-//		}
-//	}
-//}
+                if (runEvents)
+                    _onReachTarget.Invoke();
+            }
+        }
+        #endregion
+    }
+}

@@ -76,7 +76,7 @@ namespace Akela.Triggers
 		private bool CheckConditions(Collider other)
 		{
 			var fireTest = !_triggerOnlyOnce || _triggerOnlyOnce && !_triggered;
-			var tagTest = _tag.HasValue || other.gameObject.CompareTag(_tag);
+			var tagTest = _tag != string.Empty || other.gameObject.CompareTag(_tag);
 			var layerTest = _layerMask.Value.Contains(other.gameObject.layer);
 
 			return fireTest && tagTest && layerTest;

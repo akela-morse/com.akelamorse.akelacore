@@ -28,7 +28,14 @@ namespace AkelaEditor.Tools
             typeof(VolumeTrigger),
             typeof(CollisionTrigger),
             typeof(CameraVolumeTrigger),
-			typeof(CameraLookTrigger)
+			typeof(CameraLookTrigger),
+			typeof(LogicTrigger),
+            typeof(DelayTrigger),
+            typeof(IntervalTrigger),
+            typeof(CounterTrigger),
+            typeof(CombinationTrigger),
+            typeof(FlipFlopTrigger),
+            typeof(ProxyTrigger)
 		};
 
 		private const int MONO_BEHAVIOR_CLASS_ID = 114; // https://docs.unity3d.com/Manual/ClassIDReference.html

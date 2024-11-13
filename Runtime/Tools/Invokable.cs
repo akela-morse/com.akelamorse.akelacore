@@ -1,9 +1,11 @@
 ﻿using System.Collections;
+using Akela.Behaviours;
 using UnityEngine;
 
 namespace Akela.Tools
 {
 	[AddComponentMenu("Tools/Invokable")]
+    [HideScriptField]
 	public class Invokable : MonoBehaviour
 	{
 		public void DestroyMe(float time) => Destroy(gameObject, time);

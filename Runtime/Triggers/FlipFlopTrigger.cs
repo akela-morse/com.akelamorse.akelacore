@@ -1,58 +1,60 @@
-﻿//using SOL.Utilities;
-//using System;
-//using UltEvents;
-//using UnityEngine;
+﻿using System;
+using Akela.Behaviours;
+using Akela.Bridges;
+using UnityEngine;
 
-//namespace SOL.Triggers
-//{
-//	public class FlipFlopTrigger : MonoBehaviour, ITrigger
-//	{
-//		public event Action OnActivate;
-//		public event Action OnDeactivate { add { } remove { } } // unused in this context
+namespace Akela.Triggers
+{
+    [AddComponentMenu("Triggers/Flip-Flop Trigger", 10)]
+    [HideScriptField]
+    public class FlipFlopTrigger : MonoBehaviour, ITrigger
+    {
+        #region Component Fields
+        [SerializeField] bool _startFlipped;
+        [Header("Events")]
+        [SerializeField] BridgedEvent _onFlipped;
+        [SerializeField] BridgedEvent _onUnflipped;
+        #endregion
 
-//		#region Component Fields
-//		public bool startFlipped;
+        public bool IsFlipped { get; private set; }
+        public bool IsActive { get; private set; }
 
-//		[SerializeField] UltEvent _onFlipped;
+        public void AddListener(Action callback, TriggerEventType eventType = TriggerEventType.OnBecomeActive)
+        {
+            if (eventType == TriggerEventType.OnBecomeInactive)
+                _onUnflipped.AddListener(() => callback());
+            else
+                _onFlipped.AddListener(() => callback());
+        }
 
-//		[SerializeField] UltEvent _onUnflipped;
-//		#endregion
+        public void Flip()
+        {
+            IsFlipped = !IsFlipped;
 
-//		private bool _active;
-//		private bool _isFlipped;
+            if (IsFlipped)
+                _onFlipped.Invoke();
+            else
+                _onUnflipped.Invoke();
 
-//		public bool IsFlipped => _isFlipped;
-//		public bool IsActive() => _active;
+            IsActive = true;
+        }
 
-//		public void Flip()
-//		{
-//			_isFlipped = !_isFlipped;
+        public void ForceState(bool flipped)
+        {
+            IsFlipped = flipped;
 
-//			if (_isFlipped)
-//				_onFlipped.Invoke();
-//			else
-//				_onUnflipped.Invoke();
+            if (IsFlipped)
+                _onFlipped.Invoke();
+            else
+                _onUnflipped.Invoke();
+        }
 
-//			_active = true;
-//			OnActivate?.Invoke();
-//		}
-
-//		public void ForceState(bool flipped)
-//		{
-//			_isFlipped = flipped;
-
-//			if (_isFlipped)
-//				_onFlipped.Invoke();
-//			else
-//				_onUnflipped.Invoke();
-//		}
-
-//		#region Component Fields
-//		private void Start()
-//		{
-//			if (startFlipped)
-//				ForceState(true);
-//		}
-//		#endregion
-//	}
-//}
+        #region Component Fields
+        private void OnEnable()
+        {
+            if (_startFlipped)
+                ForceState(true);
+        }
+        #endregion
+    }
+}
