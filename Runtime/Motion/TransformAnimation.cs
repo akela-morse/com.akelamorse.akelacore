@@ -11,8 +11,7 @@ namespace Akela.Motion
         public struct TransformAnimationKey
         {
             public Vector3 position;
-            [EulerAngles]
-            public Quaternion rotation;
+            public Vector3 rotation;
             public Vector3 scale;
             public float duration;
             public AnimationCurve fromToCurve;
@@ -37,13 +36,13 @@ namespace Akela.Motion
         /// </summary>
         /// <param name="time">Time to evaluate the animation at</param>
         /// <param name="position">Resulting position</param>
-        /// <param name="rotation">Resulting rotation</param>
+        /// <param name="eulerRotation">Resulting rotation</param>
         /// <param name="scale">Resulting scale</param>
         /// <returns>True if the animation has not yet ended, False otherwise</returns>
-        public bool Evaluate(float time, out Vector3 position, out Quaternion rotation, out Vector3 scale)
+        public bool Evaluate(float time, out Vector3 position, out Vector3 eulerRotation, out Vector3 scale)
         {
             position = Vector3.zero;
-            rotation = Quaternion.identity;
+            eulerRotation = Vector3.zero;
             scale = Vector3.one;
             
             if (time < 0f)
@@ -58,7 +57,7 @@ namespace Akela.Motion
                 if (time > additionalTime)
                 {
                     position = key.position;
-                    rotation = key.rotation;
+                    eulerRotation = key.rotation;
                     scale = key.scale;
                     
                     continue;
@@ -69,7 +68,7 @@ namespace Akela.Motion
                 var value = key.fromToCurve.Evaluate(percent);
 
                 position = Vector3.Lerp(position, key.position, value);
-                rotation = Quaternion.Lerp(rotation, key.rotation, value);
+                eulerRotation = Vector3.Lerp(eulerRotation, key.rotation, value);
                 scale = Vector3.Lerp(scale, key.scale, value);
 
                 return true;
@@ -78,17 +77,33 @@ namespace Akela.Motion
             return false;
         }
 
-        public void GetFirstKey(out Vector3 position, out Quaternion rotation, out Vector3 scale)
+        public void GetFirstKey(out Vector3 position, out Vector3 eulerRotation, out Vector3 scale)
         {
+            if (keys.Length == 0)
+            {
+                position = Vector3.zero;
+                eulerRotation = Vector3.zero;
+                scale = Vector3.one;
+                return;
+            }
+            
             position = keys[0].position;
-            rotation = keys[0].rotation;
+            eulerRotation = keys[0].rotation;
             scale = keys[0].scale;
         }
         
-        public void GetLastKey(out Vector3 position, out Quaternion rotation, out Vector3 scale)
+        public void GetLastKey(out Vector3 position, out Vector3 eulerRotation, out Vector3 scale)
         {
+            if (keys.Length == 0)
+            {
+                position = Vector3.zero;
+                eulerRotation = Vector3.zero;
+                scale = Vector3.one;
+                return;
+            }
+            
             position = keys[^1].position;
-            rotation = keys[^1].rotation;
+            eulerRotation = keys[^1].rotation;
             scale = keys[^1].scale;
         }
     }
