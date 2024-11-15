@@ -15,7 +15,7 @@ namespace AkelaEditor.Optimisations
 
 			var selectedObject = Selection.gameObjects[0];
 
-			if (selectedObject == null || !selectedObject.TryGetComponent<PooledPrefab>(out _))
+			if (!selectedObject || !selectedObject.TryGetComponent<PooledPrefab>(out _))
 				return false;
 
 			return true;
@@ -30,7 +30,7 @@ namespace AkelaEditor.Optimisations
 			prefabPool.SetPrefab(pooledPrefab);
 
 			var path = AssetDatabase.GenerateUniqueAssetPath(Path.Combine(
-				Path.GetDirectoryName(AssetDatabase.GUIDToAssetPath(Selection.assetGUIDs[0])),
+				Path.GetDirectoryName(AssetDatabase.GUIDToAssetPath(Selection.assetGUIDs[0])) ?? string.Empty,
 				pooledPrefab.gameObject.name + " Pool.asset"
 			));
 
