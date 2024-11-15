@@ -21,9 +21,6 @@ A custom constraint for the [Animation Rigging](https://docs.unity3d.com/Package
 <details>
 <summary>Attributes you can add to augment your MonoBehaviours, and special Behaviour types you can inherit from</summary>
 
-> [!NOTE]
-> Any special Behaviour type or Attribute that uses the AkelaAnalyser for metaprogramming purposes requires your class to be partial. Simply declare your component with the `partial` keyword before the `class` keyword.
-
 #### HideScriptFieldAttribute
 
 Allows you to hide the “Script” field in any MonoBehaviour's inspector without having to create a custom inspector. Uses the AkelaAnalyser to perform source generation and metaprogramming (see .Analyser folder)
@@ -57,6 +54,9 @@ Simple behaviour type that provides you with a `transform` property referring to
 Useful attribute that allows you to specify a `[Serializable]` struct type that contains dependencies to other components. You can use `[FromParents]` and `[FromChildren]` on this struct's fields to indicate the source of the component dependencies (if not specified, it is assumed the component is on the gameObject itself). The dependencies will be automatically injected and serialized, and you will be able to access them using a generated `dep` field that will be of the type of your struct (uses the AkelaAnalyser for source generation and metaprogramming)
 
 </details>
+
+> [!NOTE]
+> Any special Behaviour type or Attribute that uses the AkelaAnalyser for metaprogramming purposes requires your class to be partial. Simply declare your component with the `partial` keyword before the `class` keyword.
 
 ## Bridges namespace
 
