@@ -2,8 +2,8 @@
 
 Various tools and components for Unity that I created for my personal use.
 
-[!IMPORTANT]
-This toolset was created as a boilerplate for my Unity projects. I'm providing its source as-is in the hope that it is useful to other people or that someone wishes to learn from it. I won't take any responsibility in case of misuse or project corruption and will only provide a brief description of each tool and component. This is merely a personal toolset that I'm making open source, that's all.
+> [!IMPORTANT]
+> This toolset was created as a boilerplate for my Unity projects. I'm providing its source as-is in the hope that it is useful to other people or that someone wishes to learn from it. I won't take any responsibility in case of misuse or project corruption and will only provide a brief description of each tool and component. This is merely a personal toolset that I'm making open source, that's all.
 
 ### Animation namespace
 
