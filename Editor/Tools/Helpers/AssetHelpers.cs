@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace AkelaEditor.Tools
 {
-	public static class AssetHelpers
-	{
+    public static class AssetHelpers
+    {
         public static T CreateOrReplaceAsset<T>(T asset, string path) where T : Object
         {
             T existingAsset = AssetDatabase.LoadAssetAtPath<T>(path);

@@ -5,10 +5,10 @@ using UnityEngine;
 
 namespace AkelaEditor.Triggers
 {
-	[CustomEditor(typeof(CameraLookTrigger))]
-	internal class CameraLookTriggerEditor : Editor
-	{
-		private readonly SphereBoundsHandle _sphereHandle = new();
+    [CustomEditor(typeof(CameraLookTrigger))]
+    internal class CameraLookTriggerEditor : Editor
+    {
+        private readonly SphereBoundsHandle _sphereHandle = new();
 
         public override void OnInspectorGUI()
         {
@@ -18,31 +18,31 @@ namespace AkelaEditor.Triggers
         }
 
         private void OnSceneGUI()
-		{
-			var radiusProperty = serializedObject.FindProperty("_proximity");
+        {
+            var radiusProperty = serializedObject.FindProperty("_proximity");
 
-			if (radiusProperty.floatValue < 0f)
-				return;
+            if (radiusProperty.floatValue < 0f)
+                return;
 
-			using (new Handles.DrawingScope(new Color(244f, 244f, 139f, 210f) / 191f, ((CameraLookTrigger)target).transform.localToWorldMatrix))
-			{
-				_sphereHandle.axes = PrimitiveBoundsHandle.Axes.All;
-				_sphereHandle.center = Vector3.zero;
-				_sphereHandle.radius = radiusProperty.floatValue;
+            using (new Handles.DrawingScope(new Color(244f, 244f, 139f, 210f) / 191f, ((CameraLookTrigger)target).transform.localToWorldMatrix))
+            {
+                _sphereHandle.axes = PrimitiveBoundsHandle.Axes.All;
+                _sphereHandle.center = Vector3.zero;
+                _sphereHandle.radius = radiusProperty.floatValue;
 
-				EditorGUI.BeginChangeCheck();
+                EditorGUI.BeginChangeCheck();
 
-				_sphereHandle.DrawHandle();
+                _sphereHandle.DrawHandle();
 
-				if (EditorGUI.EndChangeCheck())
-				{
-					serializedObject.Update();
+                if (EditorGUI.EndChangeCheck())
+                {
+                    serializedObject.Update();
 
-					radiusProperty.floatValue = _sphereHandle.radius;
+                    radiusProperty.floatValue = _sphereHandle.radius;
 
-					serializedObject.ApplyModifiedProperties();
-				}
-			}
-		}
-	}
+                    serializedObject.ApplyModifiedProperties();
+                }
+            }
+        }
+    }
 }

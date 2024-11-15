@@ -2,6 +2,6 @@
 
 namespace Akela.Behaviours
 {
-	[AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
-	public sealed class SingletonAttribute : Attribute { }
+    [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
+    public sealed class SingletonAttribute : Attribute { }
 }

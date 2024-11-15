@@ -2,8 +2,8 @@
 
 namespace Akela.ExtendedPhysics
 {
-	public interface ICustomCollider
-	{
-		bool IsBindingCollider(Collider collider);
-	}
+    public interface ICustomCollider
+    {
+        bool IsBindingCollider(Collider collider);
+    }
 }

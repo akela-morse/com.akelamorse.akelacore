@@ -8,45 +8,45 @@ using static Akela.Behaviours.TickBehaviour;
 
 namespace AkelaEditor
 {
-	[CustomPropertyDrawer(typeof(TickUpdateType))]
-	internal class TickUpdateTypeDrawer : PropertyDrawer
-	{
-		static readonly TickUpdateType[] DEFAULT_OPTIONS = new[] { TickUpdateType.Update, TickUpdateType.LateUpdate, TickUpdateType.FixedUpdate };
+    [CustomPropertyDrawer(typeof(TickUpdateType))]
+    internal class TickUpdateTypeDrawer : PropertyDrawer
+    {
+        static readonly TickUpdateType[] DEFAULT_OPTIONS = new[] { TickUpdateType.Update, TickUpdateType.LateUpdate, TickUpdateType.FixedUpdate };
 
-		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
-		{
-			var optionsAttr = property.serializedObject.targetObject.GetType().GetCustomAttribute<TickOptionsAttribute>();
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            var optionsAttr = property.serializedObject.targetObject.GetType().GetCustomAttribute<TickOptionsAttribute>();
 
-			var allowedOptions = optionsAttr != null ? optionsAttr.AllowedUpdateTypes : DEFAULT_OPTIONS;
+            var allowedOptions = optionsAttr != null ? optionsAttr.AllowedUpdateTypes : DEFAULT_OPTIONS;
 
-			var currentlySelectedOption = (TickUpdateType)property.enumValueIndex;
-			var currentlySelectedIndex = Array.IndexOf(allowedOptions, currentlySelectedOption);
+            var currentlySelectedOption = (TickUpdateType)property.enumValueIndex;
+            var currentlySelectedIndex = Array.IndexOf(allowedOptions, currentlySelectedOption);
 
-			if (!allowedOptions.Contains(currentlySelectedOption))
-			{
-				currentlySelectedOption = allowedOptions.First();
-				property.enumValueIndex = (int)currentlySelectedOption;
+            if (!allowedOptions.Contains(currentlySelectedOption))
+            {
+                currentlySelectedOption = allowedOptions.First();
+                property.enumValueIndex = (int)currentlySelectedOption;
 
-				property.serializedObject.ApplyModifiedProperties();
+                property.serializedObject.ApplyModifiedProperties();
 
-				return;
-			}
+                return;
+            }
 
-			var newIndex = EditorGUI.Popup(position, "Refresh Every", currentlySelectedIndex, Array.ConvertAll(allowedOptions, GetEnumName));
+            var newIndex = EditorGUI.Popup(position, "Refresh Every", currentlySelectedIndex, Array.ConvertAll(allowedOptions, GetEnumName));
 
-			if (newIndex != currentlySelectedIndex)
-			{
-				property.enumValueIndex = (int)allowedOptions[newIndex];
-				property.serializedObject.ApplyModifiedProperties();
-			}
-		}
+            if (newIndex != currentlySelectedIndex)
+            {
+                property.enumValueIndex = (int)allowedOptions[newIndex];
+                property.serializedObject.ApplyModifiedProperties();
+            }
+        }
 
-		private static string GetEnumName(TickUpdateType tickUpdateType)
-		{
-			if (tickUpdateType == TickUpdateType.None)
-				return "Don't Refresh";
+        private static string GetEnumName(TickUpdateType tickUpdateType)
+        {
+            if (tickUpdateType == TickUpdateType.None)
+                return "Don't Refresh";
 
-			return ObjectNames.NicifyVariableName(Enum.GetName(typeof(TickUpdateType), tickUpdateType));
-		}
-	}
+            return ObjectNames.NicifyVariableName(Enum.GetName(typeof(TickUpdateType), tickUpdateType));
+        }
+    }
 }

@@ -2,9 +2,9 @@
 
 namespace Akela.Tools
 {
-	public sealed class LineUpAttribute : PropertyAttribute
-	{
-		private readonly string[] _labels;
+    public sealed class LineUpAttribute : PropertyAttribute
+    {
+        private readonly string[] _labels;
 
         public LineUpAttribute(params string[] labels)
         {
