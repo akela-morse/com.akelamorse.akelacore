@@ -7,16 +7,22 @@ Various tools and components for Unity that I created for my personal use.
 
 ## Animation namespace
 
-Animation-related tools and components
+<details>
+<summary>Animation-related tools and components</summary>
 
 #### NoiseConstraint
 
 A custom constraint for the [Animation Rigging](https://docs.unity3d.com/Packages/com.unity.animation.rigging@1.3/manual/index.html) package that adds noise to a transform's position and/or rotation.
 
+</details>
+
 ## Behaviours namespace
 
-Attributes you can add to augment your MonoBehaviours, and special Behaviour types you can inherit from.  
-Note that any special Behaviour type or Attribute that uses the AkelaAnalyser for metaprogramming purposes requires your class to be partial. Simply declare your component with the `partial` keyword before the `class` keyword.
+<details>
+<summary>Attributes you can add to augment your MonoBehaviours, and special Behaviour types you can inherit from</summary>
+
+> [!NOTE]
+> Any special Behaviour type or Attribute that uses the AkelaAnalyser for metaprogramming purposes requires your class to be partial. Simply declare your component with the `partial` keyword before the `class` keyword.
 
 #### HideScriptFieldAttribute
 
@@ -50,17 +56,23 @@ Simple behaviour type that provides you with a `transform` property referring to
 
 Useful attribute that allows you to specify a `[Serializable]` struct type that contains dependencies to other components. You can use `[FromParents]` and `[FromChildren]` on this struct's fields to indicate the source of the component dependencies (if not specified, it is assumed the component is on the gameObject itself). The dependencies will be automatically injected and serialized, and you will be able to access them using a generated `dep` field that will be of the type of your struct (uses the AkelaAnalyser for source generation and metaprogramming)
 
+</details>
+
 ## Bridges namespace
 
-Serializable wrappers that I use to select a type based on the packages currently in use in the Unity project.
+<details>
+<summary>Serializable wrappers that I use to select a type based on the packages currently in use within the Unity project</summary>
 
 #### BridgedEvent
 
 If the [UltEvents](https://kybernetik.com.au/ultevents/) package is installed, then it will be a `UltEvent` wrapper. Otherwise, it's a `UnityEvent` wrapper.
 
+</details>
+
 ## ExtendedPhysics namespace
 
-Physics-related tools and components
+<details>
+<summary>Physics-related tools and components</summary>
 
 #### Raycaster
 
@@ -70,13 +82,19 @@ Component that allows you to preview and perform raycasting. Raycasting can be e
 
 Custom collider shape that describes a torus. It's not a `MeshCollider` in disguise and can be used as a `Rigidbody`. The higher the resolution the less performant.
 
+</details>
+
 ## Globals namespace
 
-A collection of ScriptableAssets that allow you to create engine-wide global variables. Right-click in the project view and choose “Globals” to create one, then you can use it in any of your components or one of mine. Use `Var<T>` in your scripts to indicate that you accept a Global as a value.
+A collection of ScriptableAssets that allow you to create engine-wide global variables.
+
+> [!TIP]
+> Right-click in the project view and choose “Globals” to create one, then you can use it in any of your components or mine. Use `Var<T>` in your scripts to indicate that you accept a Global as a value.
 
 ## Motion namespace
 
-Components that provide tools for moving gameObjects in a controlled manner.
+<details>
+<summary>Components that provide tools for moving gameObjects in a controlled manner</summary>
 
 #### ContinuousRotation
 
@@ -106,9 +124,12 @@ Locks one or several `Transform` properties to a defined value.
 
 Interpolates one or several `Transform` properties between two states. Useful for moving platforms, for example.
 
+</details>
+
 ## Optimisations namespace
 
-Tools and components used for Game Logic optimisation.
+<details>
+<summary>Tools and components used for Game Logic optimisation</summary>
 
 #### ComponentCull
 
@@ -134,9 +155,12 @@ Uses the [ObjectPool](https://docs.unity3d.com/2021.3/Documentation/ScriptRefere
 
 Uses the `CullingElement` component to decrease a light's shadow quality and resolution based on the gameObject's cull state (works on BiRP and URP, does NOT work on HDRP)
 
+</details>
+
 ## Signals namespace
 
-Messenging API and Unity event tools
+<details>
+<summary>Messenging API and Unity event tools</summary>
 
 #### ObjectFunctions
 
@@ -150,13 +174,19 @@ ScriptableObject that can be broadcasted from script or an event, and is observe
 
 Component that listens for specific Signals, and invokes events when notified.
 
+</details>
+
 ## Tools namespace
 
-A collection of tools and utilities for scripting purposes.
+A collection of tools and utilities for scripting purposes
 
 ## Triggers namespace
 
-Event invokers based on specific conditions. Most of them have invokable methods to that are meant to be called from other events (or from script).
+<details>
+<summary>Event invokers based on specific conditions</summary>
+
+> [!TIP]
+> Most of them have invokable methods to that are meant to be called from other events (or from script).
 
 #### CameraLookTrigger
 
@@ -213,3 +243,5 @@ Utility component that computes a volume from every collider with `isTrigger` se
 #### VolumeTrigger
 
 Invokes events on `OnTrigger` messages.
+
+</details>
