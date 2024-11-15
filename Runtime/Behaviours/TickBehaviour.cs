@@ -2,55 +2,89 @@
 
 namespace Akela.Behaviours
 {
-	public abstract class TickBehaviour : MonoBehaviour
-	{
-		public enum TickUpdateType
-		{
-			None,
-			Update,
-			LateUpdate,
-			FixedUpdate,
-			AnimatorMove
-		}
+    public abstract class TickBehaviour : MonoBehaviour
+    {
+        public enum TickUpdateType
+        {
+            None,
+            Update,
+            LateUpdate,
+            FixedUpdate,
+            AnimatorMove
+        }
 
-		#region Component Fields
-		[SerializeField] protected TickUpdateType _updateType = TickUpdateType.Update;
-		#endregion
+        #region Component Fields
+        [SerializeField] protected TickUpdateType _updateType = TickUpdateType.Update;
+        #endregion
 
-		protected abstract void Tick(float deltaTime);
+#if UNITY_EDITOR
+        [System.NonSerialized] private double _editorTime;
 
-		#region Component Messages
-		private void Update()
-		{
-			if (_updateType != TickUpdateType.Update)
-				return;
+        public void ForceResetEditorDeltaTime()
+        {
+            _editorTime = UnityEditor.EditorApplication.timeSinceStartup;
+        }
+#endif
 
-			Tick(Time.deltaTime);
-		}
+        protected abstract void Tick(float deltaTime);
 
-		private void LateUpdate()
-		{
-			if (_updateType != TickUpdateType.LateUpdate)
-				return;
+        #region Component Messages
+        private void Update()
+        {
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+            {
+                var deltaTime = UnityEditor.EditorApplication.timeSinceStartup - _editorTime;
+                Tick((float)deltaTime);
+                _editorTime = UnityEditor.EditorApplication.timeSinceStartup;
+                return;
+            }
+#endif
 
-			Tick(Time.deltaTime);
-		}
+            if (_updateType != TickUpdateType.Update)
+                return;
 
-		private void FixedUpdate()
-		{
-			if (_updateType != TickUpdateType.FixedUpdate)
-				return;
+            Tick(Time.deltaTime);
+        }
 
-			Tick(Time.fixedDeltaTime);
-		}
+        private void LateUpdate()
+        {
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+                return;
+#endif
 
-		private void OnAnimatorMove()
-		{
-			if (_updateType != TickUpdateType.AnimatorMove)
-				return;
+            if (_updateType != TickUpdateType.LateUpdate)
+                return;
 
-			Tick(Time.deltaTime);
-		}
-		#endregion
-	}
+            Tick(Time.deltaTime);
+        }
+
+        private void FixedUpdate()
+        {
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+                return;
+#endif
+            
+            if (_updateType != TickUpdateType.FixedUpdate)
+                return;
+
+            Tick(Time.fixedDeltaTime);
+        }
+
+        private void OnAnimatorMove()
+        {
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+                return;
+#endif
+            
+            if (_updateType != TickUpdateType.AnimatorMove)
+                return;
+
+            Tick(Time.deltaTime);
+        }
+        #endregion
+    }
 }

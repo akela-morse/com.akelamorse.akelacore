@@ -1,19 +1,18 @@
 ﻿using Akela.Behaviours;
 using Akela.Globals;
-using Akela.Tools;
 using UnityEngine;
 
 namespace Akela.Motion
 {
-    [AddComponentMenu("Motion/Transform Lerp", 2)]
+    [AddComponentMenu("Motion/Transform Shift", 2)]
     [TickOptions(TickUpdateType.Update, TickUpdateType.LateUpdate, TickUpdateType.FixedUpdate)]
-    [HideScriptField]
-    public class TransformLerp : TickBehaviour
+    [HideScriptField, ExecuteInEditMode, DisallowMultipleComponent]
+    public class TransformShift : TickBehaviour
     {
         #region Component Fields
         [Space]
         [SerializeField] Vector3 _endPosition;
-        [SerializeField, EulerAngles] Quaternion _endRotation;
+        [SerializeField] Vector3 _endRotation;
         [SerializeField] Vector3 _endScale = Vector3.one;
         [SerializeField] Var<AnimationCurve> _curve = AnimationCurve.Linear(0f, 0f, 1f, 1f);
 
@@ -24,13 +23,17 @@ namespace Akela.Motion
         [SerializeField] TransformAnimationEndState _endState;
         #endregion
 
-        private float _lerpProgression;
         private sbyte _lerpDirection = 1;
         private Vector3 _startPosition;
-        private Quaternion _startRotation;
+        private Vector3 _startRotation;
         private Vector3 _startScale;
 
         public TransformAnimationPlayingState PlayingState { get; private set; } = TransformAnimationPlayingState.Stopped;
+        public float Progression { get; private set; }
+
+#if UNITY_EDITOR
+        public bool ControlledByEditor { get; set; }
+#endif
 
         public void Play()
         {
@@ -61,20 +64,20 @@ namespace Akela.Motion
         public void SetPositionAtStart()
         {
             transform.localPosition = _startPosition;
-            transform.localRotation = _startRotation;
+            transform.localEulerAngles = _startRotation;
             transform.localScale = _startScale;
 
-            _lerpProgression = 0f;
+            Progression = 0f;
             _lerpDirection = 1;
         }
 
         public void SetPositionAtEnd()
         {
             transform.localPosition = _endPosition;
-            transform.localRotation = _endRotation;
+            transform.localEulerAngles = _endRotation;
             transform.localScale = _endScale;
 
-            _lerpProgression = 1f;
+            Progression = 1f;
 
             if (_endState == TransformAnimationEndState.Reverse)
                 _lerpDirection = -1;
@@ -84,29 +87,48 @@ namespace Akela.Motion
         private void Start()
         {
             _startPosition = transform.localPosition;
-            _startRotation = transform.localRotation;
+            _startRotation = transform.localEulerAngles;
             _startScale = transform.localScale;
-
+#if UNITY_EDITOR
+            if (_playOnStart && Application.isPlaying)
+#else
             if (_playOnStart)
+#endif
                 Play();
         }
 
         protected override void Tick(float deltaTime)
         {
+#if UNITY_EDITOR
+            if (!Application.isPlaying && !ControlledByEditor)
+                Start();
+#endif
+
             if (PlayingState != TransformAnimationPlayingState.Playing)
                 return;
 
-            _lerpProgression = Mathf.Clamp01(_lerpProgression + _lerpDirection * (deltaTime / _lerpTime));
+            Progression = Mathf.Clamp01(Progression + _lerpDirection * (deltaTime / _lerpTime));
 
-            var lerp = _curve.Value.Evaluate(_lerpProgression);
+            var lerp = _curve.Value.Evaluate(Progression);
 
             transform.localPosition = Vector3.LerpUnclamped(_startPosition, _endPosition, lerp);
-            transform.localRotation = Quaternion.LerpUnclamped(_startRotation, _endRotation, lerp);
+            transform.localEulerAngles = Vector3.LerpUnclamped(_startRotation, _endRotation, lerp);
             transform.localScale = Vector3.LerpUnclamped(_startScale, _endScale, lerp);
 
             if (_lerpDirection < 0 && lerp <= 0f || _lerpDirection > 0 && lerp >= 1f)
                 StopAnimation();
         }
+
+#if UNITY_EDITOR
+        private void OnRenderObject()
+        {
+            if (Application.isPlaying || PlayingState != TransformAnimationPlayingState.Playing)
+                return;
+
+            UnityEditor.EditorApplication.QueuePlayerLoopUpdate();
+            UnityEditor.SceneView.RepaintAll();
+        }
+#endif
         #endregion
 
         #region Private Methods
@@ -119,33 +141,37 @@ namespace Akela.Motion
             {
                 case TransformAnimationEndState.Stay:
                     transform.localPosition = _endPosition;
-                    transform.localRotation = _endRotation;
+                    transform.localEulerAngles = _endRotation;
                     transform.localScale = _endScale;
+
+                    Progression = 1f;
                     break;
 
                 case TransformAnimationEndState.Reset:
                     transform.localPosition = _startPosition;
-                    transform.localRotation = _startRotation;
+                    transform.localEulerAngles = _startRotation;
                     transform.localScale = _startScale;
 
-                    _lerpProgression = 0f;
+                    Progression = 0f;
                     break;
 
                 case TransformAnimationEndState.Reverse:
                     if (_lerpDirection > 0)
                     {
                         transform.localPosition = _endPosition;
-                        transform.localRotation = _endRotation;
+                        transform.localEulerAngles = _endRotation;
                         transform.localScale = _endScale;
 
+                        Progression = 1f;
                         _lerpDirection = -1;
                     }
                     else
                     {
                         transform.localPosition = _startPosition;
-                        transform.localRotation = _startRotation;
+                        transform.localEulerAngles = _startRotation;
                         transform.localScale = _startScale;
 
+                        Progression = 0f;
                         _lerpDirection = 1;
                     }
                     break;

@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace AkelaToolsEditor
+namespace AkelaEditor.Tool
 {
 	public class EditorIcons : EditorWindow
 	{

@@ -22,7 +22,7 @@ namespace Akela.Tools
 			var name = typeof(T).Name;
 			name = name[..^POSTFIX.Length];
 
-			return type.GetMethod(name, bindingFlags).CreateDelegate(typeof(T)) as T ?? throw new MissingMethodException($"Failed find method '{name}' in type '{type}'");
+			return type.GetMethod(name, bindingFlags)?.CreateDelegate(typeof(T)) as T ?? throw new MissingMethodException($"Failed find method '{name}' in type '{type}'");
 		}
 
 		public static bool CurrentThreadIsMainThread() => currentThreadIsMainThread();

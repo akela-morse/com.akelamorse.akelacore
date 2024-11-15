@@ -39,7 +39,7 @@ namespace AkelaEditor.Tools
             typeof(ProxyTrigger),
             typeof(TransformLock),
             typeof(TransformDriver),
-            typeof(TransformLerp),
+            typeof(TransformShift),
             typeof(TransformAnimator),
             typeof(ContinuousRotation),
             typeof(RandomMotion),
