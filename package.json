@@ -1,14 +1,14 @@
 {
-	"name": "com.akelamorse.akelacore",
-	"version": "1.0.0",
-	"displayName": "Akela Core",
-	"description": "My Unity toolbox",
-	"repository": {
-		"url": "https://github.com/akela-morse/akela-core.git"
-	},
-	"unity": "2021.3",
-	"author": {
-		"name": "Akela Morse",
-		"email": "akela.morse@gmail.com"
-	}
+    "name": "com.akelamorse.akelacore",
+    "version": "1.0.0",
+    "displayName": "Akela Core",
+    "description": "My Unity toolbox",
+    "repository": {
+        "url": "https://github.com/akela-morse/akela-core.git"
+    },
+    "unity": "2021.3",
+    "author": {
+        "name": "Akela Morse",
+        "email": "akela.morse@gmail.com"
+    }
 }

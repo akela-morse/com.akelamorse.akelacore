@@ -1,4 +1,4 @@
 ﻿namespace Akela.Bridges
 {
-	public interface IBridge { }
+    public interface IBridge { }
 }

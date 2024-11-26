@@ -9,7 +9,7 @@ namespace Akela.Behaviours
 
         public TickOptionsAttribute(params TickBehaviour.TickUpdateType[] positionalString)
         {
-			_allowedUpdateTypes = positionalString;
+            _allowedUpdateTypes = positionalString;
         }
 
         public TickBehaviour.TickUpdateType[] AllowedUpdateTypes => _allowedUpdateTypes;

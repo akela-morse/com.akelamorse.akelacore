@@ -2,14 +2,14 @@
 
 namespace Akela.Globals
 {
-	[AddComponentMenu("Globals/Camera Reference Setter", 2)]
-	public sealed class CameraReferenceSetter : ReferenceSetterBase<GlobalCameraReference, Camera>
-	{
+    [AddComponentMenu("Globals/Camera Reference Setter", 2)]
+    public sealed class CameraReferenceSetter : ReferenceSetterBase<GlobalCameraReference, Camera>
+    {
 #if UNITY_EDITOR
-		private void Reset()
-		{
-			_value = GetComponent<Camera>();
-		}
+        private void Reset()
+        {
+            _value = GetComponent<Camera>();
+        }
 #endif
-	}
+    }
 }

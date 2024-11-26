@@ -89,10 +89,10 @@ namespace AkelaAnalyser
 
             source.Append(
                 $@"
-		protected internal override void InitialiseBehaviour()
-		{{
-			Main = this;
-		}}"
+        protected internal override void InitialiseBehaviour()
+        {{
+            Main = this;
+        }}"
             );
 
             AppendClassFooter(source, symbol);
@@ -153,15 +153,15 @@ namespace AkelaAnalyser
 
             source.Append(
                 $@"
-		[SerializeField, HideInInspector] {dependencyContainerType.ToDisplayString()} dep;
-		
-		public void OnAfterDeserialize() {{ }}
-		
-		public void OnBeforeSerialize()
-		{{
+        [SerializeField, HideInInspector] {dependencyContainerType.ToDisplayString()} dep;
+        
+        public void OnAfterDeserialize() {{ }}
+        
+        public void OnBeforeSerialize()
+        {{
 #if UNITY_EDITOR
-			dep = new {dependencyContainerType.ToDisplayString()}
-			{{"
+            dep = new {dependencyContainerType.ToDisplayString()}
+            {{"
             );
 
             bool fromParents = false, fromChildren = false;
@@ -224,15 +224,15 @@ namespace AkelaAnalyser
 
                 source.Append(
                     $@"
-				{field.Name} = {methodCall}(),"
+                {field.Name} = {methodCall}(),"
                 );
             }
 
             source.Append(
                 $@"
-			}};
+            }};
 #endif
-		}}"
+        }}"
             );
 
             AppendClassFooter(source, symbol);
@@ -255,11 +255,11 @@ using UnityEngine;
 
             source.Append(
                 $@"
-		public override int GetHashCode()
-		{{
-			unchecked
-			{{
-				int hash = 17;
+        public override int GetHashCode()
+        {{
+            unchecked
+            {{
+                int hash = 17;
 "
             );
 
@@ -278,14 +278,14 @@ using UnityEngine;
                 {
                     source.Append(
                         $@"
-				hash = hash * 23 + (this.{fieldName} == null ? 0 : this.{fieldName}.GetHashCode());"
+                hash = hash * 23 + (this.{fieldName} == null ? 0 : this.{fieldName}.GetHashCode());"
                     );
                 }
                 else
                 {
                     source.Append(
                         $@"
-				hash = hash * 23 + this.{fieldName}.GetHashCode();"
+                hash = hash * 23 + this.{fieldName}.GetHashCode();"
                     );
                 }
             }
@@ -293,9 +293,9 @@ using UnityEngine;
             source.Append(
                 $@"
 
-				return hash;
-			}}
-		}}"
+                return hash;
+            }}
+        }}"
             );
 
             AppendClassFooter(source, symbol);
@@ -318,7 +318,7 @@ using UnityEditor;
 
             source.Append(
                 $@"
-		public override void OnInspectorGUI()
+        public override void OnInspectorGUI()
         {{
             serializedObject.Update();
             DrawPropertiesExcluding(serializedObject, ""m_Script"");
@@ -355,7 +355,7 @@ using UnityEditor;
 
             source.Append(
                 $@"
-	{{"
+    {{"
             );
         }
 
@@ -365,7 +365,7 @@ using UnityEditor;
 
             source.Append(
                 $@"
-	}}"
+    }}"
             );
 
             if (namespaceName != GLOBAL_NAMESPACE)
@@ -399,7 +399,7 @@ using UnityEditor;
 
             source.Append(
                 $@"
-	{{"
+    {{"
             );
         }
         #endregion

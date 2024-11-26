@@ -9,84 +9,84 @@ using Object = UnityEngine.Object;
 
 namespace Akela.Tools
 {
-	public static class ComponentLoader<T> where T : class
-	{
-		public delegate void TypeRegistration(IEnumerable<T> instances);
+    public static class ComponentLoader<T> where T : class
+    {
+        public delegate void TypeRegistration(IEnumerable<T> instances);
 
-		public static event TypeRegistration OnTypeFound
-		{
-			add
-			{
+        public static event TypeRegistration OnTypeFound
+        {
+            add
+            {
 #if UNITY_EDITOR
-				if (!Application.isPlaying)
-				{
-					DelayedRegistration.AddDelayedRegistration(((Object)value.Target).GetInstanceID(), e => value(e.OfType<T>()));
-					return;
-				}
+                if (!Application.isPlaying)
+                {
+                    DelayedRegistration.AddDelayedRegistration(((Object)value.Target).GetInstanceID(), e => value(e.OfType<T>()));
+                    return;
+                }
 #endif
 
-				ComponentLoaderBehaviour.Main.GetInstancesOfType += e => value(e.OfType<T>());
-			}
-			remove { }
-		}
-	}
+                ComponentLoaderBehaviour.Main.GetInstancesOfType += e => value(e.OfType<T>());
+            }
+            remove { }
+        }
+    }
 
-	internal sealed class ComponentLoaderBehaviour : MonoBehaviour
-	{
-		internal static ComponentLoaderBehaviour Main { get; private set; }
+    internal sealed class ComponentLoaderBehaviour : MonoBehaviour
+    {
+        internal static ComponentLoaderBehaviour Main { get; private set; }
 
-		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-		static void FirstSceneLoaded()
-		{
-			var newGo = new GameObject("[Component Loader]");
-			Main = newGo.AddComponent<ComponentLoaderBehaviour>();
-		}
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void FirstSceneLoaded()
+        {
+            var newGo = new GameObject("[Component Loader]");
+            Main = newGo.AddComponent<ComponentLoaderBehaviour>();
+        }
 
-		internal event Action<MonoBehaviour[]> GetInstancesOfType;
+        internal event Action<MonoBehaviour[]> GetInstancesOfType;
 
-		private void Awake()
-		{
-			DontDestroyOnLoad(this);
-		}
+        private void Awake()
+        {
+            DontDestroyOnLoad(this);
+        }
 
-		private void OnEnable()
-		{
-			SceneManager.sceneLoaded += SceneLoaded;
-		}
+        private void OnEnable()
+        {
+            SceneManager.sceneLoaded += SceneLoaded;
+        }
 
-		private void OnDestroy()
-		{
-			SceneManager.sceneLoaded -= SceneLoaded;
-		}
+        private void OnDestroy()
+        {
+            SceneManager.sceneLoaded -= SceneLoaded;
+        }
 
-		private void SceneLoaded(Scene scene, LoadSceneMode mode)
-		{
+        private void SceneLoaded(Scene scene, LoadSceneMode mode)
+        {
 #if UNITY_EDITOR
-			foreach (var delayedRegistration in DelayedRegistration.GetAllDelayedRegistrations())
-				GetInstancesOfType += delayedRegistration;
+            foreach (var delayedRegistration in DelayedRegistration.GetAllDelayedRegistrations())
+                GetInstancesOfType += delayedRegistration;
 #endif
 
-			GetInstancesOfType(FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None));
-		}
-	}
+            GetInstancesOfType(FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None));
+        }
+    }
 
 #if UNITY_EDITOR
-	internal static class DelayedRegistration
-	{
-		private static readonly Dictionary<int, Action<MonoBehaviour[]>> _delayedRegistrations = new();
+    internal static class DelayedRegistration
+    {
+        private static readonly Dictionary<int, Action<MonoBehaviour[]>> _delayedRegistrations = new();
 
-		public static void AddDelayedRegistration(int ownerId, Action<MonoBehaviour[]> action)
-		{
-			_delayedRegistrations[ownerId] = action;
-		}
+        public static void AddDelayedRegistration(int ownerId, Action<MonoBehaviour[]> action)
+        {
+            _delayedRegistrations[ownerId] = action;
+        }
 
-		public static IEnumerable<Action<MonoBehaviour[]>> GetAllDelayedRegistrations()
-		{
-			foreach (var registration in _delayedRegistrations.Values)
-				yield return registration;
+        public static IEnumerable<Action<MonoBehaviour[]>> GetAllDelayedRegistrations()
+        {
+            foreach (var registration in _delayedRegistrations.Values)
+                yield return registration;
 
-			_delayedRegistrations.Clear();
-		}
-	}
+            _delayedRegistrations.Clear();
+        }
+    }
 #endif
 }

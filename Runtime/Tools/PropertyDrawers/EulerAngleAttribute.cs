@@ -2,5 +2,5 @@
 
 namespace Akela.Tools
 {
-	public sealed class EulerAnglesAttribute : PropertyAttribute { }
+    public sealed class EulerAnglesAttribute : PropertyAttribute { }
 }
