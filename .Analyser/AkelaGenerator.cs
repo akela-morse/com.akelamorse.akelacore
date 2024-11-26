@@ -13,7 +13,7 @@ namespace AkelaAnalyser
         const string UNITY_NAMESPACE = "UnityEngine";
         const string UNITYOBJECT_SYMBOL_NAME = "UnityEngine.Object";
         const string MONOBEHAVIOUR_SYMBOL_NAME = "UnityEngine.MonoBehaviour";
-        const string SCRIPTABLEOBJECT_SYMBOL_NAME = "UnityEngine.ScriptableObject";
+        //const string SCRIPTABLEOBJECT_SYMBOL_NAME = "UnityEngine.ScriptableObject";
         const string COMPONENT_SYMBOL_NAME = "UnityEngine.Component";
         const string SERIALIZEFIELD_SYMBOL_NAME = "UnityEngine.SerializeField";
         const string HIDEFIELD_SYMBOL_NAME = "UnityEngine.HideInInspector";
@@ -80,23 +80,17 @@ namespace AkelaAnalyser
             var source = new StringBuilder();
 
             source.Append(
-                @"using Akela.Tools;
-using UnityEngine;
+                @"using Akela.Behaviours;
 
 "
             );
 
-            AppendClassHeader(source, symbol);
+            AppendClassHeader(source, symbol, "AbstractInitialisableBehaviour");
 
             source.Append(
                 $@"
-		public static {symbol.Name} Main {{ get; private set; }}
-
-		public {symbol.Name}() : base()
+		protected internal override void InitialiseBehaviour()
 		{{
-			if (!InternalTools.CurrentThreadIsMainThread())
-				return;
-
 			Main = this;
 		}}"
             );
