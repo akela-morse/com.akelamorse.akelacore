@@ -66,7 +66,7 @@ namespace Akela.Tools
                 GetInstancesOfType += delayedRegistration;
 #endif
 
-            GetInstancesOfType(FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None));
+            GetInstancesOfType?.Invoke(FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None));
         }
     }
 

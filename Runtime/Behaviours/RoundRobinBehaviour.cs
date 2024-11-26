@@ -4,15 +4,15 @@ using UnityEngine;
 
 namespace Akela.Behaviours
 {
-    public abstract class RoundRobinBehaviour : AbstractInitialisableBehaviour
+    public abstract class RoundRobinBehaviour : MonoBehaviour, IInitialisableBehaviour
     {
-        internal protected abstract void RRUpdate();
+        protected internal abstract void RRUpdate();
 
-        protected internal override void InitialiseBehaviour()
+        public void InitialiseBehaviour()
         {
             var type = GetType();
 
-            if (!RoundRobinManager.managers.TryGetValue(type, out RoundRobinManager manager))
+            if (!RoundRobinManager.managers.TryGetValue(type, out var manager))
             {
                 var newObject = new GameObject($"[{type.Name} Round Robin Manager]");
                 manager = newObject.AddComponent<RoundRobinManager>();
@@ -47,7 +47,7 @@ namespace Akela.Behaviours
         {
             var current = instances[_currentIndex = (_currentIndex + 1) % instances.Count];
 
-            if (current == null)
+            if (!current)
             {
                 instances.Remove(current);
                 --_currentIndex;

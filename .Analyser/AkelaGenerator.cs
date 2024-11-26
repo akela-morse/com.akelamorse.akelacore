@@ -85,11 +85,13 @@ namespace AkelaAnalyser
 "
             );
 
-            AppendClassHeader(source, symbol, "AbstractInitialisableBehaviour");
+            AppendClassHeader(source, symbol, "IInitialisableBehaviour");
 
             source.Append(
                 $@"
-        protected internal override void InitialiseBehaviour()
+        public static {symbol.Name} Main {{ get; private set; }}
+
+        public void InitialiseBehaviour()
         {{
             Main = this;
         }}"

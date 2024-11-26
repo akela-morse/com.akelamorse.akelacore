@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Akela.Behaviours
 {
-    public abstract class OptimisedBehaviour : AbstractInitialisableBehaviour
+    public abstract class OptimisedBehaviour : MonoBehaviour, IInitialisableBehaviour
     {
         #region Component Fields
         [SerializeField] OptimisationSettings _optimisationSettings;
@@ -31,7 +31,7 @@ namespace Akela.Behaviours
         #endregion
 
         #region Private Methods
-        protected internal override void InitialiseBehaviour()
+        public void InitialiseBehaviour()
         {
             _cullingElement = _optimisationSettings.useCullingElementFrom switch
             {
