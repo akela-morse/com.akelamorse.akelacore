@@ -8,9 +8,7 @@ namespace Akela.Behaviours
     {
         [NonSerialized] public bool didInitialise;
 
-        internal abstract protected void InitialiseBehaviour();
-
-        internal AbstractInitialisableBehaviour() : base() { }
+        protected internal abstract void InitialiseBehaviour();
     }
 
     internal sealed class BehaviourInitialisationManager : MonoBehaviour
