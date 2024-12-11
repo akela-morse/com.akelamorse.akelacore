@@ -94,7 +94,7 @@ namespace Akela.ExtendedPhysics
 
             Gizmos.color = new(.33f, .85f, 1f);
 
-            if (_maxDistance == Mathf.Infinity)
+            if (float.IsPositiveInfinity(_maxDistance))
                 GizmosHelper.DrawArrow(ray.origin, ray.direction, 1f);
             else
                 GizmosHelper.DrawDottedLine(ray.origin, ray.origin + ray.direction * _maxDistance, 4f);

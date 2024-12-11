@@ -29,6 +29,9 @@ namespace AkelaEditor.Tools
 
         private void CheckComponentIsAvailable()
         {
+            if (Application.isPlaying)
+                return;
+            
             T newComponent = null;
             
             var newState =

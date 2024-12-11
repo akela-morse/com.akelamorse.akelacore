@@ -61,7 +61,7 @@ namespace AkelaEditor.Globals
 
             EditorGUI.BeginProperty(position, label, property);
 
-            if (globalProperty.objectReferenceValue == null)
+            if (!globalProperty.objectReferenceValue)
             {
                 EditorGUI.PropertyField(fieldRect, localProperty, label);
 
