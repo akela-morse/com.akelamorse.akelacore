@@ -1,8 +1,7 @@
 using Akela.Behaviours;
-using Akela.Signals;
 using Akela.Globals;
+using Akela.Signals;
 using Akela.Tools;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Akela.ExtendedPhysics
@@ -20,6 +19,8 @@ namespace Akela.ExtendedPhysics
         }
 
         #region Component Fields
+        [SerializeField] Vector3 _direction = Vector3.forward;
+        [SerializeField] Space _castSpace = Space.Self;
         [SerializeField] float _maxDistance = Mathf.Infinity;
         [SerializeField] Var<LayerMask> _layerMask;
         [SerializeField] QueryTriggerInteraction _triggerInteraction;
@@ -39,10 +40,28 @@ namespace Akela.ExtendedPhysics
 
         public int NumberOfHits => _numberOfHits;
 
-        public void RaycastNow()
+        public Quaternion Orientation { get => _orientation; set => _orientation = value; }
+        public float MaxDistance { get => _maxDistance; set => _maxDistance = value; }
+        public Vector3 Direction { get => _castSpace == Space.Self ? transform.TransformDirection(_direction) : _direction; set => _direction = value.normalized; }
+
+        public void RaycastNow(bool sendEvents = true)
         {
             DoRaycast();
-            CheckRaycastResult();
+
+            if (sendEvents)
+                CheckRaycastResult();
+            else
+                _previousRaycastDidHit = RaycastDidHit();
+        }
+
+        public void RaycastNow(Ray ray, bool sendEvents = true)
+        {
+            DoRaycast(ray);
+
+            if (sendEvents)
+                CheckRaycastResult();
+            else
+                _previousRaycastDidHit = RaycastDidHit();
         }
 
         public bool RaycastDidHit()
@@ -62,10 +81,9 @@ namespace Akela.ExtendedPhysics
             return true;
         }
 
-        public IEnumerable<RaycastHit> GetAllHits()
+        public RaycastHit GetHit(int index)
         {
-            for (var i = 0; i < _numberOfHits; ++i)
-                yield return _hits[i];
+            return _hits[index];
         }
 
         #region Component Messages
@@ -90,7 +108,7 @@ namespace Akela.ExtendedPhysics
             if (!Application.isPlaying)
                 DoRaycast();
 
-            var ray = new Ray(transform.position, transform.forward);
+            var ray = new Ray(transform.position, Direction);
 
             Gizmos.color = new(.33f, .85f, 1f);
 
@@ -108,7 +126,7 @@ namespace Akela.ExtendedPhysics
 
                 for (var i = 0; i < _numberOfHits; ++i)
                 {
-                    Gizmos.DrawSphere(_hits[i].point, .1f);
+                    Gizmos.DrawSphere(_hits[i].point, .08f);
 
                     var point = ray.GetPoint(_hits[i].distance);
                     var sqrDist = (point - ray.origin).sqrMagnitude;
@@ -202,8 +220,11 @@ namespace Akela.ExtendedPhysics
         #region Private Methods
         private void DoRaycast()
         {
-            var ray = new Ray(transform.position, transform.forward);
+            DoRaycast(new Ray(transform.position, Direction));
+        }
 
+        private void DoRaycast(Ray ray)
+        {
             switch (_shape)
             {
                 case RaycastShape.Ray:
@@ -229,7 +250,7 @@ namespace Akela.ExtendedPhysics
 
                 case RaycastShape.Capsule:
                     var dir = _orientation * Vector3.up;
-                    var offset = (_capsuleHeight - (_radius * 2f)) * .5f;
+                    var offset = (_capsuleHeight - _radius * 2f) * .5f;
 
                     var p1 = ray.origin - dir * offset;
                     var p2 = ray.origin + dir * offset;

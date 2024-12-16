@@ -28,6 +28,8 @@ namespace AkelaEditor.ExtendedPhysics
         {
             EditorGUILayout.LabelField("General Options", EditorStyles.boldLabel);
 
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("_direction"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("_castSpace"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("_maxDistance"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("_layerMask"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("_triggerInteraction"));

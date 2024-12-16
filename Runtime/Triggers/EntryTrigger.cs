@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Akela.Triggers
 {
-    [AddComponentMenu("Signals/Entry Trigger", -2)]
+    [AddComponentMenu("Triggers/Entry Trigger", -2)]
     [DisallowMultipleComponent]
     public class EntryTrigger : MonoBehaviour, ITrigger
     {

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Akela.Triggers
 {
-    [AddComponentMenu("Signals/Exit Trigger", -1)]
+    [AddComponentMenu("Triggers/Exit Trigger", -1)]
     [DisallowMultipleComponent]
     public class ExitTrigger : MonoBehaviour, ITrigger
     {
@@ -27,7 +27,7 @@ namespace Akela.Triggers
         private void OnDisable()
         {
             IsActive = true;
-            
+
             onDisable.Invoke();
         }
 

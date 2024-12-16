@@ -28,6 +28,16 @@ namespace Akela.Tools
             return Vector3.Dot((b - a).normalized, (c - b).normalized) < 0f && Vector3.Dot((a - b).normalized, (c - a).normalized) < 0f;
         }
 
+        public static Vector3 RotateAround(this Vector3 point, Vector3 pivot, Quaternion rotation)
+        {
+            return rotation * (point - pivot) + pivot;
+        }
+
+        public static Vector3 RotateAround(this Vector3 point, Vector3 pivot, Vector3 angles)
+        {
+            return RotateAround(point, pivot, Quaternion.Euler(angles));
+        }
+
         public static Vector3 Inverse(this Vector3 v)
         {
             return new(1f / v.x, 1f / v.y, 1f / v.z);

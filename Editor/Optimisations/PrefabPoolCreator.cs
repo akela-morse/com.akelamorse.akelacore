@@ -35,6 +35,7 @@ namespace AkelaEditor.Optimisations
             ));
 
             AssetDatabase.CreateAsset(prefabPool, path);
+            AssetDatabase.SaveAssets();
 
             Selection.activeObject = prefabPool;
         }

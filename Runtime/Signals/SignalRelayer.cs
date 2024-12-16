@@ -1,4 +1,5 @@
-﻿using Akela.Bridges;
+﻿using System;
+using Akela.Bridges;
 using UnityEngine;
 
 namespace Akela.Signals
@@ -12,7 +13,7 @@ namespace Akela.Signals
         [SerializeField] BridgedEvent<Signal> _onSignalReceived;
         #endregion
 
-        public Signal[] ListenFor => _signalsToListenFor;
+        public string[] ListenFor => Array.ConvertAll(_signalsToListenFor, x => x.name);
 
         public void OnSignalReceived(Signal signal)
         {

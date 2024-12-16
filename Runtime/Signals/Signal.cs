@@ -31,6 +31,8 @@ namespace Akela.Signals
 
         public void Dispatch(Object payload) => DispatchToListeners(payload);
 
+        public void Dispatch<T>(T payload) => DispatchToListeners(payload);
+
         private void OnEnable()
         {
             ComponentLoader<ISignalReceiver>.OnTypeFound += RefreshListenersList;
