@@ -13,7 +13,7 @@ namespace AkelaAnalyser
         const string UNITY_NAMESPACE = "UnityEngine";
         const string UNITYOBJECT_SYMBOL_NAME = "UnityEngine.Object";
         const string MONOBEHAVIOUR_SYMBOL_NAME = "UnityEngine.MonoBehaviour";
-        //const string SCRIPTABLEOBJECT_SYMBOL_NAME = "UnityEngine.ScriptableObject";
+        const string SCRIPTABLEOBJECT_SYMBOL_NAME = "UnityEngine.ScriptableObject";
         const string COMPONENT_SYMBOL_NAME = "UnityEngine.Component";
         const string SERIALIZEFIELD_SYMBOL_NAME = "UnityEngine.SerializeField";
         const string HIDEFIELD_SYMBOL_NAME = "UnityEngine.HideInInspector";
@@ -38,7 +38,7 @@ namespace AkelaAnalyser
             var symbols = receiver.Classes
                 .Select(x => (behaviour: x, semanticModel: context.Compilation.GetSemanticModel(x.SyntaxTree)))
                 .Select(x => (INamedTypeSymbol)x.semanticModel.GetDeclaredSymbol(x.behaviour))
-                .Where(x => SymbolIsInstantiableFrom(x, MONOBEHAVIOUR_SYMBOL_NAME));
+                .Where(x => x != null);
 
             foreach (var symbol in symbols)
             {
@@ -49,10 +49,16 @@ namespace AkelaAnalyser
                     switch (attr.AttributeClass?.ToDisplayString())
                     {
                         case SINGLETON_SYMBOL_NAME:
+                            if (!SymbolIsInstantiableFrom(symbol, MONOBEHAVIOUR_SYMBOL_NAME))
+                                continue;
+
                             context.AddSource($"{symbol.Name}_singleton.g.cs", SourceText.From(GenerateSingleton(symbol), Encoding.UTF8));
                             break;
 
                         case DEPENDENCY_SYMBOL_NAME:
+                            if (!SymbolIsInstantiableFrom(symbol, MONOBEHAVIOUR_SYMBOL_NAME))
+                                continue;
+
                             var dependencyContainerType = attr.ConstructorArguments.Length > 0 ? attr.ConstructorArguments[0].Value as INamedTypeSymbol : null;
                             var sourceString = GenerateDependencies(context, symbol, dependencyContainerType);
 
@@ -63,10 +69,16 @@ namespace AkelaAnalyser
                             break;
 
                         case MONITOR_SYMBOL_NAME:
+                            if (!SymbolIsInstantiableFrom(symbol, MONOBEHAVIOUR_SYMBOL_NAME))
+                                continue;
+
                             context.AddSource($"{symbol.Name}_fieldMonitoring.g.cs", SourceText.From(GenerateMonitoringHash(symbol), Encoding.UTF8));
                             break;
-                        
+
                         case HIDESCRIPTFIELD_SYMBOL_NAME:
+                            if (!SymbolIsInstantiableFrom(symbol, MONOBEHAVIOUR_SYMBOL_NAME, SCRIPTABLEOBJECT_SYMBOL_NAME))
+                                continue;
+
                             context.AddSource($"{symbol.Name}_hideScriptFieldEditor.g.cs", SourceText.From(GenerateHideScriptFieldEditor(symbol), Encoding.UTF8));
                             break;
                     }
@@ -335,7 +347,7 @@ using UnityEditor;
 
             return source.ToString();
         }
-        
+
         private static void AppendClassHeader(StringBuilder source, INamedTypeSymbol symbol, params string[] additionalInterfaces)
         {
             var namespaceName = symbol.ContainingNamespace.ToDisplayString();
@@ -378,7 +390,7 @@ using UnityEditor;
                 );
             }
         }
-        
+
         private static void AppendEditorClassHeader(StringBuilder source, INamedTypeSymbol symbol, params string[] additionalInterfaces)
         {
             var namespaceName = symbol.ContainingNamespace.ToDisplayString();
@@ -407,14 +419,14 @@ using UnityEditor;
         #endregion
 
         #region Tools
-        private static bool SymbolIsInstantiableFrom(INamedTypeSymbol classSymbol, string baseClass)
+        private static bool SymbolIsInstantiableFrom(INamedTypeSymbol classSymbol, params string[] baseClass)
         {
             var isValidType = false;
             var baseType = classSymbol.BaseType;
 
             while (baseType != null && !isValidType)
             {
-                if (baseType.ToDisplayString() == baseClass)
+                if (baseClass.Contains(baseType.ToDisplayString()))
                     isValidType = true;
                 else
                     baseType = baseType.BaseType;
