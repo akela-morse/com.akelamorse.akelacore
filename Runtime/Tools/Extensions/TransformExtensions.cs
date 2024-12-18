@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using UnityEngine;
 
 namespace Akela.Tools
@@ -63,6 +65,54 @@ namespace Akela.Tools
         {
             transform.localScale = Vector3.one;
             transform.localScale = new Vector3(globalScale.x / transform.lossyScale.x, globalScale.y / transform.lossyScale.y, globalScale.z / transform.lossyScale.z);
+        }
+
+        public static Vector3 GuessHeading(this Transform transform)
+        {
+            return GuessHeading(transform, transform.root);
+        }
+
+        public static Vector3 GuessUp(this Transform transform)
+        {
+            return GuessUp(transform, transform.root);
+        }
+
+        public static Vector3 GuessRight(this Transform transform)
+        {
+            return GuessRight(transform, transform.root);
+        }
+
+        public static Vector3 GuessHeading(this Transform transform, Transform reference)
+        {
+            return GetClosestToDirection(transform, reference.forward);
+        }
+
+        public static Vector3 GuessUp(this Transform transform, Transform reference)
+        {
+            return GetClosestToDirection(transform, reference.up);
+        }
+
+        public static Vector3 GuessRight(this Transform transform, Transform reference)
+        {
+            return GetClosestToDirection(transform, reference.right);
+        }
+
+        [SuppressMessage("ReSharper", "CompareOfFloatsByEqualityOperator")]
+        private static Vector3 GetClosestToDirection(Transform transform, Vector3 direction)
+        {
+            var directions = new List<Vector3>
+            {
+                transform.right,
+                transform.up,
+                transform.forward,
+                -transform.right,
+                -transform.up,
+                -transform.forward
+            };
+
+            directions.Sort((a, b) => Vector3.Angle(b, direction).CompareTo(Vector3.Angle(a, direction)));
+
+            return directions.First();
         }
     }
 }
