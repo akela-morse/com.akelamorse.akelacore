@@ -19,7 +19,7 @@ namespace Akela.Tools
 
             var interpolatedNormal = n0 * hit.barycentricCoordinate.x + n1 * hit.barycentricCoordinate.y + n2 * hit.barycentricCoordinate.z;
 
-            hit.normal = interpolatedNormal.normalized;
+            hit.normal = hit.transform.TransformDirection(interpolatedNormal.normalized);
         }
     }
 }

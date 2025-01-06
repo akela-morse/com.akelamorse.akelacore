@@ -72,7 +72,7 @@ namespace Akela.Animation
 
         public readonly bool IsValid()
         {
-            return constrainedObject != null;
+            return constrainedObject;
         }
 
         public void SetDefaultValues()

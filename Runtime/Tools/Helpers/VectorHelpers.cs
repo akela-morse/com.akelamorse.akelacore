@@ -18,5 +18,23 @@ namespace Akela.Tools
         {
             return Vector3.Scale(a, b.Inverse());
         }
+
+        public static Vector2 Rotate2D(Vector2 v, float degrees)
+        {
+            var sin = Mathf.Sin(degrees * Mathf.Deg2Rad);
+            var cos = Mathf.Cos(degrees * Mathf.Deg2Rad);
+
+            var tx = v.x;
+            var ty = v.y;
+            v.x = cos * tx - sin * ty;
+            v.y = sin * tx + cos * ty;
+
+            return v;
+        }
+
+        public static Vector2Int Rotate2D(Vector2Int v, float degrees)
+        {
+            return Vector2Int.RoundToInt(Rotate2D((Vector2)v, degrees));
+        }
     }
 }

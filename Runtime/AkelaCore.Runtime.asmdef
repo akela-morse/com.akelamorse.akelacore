@@ -13,7 +13,8 @@
         "GUID:15fc0a57446b3144c949da3e2b9737a9",
         "GUID:57a6d82589ae03c4cabdc058f719f231",
         "GUID:0c752da273b17c547ae705acf0f2adf2",
-        "GUID:de13f8b1675b449e6a6af1cc0f7842ec"
+        "GUID:de13f8b1675b449e6a6af1cc0f7842ec",
+        "GUID:4c25c05f410a3a447a75c3b0909152ef"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -62,6 +63,11 @@
             "name": "com.kybernetik.ultevents",
             "expression": "1.0.0",
             "define": "AKELA_ULTEVENTS"
+        },
+        {
+            "name": "com.kybernetik.animancer",
+            "expression": "8.0.0",
+            "define": "AKELA_ANIMANCER"
         }
     ],
     "noEngineReferences": false
