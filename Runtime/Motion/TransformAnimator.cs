@@ -18,13 +18,13 @@ namespace Akela.Motion
         #endregion
 
         private sbyte _animationDirection = 1;
-        
+
         public TransformAnimationPlayingState PlayingState { get; private set; } = TransformAnimationPlayingState.Stopped;
         public float Time { get; private set; }
 
         public TransformAnimation TransformAnimation => _transformAnimation;
         public float Duration => _transformAnimation.Duration();
-        
+
 #if UNITY_EDITOR
         public bool ControlledByEditor { get; set; }
 #endif
@@ -83,9 +83,9 @@ namespace Akela.Motion
         #region Component Messages
         private void Start()
         {
-            if (!_transformAnimation)
+            if (!_transformAnimation || !_transformAnimation.IsValid)
                 return;
-            
+
             _transformAnimation.GetFirstKey(out var pos, out var rot, out var scale);
             transform.localPosition = pos;
             transform.localEulerAngles = rot;
@@ -105,8 +105,8 @@ namespace Akela.Motion
             if (!Application.isPlaying && !ControlledByEditor)
                 Start();
 #endif
-            
-            if (PlayingState != TransformAnimationPlayingState.Playing || !_transformAnimation)
+
+            if (PlayingState != TransformAnimationPlayingState.Playing || !_transformAnimation || !_transformAnimation.IsValid)
                 return;
 
             Time += _animationDirection * deltaTime * _speedMultiplier;
@@ -123,11 +123,11 @@ namespace Akela.Motion
             transform.localEulerAngles = rot;
             transform.localScale = scale;
         }
-        
+
 #if UNITY_EDITOR
         private void OnRenderObject()
         {
-            if (Application.isPlaying || PlayingState != TransformAnimationPlayingState.Playing || !_transformAnimation)
+            if (Application.isPlaying || PlayingState != TransformAnimationPlayingState.Playing || !_transformAnimation || !_transformAnimation.IsValid)
                 return;
 
             UnityEditor.EditorApplication.QueuePlayerLoopUpdate();

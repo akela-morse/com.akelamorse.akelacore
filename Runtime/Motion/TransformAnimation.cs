@@ -16,21 +16,23 @@ namespace Akela.Motion
             public float duration;
             public AnimationCurve fromToCurve;
         }
-        
+
         #region Component Fields
         public TransformAnimationKey[] keys;
         #endregion
 
+        public bool IsValid => keys.Length > 0;
+
         public float Duration()
         {
             var totalDuration = 0f;
-            
+
             foreach (var key in keys)
                 totalDuration += key.duration;
-            
+
             return totalDuration;
         }
-        
+
         /// <summary>
         /// Evaluate the transform animation at the given time
         /// </summary>
@@ -44,10 +46,10 @@ namespace Akela.Motion
             position = Vector3.zero;
             eulerRotation = Vector3.zero;
             scale = Vector3.one;
-            
+
             if (time < 0f)
                 return false;
-            
+
             var additionalTime = 0f;
 
             foreach (var key in keys)
@@ -59,12 +61,12 @@ namespace Akela.Motion
                     position = key.position;
                     eulerRotation = key.rotation;
                     scale = key.scale;
-                    
+
                     continue;
                 }
 
                 var delta = additionalTime - time;
-                var percent = 1f - (delta / key.duration);
+                var percent = 1f - delta / key.duration;
                 var value = key.fromToCurve.Evaluate(percent);
 
                 position = Vector3.Lerp(position, key.position, value);
@@ -79,29 +81,13 @@ namespace Akela.Motion
 
         public void GetFirstKey(out Vector3 position, out Vector3 eulerRotation, out Vector3 scale)
         {
-            if (keys.Length == 0)
-            {
-                position = Vector3.zero;
-                eulerRotation = Vector3.zero;
-                scale = Vector3.one;
-                return;
-            }
-            
             position = keys[0].position;
             eulerRotation = keys[0].rotation;
             scale = keys[0].scale;
         }
-        
+
         public void GetLastKey(out Vector3 position, out Vector3 eulerRotation, out Vector3 scale)
         {
-            if (keys.Length == 0)
-            {
-                position = Vector3.zero;
-                eulerRotation = Vector3.zero;
-                scale = Vector3.one;
-                return;
-            }
-            
             position = keys[^1].position;
             eulerRotation = keys[^1].rotation;
             scale = keys[^1].scale;
