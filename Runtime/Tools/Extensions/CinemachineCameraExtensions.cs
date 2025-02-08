@@ -5,22 +5,22 @@ using static Unity.Cinemachine.InputAxisControllerBase<Unity.Cinemachine.Cinemac
 
 namespace Akela.Tools
 {
+    public readonly struct CinemachineAxisControllers
+    {
+        public readonly Controller orbitX;
+        public readonly Controller orbitY;
+        public readonly Controller orbitScale;
+
+        public CinemachineAxisControllers(Controller orbitX, Controller orbitY, Controller orbitScale)
+        {
+            this.orbitX = orbitX;
+            this.orbitY = orbitY;
+            this.orbitScale = orbitScale;
+        }
+    }
+
     public static class CinemachineCameraExtensions
     {
-        public readonly struct CinemachineAxisControllers
-        {
-            public readonly Controller orbitX;
-            public readonly Controller orbitY;
-            public readonly Controller orbitScale;
-
-            public CinemachineAxisControllers(Controller orbitX, Controller orbitY, Controller orbitScale)
-            {
-                this.orbitX = orbitX;
-                this.orbitY = orbitY;
-                this.orbitScale = orbitScale;
-            }
-        }
-
         public static CinemachineAxisControllers GetControls(this CinemachineInputAxisController axisController)
         {
             Controller orbitX = null, orbitY = null, orbitScale = null;
