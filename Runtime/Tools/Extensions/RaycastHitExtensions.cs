@@ -6,7 +6,7 @@ namespace Akela.Tools
     {
         public static void InterpolateNormalIfNecessary(this ref RaycastHit hit)
         {
-            if (hit.collider is not MeshCollider mc || !mc.sharedMesh || mc.convex)
+            if (hit.collider is not MeshCollider mc || !mc.sharedMesh || !mc.sharedMesh.isReadable || mc.convex)
                 return;
 
             var mesh = mc.sharedMesh;
