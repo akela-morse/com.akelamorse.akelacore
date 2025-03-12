@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Akela.ExtendedPhysics
 {
-    [AddComponentMenu("New script/Sub Collider")]
+    [AddComponentMenu("/")]
     public sealed class SubCollider : MonoBehaviour
     {
         public Collider colliderComponent;
