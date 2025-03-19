@@ -78,19 +78,19 @@ namespace Akela.Tools
             public Vector3 LocalFrontTopRight { get; private set; }
             public Vector3 LocalFrontBottomLeft { get; private set; }
             public Vector3 LocalFrontBottomRight { get; private set; }
-            public readonly Vector3 LocalBackTopLeft { get { return -LocalFrontBottomRight; } }
-            public readonly Vector3 LocalBackTopRight { get { return -LocalFrontBottomLeft; } }
-            public readonly Vector3 LocalBackBottomLeft { get { return -LocalFrontTopRight; } }
-            public readonly Vector3 LocalBackBottomRight { get { return -LocalFrontTopLeft; } }
+            public readonly Vector3 LocalBackTopLeft => -LocalFrontBottomRight;
+            public readonly Vector3 LocalBackTopRight => -LocalFrontBottomLeft;
+            public readonly Vector3 LocalBackBottomLeft => -LocalFrontTopRight;
+            public readonly Vector3 LocalBackBottomRight => -LocalFrontTopLeft;
 
-            public readonly Vector3 FrontTopLeft { get { return LocalFrontTopLeft + Origin; } }
-            public readonly Vector3 FrontTopRight { get { return LocalFrontTopRight + Origin; } }
-            public readonly Vector3 FrontBottomLeft { get { return LocalFrontBottomLeft + Origin; } }
-            public readonly Vector3 FrontBottomRight { get { return LocalFrontBottomRight + Origin; } }
-            public readonly Vector3 BackTopLeft { get { return LocalBackTopLeft + Origin; } }
-            public readonly Vector3 BackTopRight { get { return LocalBackTopRight + Origin; } }
-            public readonly Vector3 BackBottomLeft { get { return LocalBackBottomLeft + Origin; } }
-            public readonly Vector3 BackBottomRight { get { return LocalBackBottomRight + Origin; } }
+            public readonly Vector3 FrontTopLeft => LocalFrontTopLeft + Origin;
+            public readonly Vector3 FrontTopRight => LocalFrontTopRight + Origin;
+            public readonly Vector3 FrontBottomLeft => LocalFrontBottomLeft + Origin;
+            public readonly Vector3 FrontBottomRight => LocalFrontBottomRight + Origin;
+            public readonly Vector3 BackTopLeft => LocalBackTopLeft + Origin;
+            public readonly Vector3 BackTopRight => LocalBackTopRight + Origin;
+            public readonly Vector3 BackBottomLeft => LocalBackBottomLeft + Origin;
+            public readonly Vector3 BackBottomRight => LocalBackBottomRight + Origin;
 
             public Vector3 Origin { get; private set; }
 
@@ -134,7 +134,7 @@ namespace Akela.Tools
 
         private static Vector3 RotatePointAroundPivot(Vector3 point, Vector3 pivot, Quaternion rotation)
         {
-            Vector3 direction = point - pivot;
+            var direction = point - pivot;
             return pivot + rotation * direction;
         }
     }
