@@ -49,7 +49,7 @@ namespace AkelaAnalyser
                     switch (attr.AttributeClass?.ToDisplayString())
                     {
                         case SINGLETON_SYMBOL_NAME:
-                            if (!SymbolIsInstantiableFrom(symbol, MONOBEHAVIOUR_SYMBOL_NAME))
+                            if (!SymbolIsInstantiableFrom(symbol, MONOBEHAVIOUR_SYMBOL_NAME) || symbol.IsAbstract)
                                 continue;
 
                             context.AddSource($"{symbol.Name}_singleton.g.cs", SourceText.From(GenerateSingleton(symbol), Encoding.UTF8));
@@ -69,7 +69,7 @@ namespace AkelaAnalyser
                             break;
 
                         case MONITOR_SYMBOL_NAME:
-                            if (!SymbolIsInstantiableFrom(symbol, MONOBEHAVIOUR_SYMBOL_NAME))
+                            if (!SymbolIsInstantiableFrom(symbol, MONOBEHAVIOUR_SYMBOL_NAME) || symbol.IsAbstract)
                                 continue;
 
                             context.AddSource($"{symbol.Name}_fieldMonitoring.g.cs", SourceText.From(GenerateMonitoringHash(symbol), Encoding.UTF8));
@@ -167,7 +167,7 @@ namespace AkelaAnalyser
 
             source.Append(
                 $@"
-        [SerializeField, HideInInspector] {dependencyContainerType.ToDisplayString()} dep;
+        [SerializeField, HideInInspector] protected {dependencyContainerType.ToDisplayString()} dep;
         
         public void OnAfterDeserialize() {{ }}
         

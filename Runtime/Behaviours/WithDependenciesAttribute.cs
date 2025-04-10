@@ -2,7 +2,7 @@
 
 namespace Akela.Behaviours
 {
-    [AttributeUsage(AttributeTargets.Class, Inherited = true, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
     public sealed class WithDependenciesAttribute : Attribute
     {
         private readonly Type _dependenciesContainer;

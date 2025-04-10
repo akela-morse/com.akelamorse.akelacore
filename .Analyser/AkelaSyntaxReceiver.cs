@@ -20,7 +20,6 @@ namespace AkelaAnalyser
             if (
                 !classDeclaration.Modifiers.Any(x => x.IsKind(SyntaxKind.PublicKeyword)) || // Public
                 !classDeclaration.Modifiers.All(x => !x.IsKind(SyntaxKind.StaticKeyword)) || // Non-static
-                !classDeclaration.Modifiers.All(x => !x.IsKind(SyntaxKind.AbstractKeyword)) || // Non-abstract
                 !(classDeclaration.TypeParameterList is null) // Non-generic
             )
             {
