@@ -56,8 +56,13 @@ namespace AkelaEditor.Tools
 
         static DisableUnwantedGizmosForInternalComponents()
         {
+#if UNITY_6000_OR_NEWER
+            foreach (var type in _disableIconsForTypes)
+                setIconEnabled.Invoke(null, new object[] { MONO_BEHAVIOR_CLASS_ID, type.FullName, 0 });
+#else
             foreach (var type in _disableIconsForTypes)
                 setIconEnabled.Invoke(null, new object[] { MONO_BEHAVIOR_CLASS_ID, type.Name, 0 });
+#endif
         }
     }
 }
