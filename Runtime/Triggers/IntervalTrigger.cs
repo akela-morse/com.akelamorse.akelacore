@@ -5,8 +5,9 @@ using UnityEngine;
 
 namespace Akela.Triggers
 {
-    [AddComponentMenu("Triggers/Interval Trigger", 7)]
     [HideScriptField]
+    [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/IntervalTrigger Icon.png")]
+    [AddComponentMenu("Triggers/Interval Trigger", 7)]
     public class IntervalTrigger : MonoBehaviour, ITrigger
     {
         #region Component Fields

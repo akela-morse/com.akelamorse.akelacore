@@ -5,9 +5,10 @@ using UnityEngine;
 
 namespace Akela.Triggers
 {
-    [AddComponentMenu("Triggers/Camera Volume Trigger", 3)]
     [HideScriptField]
     [RequireComponent(typeof(TriggerCluster))]
+    [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/CameraVolumeTrigger Icon.png")]
+    [AddComponentMenu("Triggers/Camera Volume Trigger", 3)]
     public class CameraVolumeTrigger : MonoBehaviour, ITrigger
     {
         #region Component Fields

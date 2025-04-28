@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace Akela.ExtendedPhysics
 {
+    [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/Raycaster Icon.png")]
     [AddComponentMenu("Physics/Raycaster", 100)]
     [TickOptions(TickUpdateType.None, TickUpdateType.Update, TickUpdateType.LateUpdate, TickUpdateType.FixedUpdate, TickUpdateType.AnimatorMove)]
     public class Raycaster : TickBehaviour

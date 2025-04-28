@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Akela.Signals
 {
+    [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/SignalRelayer Icon.png")]
     [AddComponentMenu("Signals/Signal Relayer", 0)]
     public class SignalRelayer : MonoBehaviour, ISignalReceiver
     {

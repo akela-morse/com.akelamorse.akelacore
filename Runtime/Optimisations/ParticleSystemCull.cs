@@ -3,8 +3,9 @@ using UnityEngine;
 
 namespace Akela.Optimisations
 {
-    [AddComponentMenu("Optimisation/Particle System Cull", 3)]
     [DisallowMultipleComponent, RequireComponent(typeof(ParticleSystem))]
+    [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/ParticleSystemCull Icon.png")]
+    [AddComponentMenu("Optimisation/Particle System Cull", 3)]
     public class ParticleSystemCull : MonoBehaviour, ICullingMessageReceiver
     {
         private struct ParticleSystemState

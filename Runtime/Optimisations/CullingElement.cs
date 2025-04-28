@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace Akela.Optimisations
 {
+    [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/CullingElement Icon.png")]
     [AddComponentMenu("Optimisation/Culling Element", 1)]
     public class CullingElement : TickBehaviour, ICullingElement
     {

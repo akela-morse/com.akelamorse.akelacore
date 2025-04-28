@@ -2,8 +2,9 @@
 
 namespace Akela.Optimisations
 {
-    [AddComponentMenu("Optimisation/Component Cull", 4)]
     [RequireComponent(typeof(CullingElement))]
+    [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/ComponentCull Icon.png")]
+    [AddComponentMenu("Optimisation/Component Cull", 4)]
     public class ComponentCull : MonoBehaviour, ICullingMessageReceiver
     {
         #region Component Fields

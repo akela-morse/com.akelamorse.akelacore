@@ -6,8 +6,9 @@ using UnityEngine.Pool;
 
 namespace Akela.Optimisations
 {
-    [AddComponentMenu("Optimisation/Pooled Prefab", 4)]
     [DisallowMultipleComponent]
+    [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/PooledPrefab Icon.png")]
+    [AddComponentMenu("Optimisation/Pooled Prefab", 4)]
     public class PooledPrefab : MonoBehaviour, ISerializationCallbackReceiver, ICullingMessageReceiver
     {
         private enum ReleaseBehaviour

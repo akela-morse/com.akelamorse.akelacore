@@ -3,9 +3,10 @@ using UnityEngine;
 
 namespace Akela.Motion
 {
-    [AddComponentMenu("Motion/Transform Animator", 3)]
-    [TickOptions(TickUpdateType.Update, TickUpdateType.LateUpdate, TickUpdateType.FixedUpdate, TickUpdateType.AnimatorMove)]
     [HideScriptField, ExecuteInEditMode, DisallowMultipleComponent]
+    [TickOptions(TickUpdateType.Update, TickUpdateType.LateUpdate, TickUpdateType.FixedUpdate, TickUpdateType.AnimatorMove)]
+    [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/TransformAnimator Icon.png")]
+    [AddComponentMenu("Motion/Transform Animator", 3)]
     public class TransformAnimator : TickBehaviour
     {
         #region Component Fields

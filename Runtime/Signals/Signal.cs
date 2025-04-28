@@ -6,6 +6,7 @@ using Object = UnityEngine.Object;
 
 namespace Akela.Signals
 {
+    [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/SignalAsset Icon.png")]
     [CreateAssetMenu(fileName = "New Signal", menuName = "Signal", order = -50)]
     public class Signal : ScriptableObject
     {

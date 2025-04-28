@@ -4,8 +4,9 @@ using UnityEngine;
 
 namespace Akela.Triggers
 {
-    [AddComponentMenu("Triggers/Trigger Cluster", 0)]
     [DisallowMultipleComponent, HideScriptField]
+    [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/TriggerCluster Icon.png")]
+    [AddComponentMenu("Triggers/Trigger Cluster", 0)]
     public class TriggerCluster : MonoBehaviour
     {
         private Collider[] _colliders;
@@ -58,7 +59,7 @@ namespace Akela.Triggers
 
             return candidate;
         }
-        
+
         public void RefreshBounds()
         {
             _bounds = _colliders[0].bounds;

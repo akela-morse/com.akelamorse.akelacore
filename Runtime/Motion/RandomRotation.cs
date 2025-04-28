@@ -3,9 +3,10 @@ using UnityEngine;
 
 namespace Akela.Motion
 {
-    [AddComponentMenu("Motion/Random Rotation", 6)]
-    [TickOptions(TickUpdateType.Update, TickUpdateType.LateUpdate, TickUpdateType.FixedUpdate, TickUpdateType.AnimatorMove)]
     [HideScriptField, DisallowMultipleComponent]
+    [TickOptions(TickUpdateType.Update, TickUpdateType.LateUpdate, TickUpdateType.FixedUpdate, TickUpdateType.AnimatorMove)]
+    [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/RandomRotation Icon.png")]
+    [AddComponentMenu("Motion/Random Rotation", 6)]
     public class RandomRotation : TickBehaviour
     {
         #region Component Fields

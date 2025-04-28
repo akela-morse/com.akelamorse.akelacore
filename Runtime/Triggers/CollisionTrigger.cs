@@ -7,8 +7,9 @@ using UnityEngine;
 
 namespace Akela.Triggers
 {
-    [AddComponentMenu("Triggers/Collision Trigger", 2)]
     [HideScriptField]
+    [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/CollisionTrigger Icon.png")]
+    [AddComponentMenu("Triggers/Collision Trigger", 2)]
     public class CollisionTrigger : MonoBehaviour, ITrigger
     {
         #region Component Fields
@@ -59,7 +60,7 @@ namespace Akela.Triggers
         {
             if (!CheckConditions(collision))
                 return;
-            
+
             _triggered = true;
             IsActive = true;
 

@@ -68,7 +68,9 @@ namespace Akela.Animation
         public override void Destroy(ExtractTransformConstraintJob job) { }
     }
 
-    [AddComponentMenu("Animation Rigging/Extract Transform Constraint"), DisallowMultipleComponent]
+    [DisallowMultipleComponent]
+    [Icon("Packages/com.unity.animation.rigging/Editor/Icons/RuntimeRig@128.png")]
+    [AddComponentMenu("Animation Rigging/Extract Transform Constraint")]
     public class ExtractTransformConstraint : RigConstraint<ExtractTransformConstraintJob, ExtractTransformConstraintData, ExtractTransformConstraintJobBinder> { }
 }
 #endif

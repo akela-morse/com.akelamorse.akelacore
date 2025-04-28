@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Akela.Triggers
 {
+    [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/CameraLookTrigger Icon.png")]
     [AddComponentMenu("Triggers/Camera Look Trigger", 4)]
     public class CameraLookTrigger : MonoBehaviour, ITrigger
     {
@@ -48,7 +49,7 @@ namespace Akela.Triggers
             var state = true;
 
             var cameraToTarget = transform.position - _camera.transform.position;
-            
+
             if (_proximity >= 0f)
                 state &= cameraToTarget.sqrMagnitude <= _proximity * _proximity;
 
@@ -63,7 +64,7 @@ namespace Akela.Triggers
             if (IsActive)
             {
                 _triggered = true;
-                
+
                 _onActive.Invoke();
             }
             else

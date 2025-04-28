@@ -2,6 +2,7 @@
 
 namespace Akela.Globals
 {
+    [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/CameraSetter Icon.png")]
     [AddComponentMenu("Globals/Camera Reference Setter", 2)]
     public sealed class CameraReferenceSetter : ReferenceSetterBase<GlobalCameraReference, Camera>
     {

@@ -3,6 +3,7 @@ using UnityEngine.Pool;
 
 namespace Akela.Optimisations
 {
+    [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/PrefabPoolAsset Icon.png")]
     public class PrefabPool : ScriptableObject
     {
         #region Component Fields

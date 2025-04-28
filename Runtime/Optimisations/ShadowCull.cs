@@ -9,8 +9,9 @@ using UnityEngine.Rendering;
 
 namespace Akela.Optimisations
 {
-    [AddComponentMenu("Optimisation/Shadow Cull", 2)]
     [DisallowMultipleComponent, RequireComponent(typeof(Light))]
+    [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/ShadowCull Icon.png")]
+    [AddComponentMenu("Optimisation/Shadow Cull", 2)]
     public class ShadowCull : MonoBehaviour, ICullingMessageReceiver
     {
 #if AKELA_URP

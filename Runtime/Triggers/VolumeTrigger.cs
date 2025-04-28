@@ -7,8 +7,9 @@ using UnityEngine;
 
 namespace Akela.Triggers
 {
-    [AddComponentMenu("Triggers/Volume Trigger", 1)]
     [HideScriptField]
+    [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/VolumeTrigger Icon.png")]
+    [AddComponentMenu("Triggers/Volume Trigger", 1)]
     public class VolumeTrigger : MonoBehaviour, ITrigger
     {
         #region Component Fields

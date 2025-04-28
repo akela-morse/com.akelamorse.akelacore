@@ -6,6 +6,7 @@ using UnityEngine;
 namespace Akela.ExtendedPhysics
 {
     [GenerateHashForEveryField]
+    [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/TorusCollider Icon.png")]
     [AddComponentMenu("Physics/Torus Collider", 101)]
     public partial class TorusCollider : CustomCollider<CapsuleCollider>
     {

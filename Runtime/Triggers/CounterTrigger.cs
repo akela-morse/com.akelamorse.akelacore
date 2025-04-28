@@ -2,12 +2,12 @@
 using Akela.Behaviours;
 using Akela.Bridges;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Akela.Triggers
 {
-    [AddComponentMenu("Triggers/Counter Trigger", 8)]
     [HideScriptField]
+    [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/CounterTrigger Icon.png")]
+    [AddComponentMenu("Triggers/Counter Trigger", 8)]
     public class CounterTrigger : MonoBehaviour, ITrigger
     {
         private enum CounterOperator

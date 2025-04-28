@@ -1,11 +1,13 @@
-using Akela.Globals;
 using System.Collections;
+using Akela.Globals;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Akela.Optimisations
 {
-    [AddComponentMenu("Optimisation/Culling System", 0)]
     [DisallowMultipleComponent]
+    [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/CullingSystem Icon.png")]
+    [AddComponentMenu("Optimisation/Culling System", 0)]
     public class CullingSystem : MonoBehaviour
     {
         private const int MAX_ELEMENT_COUNT = 30;
@@ -71,6 +73,10 @@ namespace Akela.Optimisations
                 targetCamera = _targetCamera ? Camera.main : _targetCamera,
                 onStateChanged = OnStateChanged
             };
+
+#if UNITY_EDITOR
+            Assert.IsNotNull(_cullingGroup.targetCamera);
+#endif
 
             _cullingGroup.SetBoundingSpheres(_boundingSpheres);
             _cullingGroup.SetBoundingSphereCount(_elementCount);
@@ -141,7 +147,7 @@ namespace Akela.Optimisations
 
             for (var i = 0; i < _elementCount; ++i)
                 _elements[i].InitialState(_cullingGroup.IsVisible(i), _cullingGroup.GetDistance(i));
-}
+        }
         #endregion
     }
 }

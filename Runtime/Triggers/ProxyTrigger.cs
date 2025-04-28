@@ -4,8 +4,9 @@ using UnityEngine;
 
 namespace Akela.Triggers
 {
-    [AddComponentMenu("Triggers/Proxy Trigger", 11)]
     [HideScriptField]
+    [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/ProxyTrigger Icon.png")]
+    [AddComponentMenu("Triggers/Proxy Trigger", 11)]
     public class ProxyTrigger : MonoBehaviour, ITrigger
     {
         [SerializeField] MonoBehaviour _proxy;

@@ -2,13 +2,13 @@
 using System.Linq;
 using Akela.Behaviours;
 using Akela.Bridges;
-using Akela.Tools;
 using UnityEngine;
 
 namespace Akela.Triggers
 {
-    [AddComponentMenu("Triggers/Combination Trigger", 9)]
     [HideScriptField]
+    [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/CombinationTrigger Icon.png")]
+    [AddComponentMenu("Triggers/Combination Trigger", 9)]
     public class CombinationTrigger : MonoBehaviour, ITrigger
     {
         #region Component Fields
@@ -22,7 +22,7 @@ namespace Akela.Triggers
         private string _currentCombination = string.Empty;
 
         public bool IsActive { get; private set; }
-        
+
         public void AddListener(Action callback, TriggerEventType eventType = TriggerEventType.OnBecomeActive)
         {
             if (eventType == TriggerEventType.OnBecomeInactive)

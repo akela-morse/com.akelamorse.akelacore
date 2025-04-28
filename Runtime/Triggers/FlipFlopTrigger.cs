@@ -5,8 +5,9 @@ using UnityEngine;
 
 namespace Akela.Triggers
 {
-    [AddComponentMenu("Triggers/Flip-Flop Trigger", 10)]
     [HideScriptField]
+    [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/FlipFlopTrigger Icon.png")]
+    [AddComponentMenu("Triggers/Flip-Flop Trigger", 10)]
     public class FlipFlopTrigger : MonoBehaviour, ITrigger
     {
         #region Component Fields

@@ -105,7 +105,9 @@ namespace Akela.Animation
         public override void Destroy(NoiseJob job) { }
     }
 
-    [AddComponentMenu("Animation Rigging/Noise Constraint"), DisallowMultipleComponent]
+    [DisallowMultipleComponent]
+    [Icon("Packages/com.unity.animation.rigging/Editor/Icons/RuntimeRig@128.png")]
+    [AddComponentMenu("Animation Rigging/Noise Constraint")]
     public class NoiseConstraint : RigConstraint<NoiseJob, NoiseData, NoiseBinder> { }
 }
 #endif

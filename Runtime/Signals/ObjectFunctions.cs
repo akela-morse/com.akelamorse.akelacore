@@ -4,8 +4,9 @@ using UnityEngine;
 
 namespace Akela.Signals
 {
-    [AddComponentMenu("Signals/Object Functions", 4)]
     [DisallowMultipleComponent]
+    [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/ObjectFunctions Icon.png")]
+    [AddComponentMenu("Signals/Object Functions", 4)]
     public class ObjectFunctions : MonoBehaviour, ISerializationCallbackReceiver
     {
         #region Component Fields

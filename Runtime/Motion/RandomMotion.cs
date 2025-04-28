@@ -4,9 +4,10 @@ using Random = UnityEngine.Random;
 
 namespace Akela.Motion
 {
-    [AddComponentMenu("Motion/Random Motion", 5)]
-    [TickOptions(TickUpdateType.Update, TickUpdateType.LateUpdate, TickUpdateType.FixedUpdate, TickUpdateType.AnimatorMove)]
     [DisallowMultipleComponent]
+    [TickOptions(TickUpdateType.Update, TickUpdateType.LateUpdate, TickUpdateType.FixedUpdate, TickUpdateType.AnimatorMove)]
+    [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/RandomMotion Icon.png")]
+    [AddComponentMenu("Motion/Random Motion", 5)]
     public class RandomMotion : TickBehaviour
     {
         #region Component Fields
@@ -45,7 +46,7 @@ namespace Akela.Motion
 
         private void SetPos(float deltaTime)
         {
-            var time = this._updateType == TickUpdateType.FixedUpdate ? Time.fixedTime : Time.time;
+            var time = _updateType == TickUpdateType.FixedUpdate ? Time.fixedTime : Time.time;
 
             if (time - _jitterTime > 1f / _frequency)
             {

@@ -4,8 +4,9 @@ using UnityEngine;
 
 namespace Akela.Triggers
 {
-    [AddComponentMenu("Triggers/Entry Trigger", -2)]
     [DisallowMultipleComponent]
+    [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/EntryTrigger Icon.png")]
+    [AddComponentMenu("Triggers/Entry Trigger", -2)]
     public class EntryTrigger : MonoBehaviour, ITrigger
     {
         #region Component Fields

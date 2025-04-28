@@ -3,9 +3,10 @@ using UnityEngine;
 
 namespace Akela.Motion
 {
-    [AddComponentMenu("Motion/Continuous Rotation", 4)]
-    [TickOptions(TickUpdateType.Update, TickUpdateType.LateUpdate, TickUpdateType.FixedUpdate, TickUpdateType.AnimatorMove)]
     [HideScriptField, DisallowMultipleComponent]
+    [TickOptions(TickUpdateType.Update, TickUpdateType.LateUpdate, TickUpdateType.FixedUpdate, TickUpdateType.AnimatorMove)]
+    [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/ContinuousRotation Icon.png")]
+    [AddComponentMenu("Motion/Continuous Rotation", 4)]
     public class ContinuousRotation : TickBehaviour
     {
         [SerializeField] Vector3 _speed;

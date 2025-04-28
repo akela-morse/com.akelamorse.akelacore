@@ -6,8 +6,9 @@ using UnityEngine;
 
 namespace Akela.Triggers
 {
-    [AddComponentMenu("Triggers/Delay Trigger", 6)]
     [HideScriptField]
+    [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/DelayTrigger Icon.png")]
+    [AddComponentMenu("Triggers/Delay Trigger", 6)]
     public class DelayTrigger : MonoBehaviour, ITrigger
     {
         #region Component Fields
@@ -25,7 +26,7 @@ namespace Akela.Triggers
         {
             if (eventType != TriggerEventType.OnBecomeActive)
                 return;
-            
+
             _onTimer.AddListener(() => callback());
         }
 

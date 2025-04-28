@@ -3,8 +3,9 @@ using UnityEngine;
 
 namespace Akela.Motion
 {
-    [AddComponentMenu("Motion/Transform Lock", 0)]
     [HideScriptField, ExecuteInEditMode, DisallowMultipleComponent]
+    [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/TransformLock Icon.png")]
+    [AddComponentMenu("Motion/Transform Lock", 0)]
     public class TransformLock : MonoBehaviour
     {
         #region Component Fields

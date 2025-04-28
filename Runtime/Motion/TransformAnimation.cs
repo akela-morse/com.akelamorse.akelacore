@@ -1,9 +1,9 @@
 ﻿using System;
-using Akela.Tools;
 using UnityEngine;
 
 namespace Akela.Motion
 {
+    [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/TransformAnimationAsset Icon.png")]
     [CreateAssetMenu(fileName = "New Transform Animation", menuName = "Animation/Transform Animation", order = 10)]
     public class TransformAnimation : ScriptableObject
     {

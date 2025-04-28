@@ -4,8 +4,9 @@ using UnityEngine;
 
 namespace Akela.Triggers
 {
-    [AddComponentMenu("Triggers/Exit Trigger", -1)]
     [DisallowMultipleComponent]
+    [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/ExitTrigger Icon.png")]
+    [AddComponentMenu("Triggers/Exit Trigger", -1)]
     public class ExitTrigger : MonoBehaviour, ITrigger
     {
         #region Component Fields

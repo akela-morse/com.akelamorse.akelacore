@@ -4,9 +4,10 @@ using UnityEngine;
 
 namespace Akela.Motion
 {
-    [AddComponentMenu("Motion/Transform Shift", 2)]
-    [TickOptions(TickUpdateType.Update, TickUpdateType.LateUpdate, TickUpdateType.FixedUpdate)]
     [HideScriptField, ExecuteInEditMode, DisallowMultipleComponent]
+    [TickOptions(TickUpdateType.Update, TickUpdateType.LateUpdate, TickUpdateType.FixedUpdate)]
+    [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/TransformLerp Icon.png")]
+    [AddComponentMenu("Motion/Transform Shift", 2)]
     public class TransformShift : TickBehaviour
     {
         #region Component Fields

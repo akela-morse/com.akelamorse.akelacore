@@ -6,8 +6,9 @@ using UnityEngine;
 
 namespace Akela.Triggers
 {
-    [AddComponentMenu("Triggers/Logic Trigger", 5)]
     [HideScriptField]
+    [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/LogicTrigger Icon.png")]
+    [AddComponentMenu("Triggers/Logic Trigger", 5)]
     public class LogicTrigger : MonoBehaviour, ITrigger, ISerializationCallbackReceiver
     {
         private enum LogicOperator
