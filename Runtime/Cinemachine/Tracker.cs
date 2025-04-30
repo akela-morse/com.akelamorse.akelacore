@@ -28,6 +28,9 @@ namespace Akela.Cinemachine
 
         [InternalMethod]
         private delegate void ForceCameraPositionDelegate(CinemachineComponentBase component, BindingMode bindingMode, Vector3 pos, Quaternion rot, Vector3 cameraOffsetLocalSpace);
+
+        [InternalMethod]
+        private delegate Quaternion GetReferenceOrientationDelegate(CinemachineComponentBase component, BindingMode bindingMode, Vector3 worldUp);
     }
 }
 #endif
