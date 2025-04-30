@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using UnityEngine;
 
 namespace Akela.Tools
@@ -8,13 +7,13 @@ namespace Akela.Tools
     {
         public static T GetCopyOf<T>(this Component comp, T other) where T : Component
         {
-            Type type = comp.GetType();
+            var type = comp.GetType();
 
             if (type != other.GetType())
                 return null; // type mis-match
 
-            BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Default | BindingFlags.DeclaredOnly;
-            PropertyInfo[] pinfos = type.GetProperties(flags);
+            var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Default | BindingFlags.DeclaredOnly;
+            var pinfos = type.GetProperties(flags);
 
             foreach (var pinfo in pinfos)
             {
@@ -28,7 +27,7 @@ namespace Akela.Tools
                 }
             }
 
-            FieldInfo[] finfos = type.GetFields(flags);
+            var finfos = type.GetFields(flags);
 
             foreach (var finfo in finfos)
                 finfo.SetValue(comp, finfo.GetValue(other));

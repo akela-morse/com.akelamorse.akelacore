@@ -6,6 +6,6 @@ namespace Akela.Globals
     {
         internal void SetValue(T value) => _value = value;
 
-        internal GlobalReferenceBase() : base() { }
+        internal GlobalReferenceBase() { }
     }
 }

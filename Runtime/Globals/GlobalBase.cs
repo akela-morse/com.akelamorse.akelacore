@@ -8,6 +8,6 @@ namespace Akela.Globals
 
         public T Value => _value;
 
-        internal GlobalBase() : base() { }
+        internal GlobalBase() { }
     }
 }

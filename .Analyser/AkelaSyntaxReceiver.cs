@@ -1,8 +1,6 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
+﻿using System.Collections.Generic;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace AkelaAnalyser
 {
@@ -12,19 +10,8 @@ namespace AkelaAnalyser
 
         public void OnVisitSyntaxNode(SyntaxNode syntaxNode)
         {
-            // Only test for public, non-abstract, non-static, non-generic classes
-
             if (!(syntaxNode is ClassDeclarationSyntax classDeclaration))
                 return;
-
-            if (
-                !classDeclaration.Modifiers.Any(x => x.IsKind(SyntaxKind.PublicKeyword)) || // Public
-                !classDeclaration.Modifiers.All(x => !x.IsKind(SyntaxKind.StaticKeyword)) || // Non-static
-                !(classDeclaration.TypeParameterList is null) // Non-generic
-            )
-            {
-                return;
-            }
 
             Classes.Add(classDeclaration);
         }

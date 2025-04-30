@@ -10,7 +10,7 @@ namespace Akela.Optimisations
     [AddComponentMenu("Optimisation/Culling System", 0)]
     public class CullingSystem : MonoBehaviour
     {
-        private const int MAX_ELEMENT_COUNT = 30;
+        private const int MAX_ELEMENT_COUNT = 50;
 
         #region Component Fields
         [SerializeField] Var<Camera> _targetCamera;

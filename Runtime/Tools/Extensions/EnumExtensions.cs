@@ -7,7 +7,7 @@ namespace Akela.Tools
     {
         public static T Next<T>(this T @enum) where T : Enum
         {
-            var values = (T[])Enum.GetValues(@enum.GetType());
+            var values = (T[])Enum.GetValues(typeof(T));
             var index = Array.IndexOf(values, @enum);
             var newIndex = Mathf.Clamp(index + 1, 0, values.Length - 1);
 
@@ -16,7 +16,7 @@ namespace Akela.Tools
 
         public static T Previous<T>(this T @enum) where T : Enum
         {
-            var values = (T[])Enum.GetValues(@enum.GetType());
+            var values = (T[])Enum.GetValues(typeof(T));
             var index = Array.IndexOf(values, @enum);
             var newIndex = Mathf.Clamp(index - 1, 0, values.Length - 1);
 

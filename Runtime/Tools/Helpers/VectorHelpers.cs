@@ -1,9 +1,16 @@
-﻿using UnityEngine;
+﻿using System.Runtime.CompilerServices;
+using UnityEngine;
 
 namespace Akela.Tools
 {
     public static class VectorHelpers
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float SqrDistance(Vector3 a, Vector3 b)
+        {
+            return (a - b).sqrMagnitude;
+        }
+
         public static float GreatCircleDistance(Vector3 from, Vector3 to, float radius = 1f)
         {
             return Mathf.Acos(Vector3.Dot(from.normalized, to.normalized)) * radius;

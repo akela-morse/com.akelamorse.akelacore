@@ -1,41 +1,38 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace Akela.Tools
 {
     public static class BitExtensions
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int GetBitMask(this int nthBit)
         {
             return 1 << nthBit;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsBitSet(this int n, int nthBit)
         {
             return (n & GetBitMask(nthBit)) != 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int SetBit(this int n, int nthBit)
         {
-            var result = n;
-            result |= GetBitMask(nthBit);
-
-            return result;
+            return n | GetBitMask(nthBit);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int ClearBit(this int n, int nthBit)
         {
-            var result = n;
-            result &= ~GetBitMask(nthBit);
-
-            return result;
+            return n & ~GetBitMask(nthBit);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int ToggleBit(this int n, int nthBit)
         {
-            var result = n;
-            result ^= GetBitMask(nthBit);
-
-            return result;
+            return n ^ GetBitMask(nthBit);
         }
 
         public static void ApplyBit(this ref int n, int nthBit, bool set)

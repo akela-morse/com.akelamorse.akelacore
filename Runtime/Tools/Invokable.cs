@@ -4,8 +4,9 @@ using UnityEngine;
 
 namespace Akela.Tools
 {
-    [AddComponentMenu("Tools/Invokable")]
     [HideScriptField]
+    [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/Invokable Icon.png")]
+    [AddComponentMenu("Tools/Invokable")]
     public class Invokable : MonoBehaviour
     {
         public void DestroyMe(float time) => Destroy(gameObject, time);
