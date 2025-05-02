@@ -5,6 +5,10 @@ namespace Akela.Tools
 {
     public static class VectorHelpers
     {
+        public static readonly Vector2 null2 = new(float.NaN, float.NaN);
+        public static readonly Vector3 null3 = new(float.NaN, float.NaN, float.NaN);
+        public static readonly Vector4 null4 = new(float.NaN, float.NaN, float.NaN, float.NaN);
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float SqrDistance(Vector3 a, Vector3 b)
         {

@@ -1,5 +1,6 @@
 ﻿using Akela.Behaviours;
 using Akela.Globals;
+using UnityEditor;
 using UnityEngine;
 
 namespace Akela.Motion
@@ -17,9 +18,9 @@ namespace Akela.Motion
         [SerializeField] Vector3 _endScale = Vector3.one;
         [SerializeField] Var<AnimationCurve> _curve = AnimationCurve.Linear(0f, 0f, 1f, 1f);
 
-        [Header("Lerp Settings")]
+        [Header("Motion Settings")]
         public bool _playOnStart;
-        [SerializeField] float _lerpTime = 1f;
+        [SerializeField] float _motionTime = 1f;
         [SerializeField] bool _loop;
         [SerializeField] TransformAnimationEndState _endState;
         #endregion
@@ -108,7 +109,7 @@ namespace Akela.Motion
             if (PlayingState != TransformAnimationPlayingState.Playing)
                 return;
 
-            Progression = Mathf.Clamp01(Progression + _lerpDirection * (deltaTime / _lerpTime));
+            Progression = Mathf.Clamp01(Progression + _lerpDirection * (deltaTime / _motionTime));
 
             var lerp = _curve.Value.Evaluate(Progression);
 
@@ -126,8 +127,8 @@ namespace Akela.Motion
             if (Application.isPlaying || PlayingState != TransformAnimationPlayingState.Playing)
                 return;
 
-            UnityEditor.EditorApplication.QueuePlayerLoopUpdate();
-            UnityEditor.SceneView.RepaintAll();
+            EditorApplication.QueuePlayerLoopUpdate();
+            SceneView.RepaintAll();
         }
 #endif
         #endregion
