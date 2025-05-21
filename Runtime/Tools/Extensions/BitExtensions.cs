@@ -35,12 +35,14 @@ namespace Akela.Tools
             return n ^ GetBitMask(nthBit);
         }
 
-        public static void ApplyBit(this ref int n, int nthBit, bool set)
+        public static bool ApplyBit(this ref int n, int nthBit, bool set)
         {
             if (set)
                 n = n.SetBit(nthBit);
             else
                 n = n.ClearBit(nthBit);
+
+            return set;
         }
 
         public static bool[] ToBoolArray(this byte n)

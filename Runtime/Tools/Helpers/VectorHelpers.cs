@@ -5,10 +5,6 @@ namespace Akela.Tools
 {
     public static class VectorHelpers
     {
-        public static readonly Vector2 null2 = new(float.NaN, float.NaN);
-        public static readonly Vector3 null3 = new(float.NaN, float.NaN, float.NaN);
-        public static readonly Vector4 null4 = new(float.NaN, float.NaN, float.NaN, float.NaN);
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float SqrDistance(Vector3 a, Vector3 b)
         {
@@ -46,6 +42,27 @@ namespace Akela.Tools
         public static Vector2Int Rotate2D(Vector2Int v, float degrees)
         {
             return Vector2Int.RoundToInt(Rotate2D((Vector2)v, degrees));
+        }
+
+        public static Vector2 SmoothStep(Vector2 from, Vector2 to, float t)
+        {
+            var dt = (double)Mathf.Clamp01(t);
+            dt = -2.0 * dt * dt * dt + 3.0 * dt * dt;
+            return to * (float)dt + from * (1f - (float)dt);
+        }
+
+        public static Vector3 SmoothStep(Vector3 from, Vector3 to, float t)
+        {
+            var dt = (double)Mathf.Clamp01(t);
+            dt = -2.0 * dt * dt * dt + 3.0 * dt * dt;
+            return to * (float)dt + from * (1f - (float)dt);
+        }
+
+        public static Vector4 SmoothStep(Vector4 from, Vector4 to, float t)
+        {
+            var dt = (double)Mathf.Clamp01(t);
+            dt = -2.0 * dt * dt * dt + 3.0 * dt * dt;
+            return to * (float)dt + from * (1f - (float)dt);
         }
     }
 }

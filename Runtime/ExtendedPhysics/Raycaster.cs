@@ -55,9 +55,19 @@ namespace Akela.ExtendedPhysics
                 _previousRaycastDidHit = RaycastDidHit();
         }
 
-        public void RaycastNow(Ray ray, bool sendEvents = true)
+        public void RaycastNow(LayerMask layerMask, bool sendEvents = true)
         {
-            DoRaycast(ray);
+            DoRaycast(layerMask);
+
+            if (sendEvents)
+                CheckRaycastResult();
+            else
+                _previousRaycastDidHit = RaycastDidHit();
+        }
+
+        public void RaycastNow(Ray ray, LayerMask layerMask, bool sendEvents = true)
+        {
+            DoRaycast(ray, layerMask);
 
             if (sendEvents)
                 CheckRaycastResult();
@@ -130,7 +140,7 @@ namespace Akela.ExtendedPhysics
                     Gizmos.DrawSphere(_hits[i].point, .08f);
 
                     var point = ray.GetPoint(_hits[i].distance);
-                    var sqrDist = (point - ray.origin).sqrMagnitude;
+                    var sqrDist = VectorHelpers.SqrDistance(point, ray.origin);
 
                     if (longestDist < sqrDist)
                     {
@@ -221,32 +231,37 @@ namespace Akela.ExtendedPhysics
         #region Private Methods
         private void DoRaycast()
         {
-            DoRaycast(new Ray(transform.position, Direction));
+            DoRaycast(new Ray(transform.position, Direction), _layerMask);
         }
 
-        private void DoRaycast(Ray ray)
+        private void DoRaycast(LayerMask mask)
+        {
+            DoRaycast(new Ray(transform.position, Direction), mask);
+        }
+
+        private void DoRaycast(Ray ray, LayerMask mask)
         {
             switch (_shape)
             {
                 case RaycastShape.Ray:
                     if (!_registerMultipleHits)
-                        _numberOfHits = Physics.Raycast(ray, out _hits[0], _maxDistance, _layerMask.Value, _triggerInteraction) ? 1 : 0;
+                        _numberOfHits = Physics.Raycast(ray, out _hits[0], _maxDistance, mask, _triggerInteraction) ? 1 : 0;
                     else
-                        _numberOfHits = Physics.RaycastNonAlloc(ray, _hits, _maxDistance, _layerMask.Value, _triggerInteraction);
+                        _numberOfHits = Physics.RaycastNonAlloc(ray, _hits, _maxDistance, mask, _triggerInteraction);
                     break;
 
                 case RaycastShape.Sphere:
                     if (!_registerMultipleHits)
-                        _numberOfHits = Physics.SphereCast(ray, _radius, out _hits[0], _maxDistance, _layerMask.Value, _triggerInteraction) ? 1 : 0;
+                        _numberOfHits = Physics.SphereCast(ray, _radius, out _hits[0], _maxDistance, mask, _triggerInteraction) ? 1 : 0;
                     else
-                        _numberOfHits = Physics.SphereCastNonAlloc(ray, _radius, _hits, _maxDistance, _layerMask.Value, _triggerInteraction);
+                        _numberOfHits = Physics.SphereCastNonAlloc(ray, _radius, _hits, _maxDistance, mask, _triggerInteraction);
                     break;
 
                 case RaycastShape.Box:
                     if (!_registerMultipleHits)
-                        _numberOfHits = Physics.BoxCast(ray.origin, _boxSize * .5f, ray.direction, out _hits[0], _orientation, _maxDistance, _layerMask.Value, _triggerInteraction) ? 1 : 0;
+                        _numberOfHits = Physics.BoxCast(ray.origin, _boxSize * .5f, ray.direction, out _hits[0], _orientation, _maxDistance, mask, _triggerInteraction) ? 1 : 0;
                     else
-                        _numberOfHits = Physics.BoxCastNonAlloc(ray.origin, _boxSize * .5f, ray.direction, _hits, _orientation, _maxDistance, _layerMask.Value, _triggerInteraction);
+                        _numberOfHits = Physics.BoxCastNonAlloc(ray.origin, _boxSize * .5f, ray.direction, _hits, _orientation, _maxDistance, mask, _triggerInteraction);
                     break;
 
                 case RaycastShape.Capsule:
@@ -257,9 +272,9 @@ namespace Akela.ExtendedPhysics
                     var p2 = ray.origin + dir * offset;
 
                     if (!_registerMultipleHits)
-                        _numberOfHits = Physics.CapsuleCast(p1, p2, _radius, ray.direction, out _hits[0], _maxDistance, _layerMask.Value, _triggerInteraction) ? 1 : 0;
+                        _numberOfHits = Physics.CapsuleCast(p1, p2, _radius, ray.direction, out _hits[0], _maxDistance, mask, _triggerInteraction) ? 1 : 0;
                     else
-                        _numberOfHits = Physics.CapsuleCastNonAlloc(p1, p2, _radius, ray.direction, _hits, _maxDistance, _layerMask.Value, _triggerInteraction);
+                        _numberOfHits = Physics.CapsuleCastNonAlloc(p1, p2, _radius, ray.direction, _hits, _maxDistance, mask, _triggerInteraction);
                     break;
             }
         }

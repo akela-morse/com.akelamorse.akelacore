@@ -42,7 +42,7 @@ namespace Akela.Behaviours
             };
 
 #if DEBUG
-            if (_cullingElement == null)
+            if (!_cullingElement)
             {
                 Debug.LogError(string.Format("'{0}' on gameObject '{1}' did not find a CullingElement component from '{2}'",
                     GetType().Name,

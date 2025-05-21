@@ -1,5 +1,6 @@
 ﻿#if AKELA_CINEMACHINE
 using Unity.Cinemachine;
+using UnityEngine;
 using static Unity.Cinemachine.CinemachineFreeLookModifier;
 using static Unity.Cinemachine.InputAxisControllerBase<Unity.Cinemachine.CinemachineInputAxisController.Reader>;
 
@@ -19,7 +20,7 @@ namespace Akela.Tools
         }
     }
 
-    public static class CinemachineCameraExtensions
+    public static class CinemachineExtensions
     {
         public static CinemachineAxisControllers GetControls(this CinemachineInputAxisController axisController)
         {
@@ -47,6 +48,21 @@ namespace Akela.Tools
             }
 
             return null;
+        }
+
+        public static CameraState.CustomBlendableItems.Item GetCustomBlendable<T>(this CameraState s) where T : Object
+        {
+            var count = s.GetNumCustomBlendables();
+
+            for (var i = 0; i < count; ++i)
+            {
+                var item = s.GetCustomBlendable(i);
+
+                if (item.Custom is T)
+                    return item;
+            }
+
+            return default;
         }
     }
 }

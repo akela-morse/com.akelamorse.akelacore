@@ -9,7 +9,7 @@ namespace Akela.Tools
         public static void DrawThickLine(Vector3 from, Vector3 to, float thickness)
         {
             using (new Handles.DrawingScope(Gizmos.color, Gizmos.matrix))
-            {                
+            {
                 Handles.DrawLine(from, to, thickness);
             }
         }
@@ -34,45 +34,95 @@ namespace Akela.Tools
 
         public static void DrawWireCapsule(Vector3 bottom, Vector3 top, float radius)
         {
+            DrawCapsuleMethod(bottom, top, radius, true);
+        }
+
+        public static void DrawWireCapsule(Vector3 center, Vector3 axis, float radius, float height)
+        {
+            var offset = (height - radius * 2f) * .5f;
+
+            if (offset < 0f)
+            {
+                DrawCapsuleMethod(center, center, radius, false);
+                return;
+            }
+
+            var top = center + axis * offset;
+            var bottom = center - axis * offset;
+
+            DrawCapsuleMethod(bottom, top, radius, true);
+        }
+
+        public static void DrawCapsule(Vector3 bottom, Vector3 top, float radius)
+        {
+            DrawCapsuleMethod(bottom, top, radius, false);
+        }
+
+        public static void DrawCapsule(Vector3 center, Vector3 axis, float radius, float height)
+        {
+            var offset = (height - radius * 2f) * .5f;
+
+            if (offset < 0f)
+            {
+                DrawCapsuleMethod(center, center, radius, false);
+                return;
+            }
+
+            var top = center + axis * offset;
+            var bottom = center - axis * offset;
+
+            DrawCapsuleMethod(bottom, top, radius, false);
+        }
+
+        private static void DrawCapsuleMethod(Vector3 bottom, Vector3 top, float radius, bool wire)
+        {
             if (bottom == top)
             {
-                Gizmos.DrawWireSphere(bottom, radius);
+                if (wire)
+                    Gizmos.DrawWireSphere(bottom, radius);
+                else
+                    Gizmos.DrawMesh(Resources.GetBuiltinResource<Mesh>("Sphere.fbx"), bottom, Quaternion.identity, Vector3.one * radius);
+
                 return;
             }
 
             var mainAxis = (top - bottom).normalized;
 
-            var rightAxis = Vector3.Cross(mainAxis, Vector3.up).normalized;
-
-            if (rightAxis.sqrMagnitude == 0f)
-                rightAxis = Vector3.right;
-
-            var upAxis = Vector3.Cross(mainAxis, rightAxis).normalized;
-
-            using (new Handles.DrawingScope(Gizmos.color, Gizmos.matrix))
+            if (wire)
             {
-                Handles.DrawWireDisc(top, mainAxis, radius);
-                Handles.DrawWireDisc(bottom, mainAxis, radius);
+                var rightAxis = Vector3.Cross(mainAxis, Vector3.up).normalized;
 
-                Handles.DrawLine(top + rightAxis * radius, bottom + rightAxis * radius);
-                Handles.DrawLine(top - rightAxis * radius, bottom - rightAxis * radius);
-                Handles.DrawLine(top + upAxis * radius, bottom + upAxis * radius);
-                Handles.DrawLine(top - upAxis * radius, bottom - upAxis * radius);
+                if (rightAxis.sqrMagnitude == 0f)
+                    rightAxis = Vector3.right;
 
-                Handles.DrawWireArc(top, upAxis, rightAxis, -180f, radius);
-                Handles.DrawWireArc(top, rightAxis, upAxis, 180f, radius);
-                Handles.DrawWireArc(bottom, upAxis, rightAxis, 180f, radius);
-                Handles.DrawWireArc(bottom, rightAxis, upAxis, -180f, radius);
+                var upAxis = Vector3.Cross(mainAxis, rightAxis).normalized;
+
+                using (new Handles.DrawingScope(Gizmos.color, Gizmos.matrix))
+                {
+                    Handles.DrawWireDisc(top, mainAxis, radius);
+                    Handles.DrawWireDisc(bottom, mainAxis, radius);
+
+                    Handles.DrawLine(top + rightAxis * radius, bottom + rightAxis * radius);
+                    Handles.DrawLine(top - rightAxis * radius, bottom - rightAxis * radius);
+                    Handles.DrawLine(top + upAxis * radius, bottom + upAxis * radius);
+                    Handles.DrawLine(top - upAxis * radius, bottom - upAxis * radius);
+
+                    Handles.DrawWireArc(top, upAxis, rightAxis, -180f, radius);
+                    Handles.DrawWireArc(top, rightAxis, upAxis, 180f, radius);
+                    Handles.DrawWireArc(bottom, upAxis, rightAxis, 180f, radius);
+                    Handles.DrawWireArc(bottom, rightAxis, upAxis, -180f, radius);
+                }
             }
-        }
+            else
+            {
+                var center = (top + bottom) * .5f;
+                var rotation = QuaternionHelpers.OmniLookRotation(Vector3.up, mainAxis, Vector3.forward);
+                var scale = new Vector3(radius, (top - bottom).magnitude * .5f, radius);
 
-        public static void DrawWireCapsule(Vector3 center, Vector3 axis, float radius, float height)
-        {
-            var offset = (height - (radius * 2f)) * .5f;
-            var top = center + axis * offset;
-            var bottom = center - axis * offset;
-
-            DrawWireCapsule(bottom, top, radius);
+                Gizmos.DrawMesh(Resources.GetBuiltinResource<Mesh>("Sphere.fbx"), top, rotation, Vector3.one * radius);
+                Gizmos.DrawMesh(Resources.GetBuiltinResource<Mesh>("Sphere.fbx"), bottom, rotation, Vector3.one * radius);
+                Gizmos.DrawMesh(Resources.GetBuiltinResource<Mesh>("Cylinder.fbx"), center, rotation, scale);
+            }
         }
     }
 }

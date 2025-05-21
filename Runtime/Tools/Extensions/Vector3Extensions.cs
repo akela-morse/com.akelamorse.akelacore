@@ -69,5 +69,20 @@ namespace Akela.Tools
                 v.z == mask ? v.z : fallback
             );
         }
+
+        public static Vector3 SnapToCardinalDirection(this Vector3 v)
+        {
+            if (v == Vector3.zero)
+                return Vector3.zero;
+
+            var absV = new Vector3(Mathf.Abs(v.x), Mathf.Abs(v.y), Mathf.Abs(v.z));
+
+            if (absV.x > absV.y && absV.x > absV.z)
+                return v.x > 0f ? Vector3.right : Vector3.left;
+            else if (absV.y > absV.z)
+                return v.y > 0f ? Vector3.up : Vector3.down;
+            else
+                return v.z > 0f ? Vector3.forward : Vector3.back;
+        }
     }
 }

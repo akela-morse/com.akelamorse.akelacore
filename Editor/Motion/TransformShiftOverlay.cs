@@ -30,6 +30,9 @@ namespace AkelaEditor.Motion
                 _transformPropertyDriver = null;
             }
 
+            if (!target)
+                return;
+
             target.Stop();
             target.SetPositionAtStart();
 
@@ -81,23 +84,23 @@ namespace AkelaEditor.Motion
                 AnimationMode.StopAnimationMode(_transformPropertyDriver);
                 DrivenPropertyManager.UnregisterProperties(_transformPropertyDriver);
                 Object.DestroyImmediate(_transformPropertyDriver);
-                
+
                 _transformPropertyDriver = null;
             }
-            
+
             _transformPropertyDriver = ScriptableObject.CreateInstance<AnimationModeDriver>();
 
             DrivenPropertyManager.RegisterProperty(_transformPropertyDriver, target.transform, "m_LocalPosition");
             DrivenPropertyManager.RegisterProperty(_transformPropertyDriver, target.transform, "m_LocalRotation");
             DrivenPropertyManager.RegisterProperty(_transformPropertyDriver, target.transform, "m_LocalScale");
         }
-        
+
         private void SetPreviewEnabled(bool enabled)
         {
             if (enabled)
             {
                 ResetAnimationDriver();
-                
+
                 AnimationMode.StartAnimationMode(_transformPropertyDriver);
                 target.ControlledByEditor = true;
 
@@ -107,14 +110,14 @@ namespace AkelaEditor.Motion
             {
                 target.Stop();
                 target.SetPositionAtStart();
-                
+
                 AnimationMode.StopAnimationMode(_transformPropertyDriver);
                 DrivenPropertyManager.UnregisterProperties(_transformPropertyDriver);
                 Object.DestroyImmediate(_transformPropertyDriver);
                 _transformPropertyDriver = null;
-                
+
                 target.ControlledByEditor = false;
-                
+
                 EditorApplication.update -= UpdateSliderState;
                 UpdateSliderState();
             }
@@ -126,10 +129,10 @@ namespace AkelaEditor.Motion
         {
             if (!_previewToggle.value)
                 return;
-            
+
             target.ForceResetEditorDeltaTime();
             target.Play();
-            
+
             UpdateButtonState();
         }
 
@@ -137,7 +140,7 @@ namespace AkelaEditor.Motion
         {
             if (!_previewToggle.value)
                 return;
-            
+
             target.Pause();
 
             UpdateButtonState();
@@ -147,7 +150,7 @@ namespace AkelaEditor.Motion
         {
             if (!_previewToggle.value)
                 return;
-            
+
             target.Stop();
 
             UpdateButtonState();
