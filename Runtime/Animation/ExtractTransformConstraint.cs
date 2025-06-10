@@ -12,14 +12,14 @@ namespace Akela.Animation
     {
         public ReadWriteTransformHandle bone;
 
-        public FloatProperty jobWeight { get; set; }
+        FloatProperty IWeightedAnimationJob.jobWeight { get; set; }
 
         public Vector3Property position;
         public Vector4Property rotation;
 
-        public void ProcessRootMotion(AnimationStream stream) { }
+        void IAnimationJob.ProcessRootMotion(AnimationStream stream) { }
 
-        public void ProcessAnimation(AnimationStream stream)
+        void IAnimationJob.ProcessAnimation(AnimationStream stream)
         {
             AnimationRuntimeUtils.PassThrough(stream, bone);
 
@@ -39,12 +39,12 @@ namespace Akela.Animation
         public Vector3 position;
         public Quaternion rotation;
 
-        public bool IsValid()
+        bool IAnimationJobData.IsValid()
         {
             return bone;
         }
 
-        public void SetDefaultValues()
+        void IAnimationJobData.SetDefaultValues()
         {
             bone = null;
 

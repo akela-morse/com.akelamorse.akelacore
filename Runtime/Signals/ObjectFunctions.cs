@@ -1,5 +1,5 @@
-﻿using Akela.Bridges;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Akela.Bridges;
 using UnityEngine;
 
 namespace Akela.Signals
@@ -16,7 +16,16 @@ namespace Akela.Signals
 
         private readonly Dictionary<string, BridgedEvent> _functions = new();
 
-        public void OnBeforeSerialize()
+        public void Call(string name)
+        {
+            if (!_functions.TryGetValue(name, out var function))
+                return;
+
+            function.Invoke();
+        }
+
+        #region ISerializationCallbackReceiver
+        void ISerializationCallbackReceiver.OnBeforeSerialize()
         {
             _keys.Clear();
             _values.Clear();
@@ -28,7 +37,7 @@ namespace Akela.Signals
             }
         }
 
-        public void OnAfterDeserialize()
+        void ISerializationCallbackReceiver.OnAfterDeserialize()
         {
             _functions.Clear();
 
@@ -44,13 +53,6 @@ namespace Akela.Signals
                 _functions.Add(_keys[i], _values[i]);
             }
         }
-
-        public void Call(string name)
-        {
-            if (!_functions.TryGetValue(name, out var function))
-                return;
-
-            function.Invoke();
-        }
+        #endregion
     }
 }

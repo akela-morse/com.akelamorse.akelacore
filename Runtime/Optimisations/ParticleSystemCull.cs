@@ -55,11 +55,11 @@ namespace Akela.Optimisations
 
         private ParticleSystemState[] _states;
 
-        public void OnCullingElementInvisible() { }
+        void ICullingMessageReceiver.OnCullingElementInvisible() { }
 
-        public void OnCullingElementVisible() { }
+        void ICullingMessageReceiver.OnCullingElementVisible() { }
 
-        public void OnDistanceBandChanges(int previousBand, int newBand)
+        void ICullingMessageReceiver.OnDistanceBandChanges(int previousBand, int newBand)
         {
             if (newBand > _distanceBandRange.y) // Too far, pause the systems
             {

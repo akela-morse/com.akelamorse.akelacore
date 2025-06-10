@@ -22,9 +22,9 @@ namespace Akela.Animation
 
         private float t;
 
-        public readonly void ProcessRootMotion(AnimationStream stream) { }
+        readonly void IAnimationJob.ProcessRootMotion(AnimationStream stream) { }
 
-        public void ProcessAnimation(AnimationStream stream)
+        void IAnimationJob.ProcessAnimation(AnimationStream stream)
         {
             var w = jobWeight.Get(stream);
             t += stream.deltaTime;
@@ -70,12 +70,12 @@ namespace Akela.Animation
 
         [HideInInspector] public int seed;
 
-        public readonly bool IsValid()
+        readonly bool IAnimationJobData.IsValid()
         {
             return constrainedObject;
         }
 
-        public void SetDefaultValues()
+        void IAnimationJobData.SetDefaultValues()
         {
             constrainedObject = null;
             noiseAmplitude = 0f;

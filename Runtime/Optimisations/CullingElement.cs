@@ -24,12 +24,12 @@ namespace Akela.Optimisations
 
         public CullingSystem CullingSystem => _system;
 
-        public void IndexChanged(int index)
+        void ICullingElement.IndexChanged(int index)
         {
             _elementId = index;
         }
 
-        public void InitialState(bool visible, int distanceBand)
+        void ICullingElement.InitialState(bool visible, int distanceBand)
         {
             IsVisible = visible;
             CurrentDistanceBand = distanceBand;
@@ -42,7 +42,7 @@ namespace Akela.Optimisations
             _messageBroadcaster.Dispatch(x => x.OnDistanceBandChanges(-1, CurrentDistanceBand));
         }
 
-        public void StateChanged(CullingGroupEvent data)
+        void ICullingElement.StateChanged(CullingGroupEvent data)
         {
             IsVisible = data.isVisible;
             CurrentDistanceBand = data.currentDistance;

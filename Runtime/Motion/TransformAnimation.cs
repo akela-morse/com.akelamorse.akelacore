@@ -21,7 +21,7 @@ namespace Akela.Motion
         public TransformAnimationKey[] keys;
         #endregion
 
-        public bool IsValid => keys.Length > 0;
+        public bool IsValid => keys != null && keys.Length > 0;
 
         public float Duration()
         {

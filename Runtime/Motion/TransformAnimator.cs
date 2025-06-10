@@ -60,6 +60,9 @@ namespace Akela.Motion
         {
             Time = 0f;
 
+            if (!_transformAnimation.IsValid)
+                return;
+
             _transformAnimation.GetFirstKey(out var pos, out var rot, out var scale);
             transform.localPosition = pos;
             transform.localEulerAngles = rot;
@@ -71,6 +74,9 @@ namespace Akela.Motion
         public void SetPositionAtEnd()
         {
             Time = _transformAnimation.Duration();
+
+            if (!_transformAnimation.IsValid)
+                return;
 
             _transformAnimation.GetLastKey(out var pos, out var rot, out var scale);
             transform.localPosition = pos;
@@ -103,7 +109,7 @@ namespace Akela.Motion
         protected override void Tick(float deltaTime)
         {
 #if UNITY_EDITOR
-            if (!Application.isPlaying && !ControlledByEditor)
+            if (!Application.isPlaying && ControlledByEditor)
                 Start();
 #endif
 

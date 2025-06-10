@@ -46,11 +46,11 @@ namespace Akela.Optimisations
 #endif
         private int _qualitySetting;
 
-        public void OnCullingElementInvisible() { }
+        void ICullingMessageReceiver.OnCullingElementInvisible() { }
 
-        public void OnCullingElementVisible() { }
+        void ICullingMessageReceiver.OnCullingElementVisible() { }
 
-        public void OnDistanceBandChanges(int _, int newBand)
+        void ICullingMessageReceiver.OnDistanceBandChanges(int _, int newBand)
         {
 #if AKELA_URP
             // Quality

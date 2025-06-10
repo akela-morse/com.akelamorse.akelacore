@@ -23,12 +23,12 @@ namespace Akela.ExtendedPhysics
         protected abstract void Build();
         protected abstract void RefreshSubCollider(int index);
 
-        public bool IsBindingCollider(Collider collider)
+        bool ICustomCollider.IsBindingCollider(Collider collider)
         {
             return Array.IndexOf(_subColliders, collider) >= 0;
         }
 
-        public void OnSerializedFieldChanged()
+        void INotifySerializedFieldChanged.OnSerializedFieldChanged()
         {
             Refresh();
         }

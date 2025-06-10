@@ -1,6 +1,6 @@
-﻿using Akela.Bridges;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Akela.Bridges;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -61,17 +61,20 @@ namespace Akela.Optimisations
             _pool = pool;
         }
 
-        public void OnCullingElementVisible() { }
+        #region ICullingMessageReceiver
+        void ICullingMessageReceiver.OnCullingElementVisible() { }
 
-        public void OnCullingElementInvisible()
+        void ICullingMessageReceiver.OnCullingElementInvisible()
         {
             if (_releaseToPool == ReleaseBehaviour.OnCulled)
                 ReleaseNow();
         }
 
-        public void OnDistanceBandChanges(int previousBand, int newBand) { }
+        void ICullingMessageReceiver.OnDistanceBandChanges(int previousBand, int newBand) { }
+        #endregion
 
-        public void OnBeforeSerialize()
+        #region ISerializationCallbackReceiver
+        void ISerializationCallbackReceiver.OnBeforeSerialize()
         {
             _cachedComponents.Clear();
 
@@ -79,13 +82,14 @@ namespace Akela.Optimisations
                 _cachedComponents.Add(component);
         }
 
-        public void OnAfterDeserialize()
+        void ISerializationCallbackReceiver.OnAfterDeserialize()
         {
             _cachedComponentsDictionary.Clear();
 
             foreach (var component in _cachedComponents)
                 _cachedComponentsDictionary.Add(component.GetType(), component);
         }
+        #endregion
 
         #region Component Messages
         private void OnEnable()

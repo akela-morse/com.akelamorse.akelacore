@@ -31,7 +31,7 @@ namespace Akela.Behaviours
         #endregion
 
         #region Private Methods
-        public void InitialiseBehaviour()
+        void IInitialisableBehaviour.InitialiseBehaviour()
         {
             _cullingElement = _optimisationSettings.useCullingElementFrom switch
             {

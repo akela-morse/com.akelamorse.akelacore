@@ -8,7 +8,7 @@ namespace Akela.Behaviours
     {
         protected internal abstract void RRUpdate();
 
-        public void InitialiseBehaviour()
+        void IInitialisableBehaviour.InitialiseBehaviour()
         {
             var type = GetType();
 

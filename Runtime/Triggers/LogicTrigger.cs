@@ -39,7 +39,8 @@ namespace Akela.Triggers
                 _onActive.AddListener(() => callback());
         }
 
-        public void OnBeforeSerialize()
+        #region ISerializationCallbackReceiver
+        void ISerializationCallbackReceiver.OnBeforeSerialize()
         {
             _members.Clear();
 
@@ -47,13 +48,14 @@ namespace Akela.Triggers
                 _members.Add((MonoBehaviour)trigger);
         }
 
-        public void OnAfterDeserialize()
+        void ISerializationCallbackReceiver.OnAfterDeserialize()
         {
             _triggers.Clear();
 
             foreach (var member in _members)
                 _triggers.Add((ITrigger)member);
         }
+        #endregion
 
         #region Component Messages
         private void Awake()

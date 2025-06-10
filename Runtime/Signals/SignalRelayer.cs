@@ -14,9 +14,9 @@ namespace Akela.Signals
         [SerializeField] BridgedEvent<Signal> _onSignalReceived;
         #endregion
 
-        public string[] ListenFor => Array.ConvertAll(_signalsToListenFor, x => x.name);
+        string[] ISignalReceiver.ListenFor => Array.ConvertAll(_signalsToListenFor, x => x.name);
 
-        public void OnSignalReceived(Signal signal)
+        void ISignalReceiver.OnSignalReceived(Signal signal)
         {
             _onSignalReceived.Invoke(signal);
         }

@@ -19,17 +19,17 @@ namespace Akela.Optimisations
         private bool _currentStateOfComponents;
         private CullingElement _cullingElement;
 
-        public void OnCullingElementInvisible()
+        void ICullingMessageReceiver.OnCullingElementInvisible()
         {
             SetComponentState(_cullingElement.CurrentDistanceBand < _distanceBandRange.x);
         }
 
-        public void OnCullingElementVisible()
+        void ICullingMessageReceiver.OnCullingElementVisible()
         {
             SetComponentState(_cullingElement.CurrentDistanceBand <= _distanceBandRange.y);
         }
 
-        public void OnDistanceBandChanges(int _, int newBand)
+        void ICullingMessageReceiver.OnDistanceBandChanges(int _, int newBand)
         {
             if (newBand < _distanceBandRange.x)
                 SetComponentState(true);
