@@ -1,6 +1,8 @@
 ﻿using Akela.Tools;
 using UnityEditor;
+using UnityEditor.UIElements;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace AkelaEditor.YieldInstructions
 {
@@ -17,6 +19,13 @@ namespace AkelaEditor.YieldInstructions
             var actualProperty = property.FindPropertyRelative("_duration");
 
             EditorGUI.PropertyField(position, actualProperty, label);
+        }
+
+        public override VisualElement CreatePropertyGUI(SerializedProperty property)
+        {
+            var actualProperty = property.FindPropertyRelative("_duration");
+
+            return new PropertyField(actualProperty, preferredLabel);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using Animancer.Units;
 using UnityEngine;
 
 namespace Akela.Tools
@@ -7,7 +8,7 @@ namespace Akela.Tools
     public class SerializedWaitForSeconds : CustomYieldInstruction
     {
 #if AKELA_ANIMANCER
-        [Animancer.Units.Seconds]
+        [Seconds]
 #endif
         [SerializeField] float _duration;
 
@@ -34,9 +35,14 @@ namespace Akela.Tools
             }
         }
 
-        public static implicit operator SerializedWaitForSeconds(float duration)
+        public static implicit operator SerializedWaitForSeconds(float other)
         {
-            return new SerializedWaitForSeconds { _duration = duration };
+            return new SerializedWaitForSeconds { _duration = other };
+        }
+
+        public static implicit operator float(SerializedWaitForSeconds other)
+        {
+            return other._duration;
         }
     }
 }
