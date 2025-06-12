@@ -27,18 +27,15 @@ namespace AkelaEditor
                 currentlySelectedOption = allowedOptions.First();
                 property.enumValueIndex = (int)currentlySelectedOption;
 
-                property.serializedObject.ApplyModifiedProperties();
-
                 return;
             }
 
+            EditorGUI.BeginProperty(position, label, property);
             var newIndex = EditorGUI.Popup(position, "Refresh Every", currentlySelectedIndex, Array.ConvertAll(allowedOptions, GetEnumName));
+            EditorGUI.EndProperty();
 
             if (newIndex != currentlySelectedIndex)
-            {
                 property.enumValueIndex = (int)allowedOptions[newIndex];
-                property.serializedObject.ApplyModifiedProperties();
-            }
         }
 
         private static string GetEnumName(TickUpdateType tickUpdateType)

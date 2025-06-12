@@ -45,12 +45,10 @@ namespace Akela.Signals
             {
 #if UNITY_EDITOR
                 if (!_functions.TryAdd(_keys[i], _values[i]))
-                {
                     Debug.LogError($"Issue while serializing ObjectFunctions. Function name '{_keys[i]}' already exists.", this);
-                    continue;
-                }
-#endif
+#else
                 _functions.Add(_keys[i], _values[i]);
+#endif
             }
         }
         #endregion

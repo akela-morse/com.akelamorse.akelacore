@@ -26,9 +26,9 @@ namespace Akela.Triggers
         public void AddListener(Action callback, TriggerEventType eventType = TriggerEventType.OnBecomeActive)
         {
             if (eventType == TriggerEventType.OnBecomeInactive)
-                _onCombinationIncorrect.AddListener(() => callback());
+                _onCombinationIncorrect.AddListener(callback);
             else
-                _onCombinationCorrect.AddListener(() => callback());
+                _onCombinationCorrect.AddListener(callback);
         }
 
         public void EnterNewMember(string member)

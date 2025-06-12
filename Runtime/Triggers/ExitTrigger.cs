@@ -21,7 +21,7 @@ namespace Akela.Triggers
             if (eventType != TriggerEventType.OnBecomeActive)
                 return;
 
-            onDisable.AddListener(() => callback());
+            onDisable.AddListener(callback);
         }
 
         #region Component Messages

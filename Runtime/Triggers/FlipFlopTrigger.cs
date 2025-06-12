@@ -23,9 +23,9 @@ namespace Akela.Triggers
         public void AddListener(Action callback, TriggerEventType eventType = TriggerEventType.OnBecomeActive)
         {
             if (eventType == TriggerEventType.OnBecomeInactive)
-                _onUnflipped.AddListener(() => callback());
+                _onUnflipped.AddListener(callback);
             else
-                _onFlipped.AddListener(() => callback());
+                _onFlipped.AddListener(callback);
         }
 
         public void Flip()

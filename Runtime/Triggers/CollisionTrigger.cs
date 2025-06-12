@@ -28,10 +28,15 @@ namespace Akela.Triggers
 
         public void AddListener(Action callback, TriggerEventType eventType = TriggerEventType.OnBecomeActive)
         {
+            AddListener(_ => callback(), eventType);
+        }
+
+        public void AddListener(Action<Collision> callback, TriggerEventType eventType = TriggerEventType.OnBecomeActive)
+        {
             if (eventType == TriggerEventType.OnBecomeInactive)
-                _onExit.AddListener(_ => callback());
+                _onExit.AddListener(callback);
             else
-                _onEnter.AddListener(_ => callback());
+                _onEnter.AddListener(callback);
         }
 
         #region Component Messages

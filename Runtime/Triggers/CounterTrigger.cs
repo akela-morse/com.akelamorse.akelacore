@@ -35,9 +35,9 @@ namespace Akela.Triggers
         public void AddListener(Action callback, TriggerEventType eventType = TriggerEventType.OnBecomeActive)
         {
             if (eventType == TriggerEventType.OnBecomeInactive)
-                _onMissTarget.AddListener(() => callback());
+                _onMissTarget.AddListener(callback);
             else
-                _onReachTarget.AddListener(() => callback());
+                _onReachTarget.AddListener(callback);
         }
 
         public void Increment()

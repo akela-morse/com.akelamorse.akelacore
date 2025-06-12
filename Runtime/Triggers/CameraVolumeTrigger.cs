@@ -27,9 +27,9 @@ namespace Akela.Triggers
         public void AddListener(Action callback, TriggerEventType eventType = TriggerEventType.OnBecomeActive)
         {
             if (eventType == TriggerEventType.OnBecomeInactive)
-                _onInactive.AddListener(() => callback());
+                _onInactive.AddListener(callback);
             else
-                _onActive.AddListener(() => callback());
+                _onActive.AddListener(callback);
         }
 
         #region Component Messages

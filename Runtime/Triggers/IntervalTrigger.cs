@@ -25,7 +25,7 @@ namespace Akela.Triggers
             if (eventType != TriggerEventType.OnBecomeActive)
                 return;
 
-            _onInterval.AddListener(() => callback());
+            _onInterval.AddListener(callback);
         }
 
         #region Component Methods

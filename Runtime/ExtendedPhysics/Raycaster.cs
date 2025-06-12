@@ -44,6 +44,7 @@ namespace Akela.ExtendedPhysics
         public Quaternion Orientation { get => _orientation; set => _orientation = value; }
         public float MaxDistance { get => _maxDistance; set => _maxDistance = value; }
         public Vector3 Direction { get => _castSpace == Space.Self ? transform.TransformDirection(_direction) : _direction; set => _direction = value.normalized; }
+        public Quaternion WorldOrientation => Quaternion.LookRotation(Direction) * _orientation;
 
         public void RaycastNow(bool sendEvents = true)
         {
@@ -169,7 +170,7 @@ namespace Akela.ExtendedPhysics
 
                 case RaycastShape.Box:
                     Gizmos.color = new(.33f, .85f, 1f);
-                    Gizmos.matrix = Matrix4x4.TRS(ray.origin, _orientation, Vector3.one);
+                    Gizmos.matrix = Matrix4x4.TRS(ray.origin, WorldOrientation, Vector3.one);
                     Gizmos.DrawWireCube(Vector3.zero, _boxSize);
 
                     if (_numberOfHits > 0)
@@ -178,7 +179,7 @@ namespace Akela.ExtendedPhysics
 
                         for (var i = 0; i < _numberOfHits; ++i)
                         {
-                            Gizmos.matrix = Matrix4x4.TRS(ray.GetPoint(_hits[i].distance), _orientation, Vector3.one);
+                            Gizmos.matrix = Matrix4x4.TRS(ray.GetPoint(_hits[i].distance), WorldOrientation, Vector3.one);
                             Gizmos.DrawWireCube(Vector3.zero, _boxSize);
                         }
                     }
@@ -186,7 +187,7 @@ namespace Akela.ExtendedPhysics
 
                 case RaycastShape.Capsule:
                     Gizmos.color = new(.33f, .85f, 1f);
-                    Gizmos.matrix = Matrix4x4.TRS(ray.origin, _orientation, Vector3.one);
+                    Gizmos.matrix = Matrix4x4.TRS(ray.origin, WorldOrientation, Vector3.one);
                     GizmosHelper.DrawWireCapsule(Vector3.zero, Vector3.up, _radius, _capsuleHeight);
 
                     if (_numberOfHits > 0)
@@ -195,7 +196,7 @@ namespace Akela.ExtendedPhysics
 
                         for (var i = 0; i < _numberOfHits; ++i)
                         {
-                            Gizmos.matrix = Matrix4x4.TRS(ray.GetPoint(_hits[i].distance), _orientation, Vector3.one);
+                            Gizmos.matrix = Matrix4x4.TRS(ray.GetPoint(_hits[i].distance), WorldOrientation, Vector3.one);
                             GizmosHelper.DrawWireCapsule(Vector3.zero, Vector3.up, _radius, _capsuleHeight);
                         }
                     }
@@ -259,13 +260,13 @@ namespace Akela.ExtendedPhysics
 
                 case RaycastShape.Box:
                     if (!_registerMultipleHits)
-                        _numberOfHits = Physics.BoxCast(ray.origin, _boxSize * .5f, ray.direction, out _hits[0], _orientation, _maxDistance, mask, _triggerInteraction) ? 1 : 0;
+                        _numberOfHits = Physics.BoxCast(ray.origin, _boxSize * .5f, ray.direction, out _hits[0], WorldOrientation, _maxDistance, mask, _triggerInteraction) ? 1 : 0;
                     else
-                        _numberOfHits = Physics.BoxCastNonAlloc(ray.origin, _boxSize * .5f, ray.direction, _hits, _orientation, _maxDistance, mask, _triggerInteraction);
+                        _numberOfHits = Physics.BoxCastNonAlloc(ray.origin, _boxSize * .5f, ray.direction, _hits, WorldOrientation, _maxDistance, mask, _triggerInteraction);
                     break;
 
                 case RaycastShape.Capsule:
-                    var dir = _orientation * Vector3.up;
+                    var dir = WorldOrientation * Vector3.up;
                     var offset = (_capsuleHeight - _radius * 2f) * .5f;
 
                     var p1 = ray.origin - dir * offset;

@@ -16,6 +16,8 @@ namespace Akela.Behaviours
         static void FirstSceneLoaded()
         {
             var newGo = new GameObject("[Field Change Monitor]");
+            newGo.hideFlags = HideFlags.HideAndDontSave;
+            
             newGo.AddComponent<SerializedFieldChangeMonitor>();
         }
 

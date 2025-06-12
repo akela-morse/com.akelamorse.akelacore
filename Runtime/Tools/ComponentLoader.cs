@@ -27,7 +27,10 @@ namespace Akela.Tools
 
                 ComponentLoaderBehaviour.Main.GetInstancesOfType += e => value(e.OfType<T>());
             }
-            remove { }
+            remove
+            {
+                throw new InvalidOperationException("You don't need to unregister from OnTypeFound, it will be done automatically.");
+            }
         }
     }
 
@@ -39,6 +42,8 @@ namespace Akela.Tools
         static void FirstSceneLoaded()
         {
             var newGo = new GameObject("[Component Loader]");
+            newGo.hideFlags = HideFlags.HideAndDontSave;
+
             Main = newGo.AddComponent<ComponentLoaderBehaviour>();
         }
 

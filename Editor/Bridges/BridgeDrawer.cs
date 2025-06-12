@@ -1,6 +1,8 @@
 ﻿using Akela.Bridges;
 using UnityEditor;
+using UnityEditor.UIElements;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace AkelaEditor.Bridges
 {
@@ -17,6 +19,13 @@ namespace AkelaEditor.Bridges
             var actualProperty = property.FindPropertyRelative("_internalValue");
 
             EditorGUI.PropertyField(position, actualProperty, label);
+        }
+
+        public override VisualElement CreatePropertyGUI(SerializedProperty property)
+        {
+            var actualProperty = property.FindPropertyRelative("_internalValue");
+
+            return new PropertyField(actualProperty, preferredLabel);
         }
     }
 }

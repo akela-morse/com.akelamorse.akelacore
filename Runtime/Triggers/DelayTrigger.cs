@@ -27,7 +27,7 @@ namespace Akela.Triggers
             if (eventType != TriggerEventType.OnBecomeActive)
                 return;
 
-            _onTimer.AddListener(() => callback());
+            _onTimer.AddListener(callback);
         }
 
         public void StartTimer()

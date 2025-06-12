@@ -15,6 +15,8 @@ namespace Akela.Behaviours
             if (!RoundRobinManager.managers.TryGetValue(type, out var manager))
             {
                 var newObject = new GameObject($"[{type.Name} Round Robin Manager]");
+                newObject.hideFlags = HideFlags.HideAndDontSave;
+
                 manager = newObject.AddComponent<RoundRobinManager>();
 
                 RoundRobinManager.managers.Add(type, manager);
