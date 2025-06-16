@@ -124,6 +124,35 @@ namespace Akela.Tools
                 Gizmos.DrawMesh(Resources.GetBuiltinResource<Mesh>("Cylinder.fbx"), center, rotation, scale);
             }
         }
+
+        public static void DrawViewportSphere(Vector3 position, float radius)
+        {
+            using (new Handles.DrawingScope(Gizmos.color, Gizmos.matrix))
+            {
+                Handles.DrawWireDisc(position, Vector3.right, radius);
+                Handles.DrawWireDisc(position, Vector3.up, radius);
+                Handles.DrawWireDisc(position, Vector3.forward, radius);
+
+                if (Camera.current.orthographic)
+                {
+                    var normal = position - Handles.inverseMatrix.MultiplyVector(Camera.current.transform.forward);
+                    var sqrMagnitude = normal.sqrMagnitude;
+                    var num0 = radius * radius;
+
+                    Handles.DrawWireDisc(position - num0 * normal / sqrMagnitude, normal, radius);
+                }
+                else
+                {
+                    var normal = position - Handles.inverseMatrix.MultiplyPoint(Camera.current.transform.position);
+                    var sqrMagnitude = normal.sqrMagnitude;
+                    var num0 = radius * radius;
+                    var num1 = num0 * num0 / sqrMagnitude;
+                    var num2 = Mathf.Sqrt(num0 - num1);
+
+                    Handles.DrawWireDisc(position - num0 * normal / sqrMagnitude, normal, num2);
+                }
+            }
+        }
     }
 }
 #endif

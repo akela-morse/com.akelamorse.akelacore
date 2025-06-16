@@ -17,22 +17,29 @@ namespace AkelaEditor.Tools
             var count = 0;
             var index = 0;
 
-            foreach (SerializedProperty prop in property.Copy())
+            foreach (SerializedProperty unused in property.Copy())
                 count++;
 
             var propRect = EditorGUI.PrefixLabel(position, label);
-            propRect.width = (propRect.width - MARGIN * (count - 1)) / count;
 
-            EditorGUIUtility.labelWidth = propRect.width / 4f;
+            EditorGUIUtility.labelWidth = propRect.width / 6f;
 
+            var previousRect = Rect.zero;
             foreach (SerializedProperty prop in property.Copy())
             {
                 var currentRect = new Rect(propRect);
-                currentRect.x += (currentRect.width + MARGIN) * index;
+                currentRect.x += (previousRect.width + MARGIN) * index;
+
+                if (attr.sizeRatios != null && attr.sizeRatios.Length > index)
+                    currentRect.width = (propRect.width - MARGIN * (count - 1)) * attr.sizeRatios[index];
+                else
+                    currentRect.width = (propRect.width - MARGIN * (count - 1)) / count;
 
                 GUIContent propertyLabel = attr.Labels != null && attr.Labels.Length > index ? new(attr.Labels[index]) : new();
 
                 EditorGUI.PropertyField(currentRect, prop, propertyLabel);
+
+                previousRect = currentRect;
 
                 ++index;
             }

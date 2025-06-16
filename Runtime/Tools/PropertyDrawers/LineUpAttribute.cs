@@ -12,5 +12,6 @@ namespace Akela.Tools
         }
 
         public string[] Labels => _labels;
+        public float[] sizeRatios { get; set; }
     }
 }

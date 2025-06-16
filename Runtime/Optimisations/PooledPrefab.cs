@@ -14,7 +14,7 @@ namespace Akela.Optimisations
         private enum ReleaseBehaviour
         {
             AfterTime,
-            OnDisable,
+            OnDisabled,
             OnCulled,
             OnParticleSystemEnd,
             Manually
@@ -26,6 +26,9 @@ namespace Akela.Optimisations
         [SerializeField] ReleaseBehaviour _releaseToPool;
 #if AKELA_VINSPECTOR
         [VInspector.ShowIf(nameof(_releaseToPool), ReleaseBehaviour.AfterTime)]
+#endif
+#if AKELA_ANIMANCER
+        [Animancer.Units.Seconds]
 #endif
         [SerializeField] float _releaseTime;
 #if AKELA_VINSPECTOR
@@ -102,7 +105,7 @@ namespace Akela.Optimisations
 
         private void OnDisable()
         {
-            if (_releaseToPool == ReleaseBehaviour.OnDisable)
+            if (_releaseToPool == ReleaseBehaviour.OnDisabled)
                 ReleaseNow();
         }
 
