@@ -4,7 +4,7 @@
     "displayName": "Akela Core",
     "description": "My Unity toolbox",
     "repository": {
-        "url": "https://github.com/akela-morse/akela-core.git"
+        "url": "https://github.com/akela-morse/com.akelamorse.akelacore.git"
     },
     "unity": "2021.3",
     "author": {
