@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 #if AKELA_FIKKIS
-using Fikkis;
+using Fikkis.Data;
 #elif AKELA_FMOD
 using FMODUnity;
 #endif

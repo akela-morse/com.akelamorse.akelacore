@@ -11,10 +11,11 @@
         "GUID:e0cd26848372d4e5c891c569017e11f1",
         "GUID:7f7d1af65c2641843945d409d28f2e20",
         "GUID:15fc0a57446b3144c949da3e2b9737a9",
-        "GUID:57a6d82589ae03c4cabdc058f719f231",
         "GUID:0c752da273b17c547ae705acf0f2adf2",
-        "GUID:de13f8b1675b449e6a6af1cc0f7842ec",
-        "GUID:4c25c05f410a3a447a75c3b0909152ef"
+        "GUID:db558c0e1fe1eb541b87e04ad88767ad",
+        "GUID:57a6d82589ae03c4cabdc058f719f231",
+        "GUID:4c25c05f410a3a447a75c3b0909152ef",
+        "GUID:de13f8b1675b449e6a6af1cc0f7842ec"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -58,6 +59,11 @@
             "name": "com.unity.render-pipelines.universal",
             "expression": "1.0.0",
             "define": "AKELA_URP"
+        },
+        {
+            "name": "com.akelamorse.fikkis",
+            "expression": "1.0.0",
+            "define": "AKELA_FIKKIS"
         },
         {
             "name": "com.kybernetik.ultevents",
