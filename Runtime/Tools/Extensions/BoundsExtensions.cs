@@ -6,7 +6,7 @@ namespace Akela.Tools
     {
         public static Rect ToViewportRect(this Bounds bounds)
         {
-            var camera = Camera.main;
+            var camera = Camera.main!;
 
             var cen = bounds.center;
             var ext = bounds.extents;
