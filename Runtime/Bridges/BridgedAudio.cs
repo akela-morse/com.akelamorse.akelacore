@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine;
-#if AKELA_FIKKIS
+#if AKELA_FIKKIS && FIKKIS_FMOD_OK
 using Fikkis.Data;
 #elif AKELA_FMOD
 using FMODUnity;
@@ -11,7 +11,7 @@ namespace Akela.Bridges
     [Serializable]
     public class BridgedAudio : IBridge
     {
-#if AKELA_FIKKIS
+#if AKELA_FIKKIS && FIKKIS_FMOD_OK
         [SerializeField] private AudioEvent _internalValue;
 
         public static implicit operator AudioEvent(BridgedAudio bridge) => bridge._internalValue;
