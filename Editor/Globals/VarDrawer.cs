@@ -13,7 +13,7 @@ namespace AkelaEditor.Globals
     internal class VarDrawer : PropertyDrawer
     {
         private static readonly Dictionary<Type, Type> containerTypes;
-        
+
         static VarDrawer()
         {
             containerTypes = AppDomain.CurrentDomain
@@ -22,7 +22,7 @@ namespace AkelaEditor.Globals
                 .Where(finalType => !finalType.IsGenericType && finalType
                     .GetBaseTypes()
                     .Any(baseType => baseType.IsGenericType && baseType.GetGenericTypeDefinition() == typeof(GlobalBase<>)))
-                .ToDictionary(key => key.BaseType.GetGenericArguments()[0], elem => elem);
+                .ToDictionary(key => key.BaseType!.GetGenericArguments()[0], elem => elem);
         }
 
         private bool _hasOpenedPicker;
@@ -67,8 +67,8 @@ namespace AkelaEditor.Globals
 
                 if (GUI.Button(buttonRect, EditorGUIUtility.IconContent("_Menu"), EditorStyles.iconButton))
                 {
-                    var controlId = (int)typeof(EditorGUIUtility).GetField("s_LastControlID", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null);
-                    var pickerMethod = typeof(EditorGUIUtility).GetMethod("ShowObjectPicker", BindingFlags.Static | BindingFlags.Public).MakeGenericMethod(assetType);
+                    var controlId = (int)typeof(EditorGUIUtility).GetField("s_LastControlID", BindingFlags.Static | BindingFlags.NonPublic)!.GetValue(null);
+                    var pickerMethod = typeof(EditorGUIUtility).GetMethod("ShowObjectPicker", BindingFlags.Static | BindingFlags.Public)!.MakeGenericMethod(assetType);
 
                     _hasOpenedPicker = true;
 

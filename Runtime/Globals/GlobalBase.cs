@@ -7,7 +7,5 @@ namespace Akela.Globals
         [SerializeField] protected T _value;
 
         public T Value => _value;
-
-        internal GlobalBase() { }
     }
 }
