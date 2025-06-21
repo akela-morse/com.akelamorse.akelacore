@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using UnityEngine;
 
@@ -120,20 +119,19 @@ namespace Akela.Tools
 
         public static Vector3 GuessHeading(this Transform transform, Transform reference)
         {
-            return GetClosestToDirection(transform, reference.forward);
+            return GetClosestToDirection(transform, reference == transform ? Vector3.forward : reference.forward);
         }
 
         public static Vector3 GuessUp(this Transform transform, Transform reference)
         {
-            return GetClosestToDirection(transform, reference.up);
+            return GetClosestToDirection(transform, reference == transform ? Vector3.up : reference.up);
         }
 
         public static Vector3 GuessRight(this Transform transform, Transform reference)
         {
-            return GetClosestToDirection(transform, reference.right);
+            return GetClosestToDirection(transform, reference == transform ? Vector3.right : reference.right);
         }
 
-        [SuppressMessage("ReSharper", "CompareOfFloatsByEqualityOperator")]
         private static Vector3 GetClosestToDirection(Transform transform, Vector3 direction)
         {
             var directions = new List<Vector3>
@@ -146,7 +144,7 @@ namespace Akela.Tools
                 -transform.forward
             };
 
-            directions.Sort((a, b) => Vector3.Angle(b, direction).CompareTo(Vector3.Angle(a, direction)));
+            directions.Sort((a, b) => Vector3.Angle(a, direction).CompareTo(Vector3.Angle(b, direction)));
 
             return directions.First();
         }

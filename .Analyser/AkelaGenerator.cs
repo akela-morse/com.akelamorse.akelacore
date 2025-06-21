@@ -202,6 +202,9 @@ namespace AkelaAnalyser
         public void OnBeforeSerialize()
         {{
 #if UNITY_EDITOR
+            if (!this)
+                return;
+
             dep = new {dependencyContainerType.ToDisplayString()}
             {{"
             );
