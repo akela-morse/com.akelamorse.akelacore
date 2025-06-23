@@ -26,10 +26,9 @@ namespace Akela.Tools
             foreach (Transform t in root)
             {
                 if (predicate(t))
-                {
                     return t;
-                }
-                else if (t.childCount > 0)
+
+                if (t.childCount > 0)
                 {
                     var child = t.FindChildRecursive(predicate);
 
@@ -43,21 +42,27 @@ namespace Akela.Tools
 
         public static Transform FindParentRecursive(this Transform leaf, Func<Transform, bool> predicate)
         {
-            if (predicate(leaf))
-                return leaf;
-            else if (leaf.parent)
-                return leaf.parent.FindParentRecursive(predicate);
+            for (;;)
+            {
+                if (predicate(leaf))
+                    return leaf;
 
-            return null;
+                if (leaf.parent)
+                {
+                    leaf = leaf.parent;
+                    continue;
+                }
+
+                return null;
+            }
         }
 
         public static void SetLayerRecursively(this Transform trans, int layer)
         {
             trans.gameObject.layer = layer;
+
             foreach (Transform child in trans)
-            {
                 child.SetLayerRecursively(layer);
-            }
         }
 
         public static void SetGlobalScale(this Transform transform, Vector3 globalScale)
@@ -89,15 +94,19 @@ namespace Akela.Tools
 
             var col4Pos = matrix.GetColumn(3);
 
-            var min = new Vector3();
-            min.x = Mathf.Min(xa.x, xb.x) + Mathf.Min(ya.x, yb.x) + Mathf.Min(za.x, zb.x) + col4Pos.x;
-            min.y = Mathf.Min(xa.y, xb.y) + Mathf.Min(ya.y, yb.y) + Mathf.Min(za.y, zb.y) + col4Pos.y;
-            min.z = Mathf.Min(xa.z, xb.z) + Mathf.Min(ya.z, yb.z) + Mathf.Min(za.z, zb.z) + col4Pos.z;
+            var min = new Vector3
+            {
+                x = Mathf.Min(xa.x, xb.x) + Mathf.Min(ya.x, yb.x) + Mathf.Min(za.x, zb.x) + col4Pos.x,
+                y = Mathf.Min(xa.y, xb.y) + Mathf.Min(ya.y, yb.y) + Mathf.Min(za.y, zb.y) + col4Pos.y,
+                z = Mathf.Min(xa.z, xb.z) + Mathf.Min(ya.z, yb.z) + Mathf.Min(za.z, zb.z) + col4Pos.z
+            };
 
-            var max = new Vector3();
-            max.x = Mathf.Max(xa.x, xb.x) + Mathf.Max(ya.x, yb.x) + Mathf.Max(za.x, zb.x) + col4Pos.x;
-            max.y = Mathf.Max(xa.y, xb.y) + Mathf.Max(ya.y, yb.y) + Mathf.Max(za.y, zb.y) + col4Pos.y;
-            max.z = Mathf.Max(xa.z, xb.z) + Mathf.Max(ya.z, yb.z) + Mathf.Max(za.z, zb.z) + col4Pos.z;
+            var max = new Vector3
+            {
+                x = Mathf.Max(xa.x, xb.x) + Mathf.Max(ya.x, yb.x) + Mathf.Max(za.x, zb.x) + col4Pos.x,
+                y = Mathf.Max(xa.y, xb.y) + Mathf.Max(ya.y, yb.y) + Mathf.Max(za.y, zb.y) + col4Pos.y,
+                z = Mathf.Max(xa.z, xb.z) + Mathf.Max(ya.z, yb.z) + Mathf.Max(za.z, zb.z) + col4Pos.z
+            };
 
             return BoundsHelpers.CreateMinMax(min, max);
         }
