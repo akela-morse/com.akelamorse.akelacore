@@ -27,8 +27,8 @@ namespace Akela.Tools
 
         static UrpGraphics()
         {
+            const BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic;
             var pipelineAssetType = typeof(UniversalRenderPipelineAsset);
-            var flags = BindingFlags.Instance | BindingFlags.NonPublic;
 
             MainLightCastShadows_FieldInfo = pipelineAssetType.GetField("m_MainLightShadowsSupported", flags);
             AdditionalLightCastShadows_FieldInfo = pipelineAssetType.GetField("m_AdditionalLightShadowsSupported", flags);

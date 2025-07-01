@@ -135,44 +135,20 @@ namespace Akela.Tools
 
         public static void SetPivot(this RectTransform source, PivotPresets preset)
         {
-            switch (preset)
+            source.pivot = preset switch
             {
-                case PivotPresets.TopLeft:
-                    source.pivot = new Vector2(0, 1);
-                    break;
+                PivotPresets.TopLeft => new Vector2(0, 1),
+                PivotPresets.TopCenter => new Vector2(0.5f, 1),
+                PivotPresets.TopRight => new Vector2(1, 1),
+                PivotPresets.MiddleLeft => new Vector2(0, 0.5f),
+                PivotPresets.MiddleCenter => new Vector2(0.5f, 0.5f),
+                PivotPresets.MiddleRight => new Vector2(1, 0.5f),
+                PivotPresets.BottomLeft => new Vector2(0, 0),
+                PivotPresets.BottomCenter => new Vector2(0.5f, 0),
+                PivotPresets.BottomRight => new Vector2(1, 0),
 
-                case PivotPresets.TopCenter:
-                    source.pivot = new Vector2(0.5f, 1);
-                    break;
-
-                case PivotPresets.TopRight:
-                    source.pivot = new Vector2(1, 1);
-                    break;
-
-                case PivotPresets.MiddleLeft:
-                    source.pivot = new Vector2(0, 0.5f);
-                    break;
-
-                case PivotPresets.MiddleCenter:
-                    source.pivot = new Vector2(0.5f, 0.5f);
-                    break;
-
-                case PivotPresets.MiddleRight:
-                    source.pivot = new Vector2(1, 0.5f);
-                    break;
-
-                case PivotPresets.BottomLeft:
-                    source.pivot = new Vector2(0, 0);
-                    break;
-
-                case PivotPresets.BottomCenter:
-                    source.pivot = new Vector2(0.5f, 0);
-                    break;
-
-                case PivotPresets.BottomRight:
-                    source.pivot = new Vector2(1, 0);
-                    break;
-            }
+                _ => source.pivot
+            };
         }
     }
 }
