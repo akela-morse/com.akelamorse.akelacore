@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using Unity.Mathematics;
+using UnityEngine;
 
 namespace Akela.Tools
 {
@@ -28,6 +30,34 @@ namespace Akela.Tools
             return (float)result;
         }
 
+        public static float Sum(IEnumerable<float> numbers)
+        {
+            var result = 0.0;
+
+            foreach (var number in numbers)
+                result += number;
+
+            return (float)result;
+        }
+
+        public static float Average(IEnumerable<float> numbers)
+        {
+            var result = 0.0;
+            var count = 0;
+
+            foreach (var number in numbers)
+            {
+                result += number;
+                count++;
+            }
+
+            var inverse = 1.0 / count;
+
+            result *= inverse;
+
+            return (float)result;
+        }
+
         public static Vector3 Sum(params Vector3[] numbers)
         {
             (double x, double y, double z) result = (0.0, 0.0, 0.0);
@@ -40,14 +70,42 @@ namespace Akela.Tools
 
         public static Vector3 Average(params Vector3[] numbers)
         {
-            (double x, double y, double z) result = (0.0, 0.0, 0.0);
+            double3 result = new(0.0, 0.0, 0.0);
 
             for (var i = 0; i < numbers.Length; i++)
-                result = (result.x + numbers[i].x, result.y + numbers[i].y, result.z + numbers[i].z);
+                result = new(result.x + numbers[i].x, result.y + numbers[i].y, result.z + numbers[i].z);
 
             var inverse = 1.0 / numbers.Length;
 
-            result = (result.x * inverse, result.y * inverse, result.z * inverse);
+            result = new(result.x * inverse, result.y * inverse, result.z * inverse);
+
+            return new((float)result.x, (float)result.y, (float)result.z);
+        }
+
+        public static Vector3 Sum(IEnumerable<Vector3> numbers)
+        {
+            double3 result = new(0.0, 0.0, 0.0);
+
+            foreach (var number in numbers)
+                result = new(result.x + number.x, result.y + number.y, result.z + number.z);
+
+            return new((float)result.x, (float)result.y, (float)result.z);
+        }
+
+        public static Vector3 Average(IEnumerable<Vector3> numbers)
+        {
+            double3 result = new(0.0, 0.0, 0.0);
+            var count = 0;
+
+            foreach (var number in numbers)
+            {
+                result = new(result.x + number.x, result.y + number.y, result.z + number.z);
+                count++;
+            }
+
+            var inverse = 1.0 / count;
+
+            result *= inverse;
 
             return new((float)result.x, (float)result.y, (float)result.z);
         }
