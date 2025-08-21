@@ -64,9 +64,9 @@ namespace Akela.Tools
         public static Vector3 ComponentMask(this Vector3 v, float mask, float fallback = 0f)
         {
             return new(
-                v.x == mask ? v.x : fallback,
-                v.y == mask ? v.y : fallback,
-                v.z == mask ? v.z : fallback
+                Mathf.Approximately(v.x, mask) ? v.x : fallback,
+                Mathf.Approximately(v.y, mask) ? v.y : fallback,
+                Mathf.Approximately(v.z, mask) ? v.z : fallback
             );
         }
 

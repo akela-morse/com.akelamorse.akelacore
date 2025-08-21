@@ -12,6 +12,19 @@ namespace Akela.Tools
         public static bool TryGet(Component source, out T component) => TryGet(source.gameObject.GetInstanceID(), out component);
         public static bool TryGet(RaycastHit hitInfo, out T component) => TryGet(hitInfo.transform.gameObject.GetInstanceID(), out component);
 
+        public static void Register(T component)
+        {
+            var behaviour = component as MonoBehaviour;
+
+            Debug.Assert(behaviour);
+
+            var instanceId = behaviour.gameObject.GetInstanceID();
+
+            _cache.Add(instanceId, component);
+
+            behaviour.destroyCancellationToken.Register(() => _cache.Remove(instanceId));
+        }
+
         public static void Initialise()
         {
             ComponentLoader<T>.OnTypeFound += LoadComponents;
@@ -25,9 +38,7 @@ namespace Akela.Tools
             {
                 var behaviour = component as MonoBehaviour;
 
-#if UNITY_ASSERTIONS
                 Debug.Assert(behaviour);
-#endif
 
                 var gameObject = behaviour.gameObject;
                 var instanceId = gameObject.GetInstanceID();

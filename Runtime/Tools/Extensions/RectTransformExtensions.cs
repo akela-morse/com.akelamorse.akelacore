@@ -47,7 +47,7 @@ namespace Akela.Tools
     {
         public static void SetAnchor(this RectTransform source, AnchorPresets allign, int offsetX = 0, int offsetY = 0)
         {
-            source.anchoredPosition = new Vector3(offsetX, offsetY, 0);
+            source.anchoredPosition = new(offsetX, offsetY);
 
             switch (allign)
             {
