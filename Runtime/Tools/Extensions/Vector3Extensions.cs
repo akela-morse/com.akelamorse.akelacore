@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Runtime.CompilerServices;
+using UnityEngine;
 
 namespace Akela.Tools
 {
@@ -43,6 +44,7 @@ namespace Akela.Tools
             return new(1f / v.x, 1f / v.y, 1f / v.z);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 Mask(this Vector3 v, Vector3 mask)
         {
             return new(
@@ -52,6 +54,7 @@ namespace Akela.Tools
             );
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 InvertMask(this Vector3 v)
         {
             return new(
@@ -61,6 +64,7 @@ namespace Akela.Tools
             );
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 ComponentMask(this Vector3 v, float mask, float fallback = 0f)
         {
             return new(
@@ -68,6 +72,20 @@ namespace Akela.Tools
                 Mathf.Approximately(v.y, mask) ? v.y : fallback,
                 Mathf.Approximately(v.z, mask) ? v.z : fallback
             );
+        }
+
+        public static float MaskSingle(this Vector3 v, Vector3 mask)
+        {
+            if (mask.x != 0f)
+                return v.x;
+
+            if (mask.y != 0f)
+                return v.y;
+
+            if (mask.z != 0f)
+                return v.z;
+
+            return 0f;
         }
 
         public static Vector3 SnapToCardinalDirection(this Vector3 v)
@@ -79,10 +97,11 @@ namespace Akela.Tools
 
             if (absV.x > absV.y && absV.x > absV.z)
                 return v.x > 0f ? Vector3.right : Vector3.left;
-            else if (absV.y > absV.z)
+
+            if (absV.y > absV.z)
                 return v.y > 0f ? Vector3.up : Vector3.down;
-            else
-                return v.z > 0f ? Vector3.forward : Vector3.back;
+
+            return v.z > 0f ? Vector3.forward : Vector3.back;
         }
     }
 }
