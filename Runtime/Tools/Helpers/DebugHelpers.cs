@@ -24,7 +24,7 @@ namespace Akela.Tools
         {
             direction.Normalize();
             Box bottomBox = new(origin, halfExtents, orientation);
-            Box topBox = new(origin + (direction * distance), halfExtents, orientation);
+            Box topBox = new(origin + direction * distance, halfExtents, orientation);
 
             Debug.DrawLine(bottomBox.BackBottomLeft, topBox.BackBottomLeft, color);
             Debug.DrawLine(bottomBox.BackBottomRight, topBox.BackBottomRight, color);
@@ -39,22 +39,12 @@ namespace Akela.Tools
             DrawBox(topBox, color);
         }
 
-        public static void DrawBox(Vector3 origin, Vector3 halfExtents, Quaternion orientation, Color color)
-        {
-            DrawBox(origin, halfExtents, orientation, color, 0f);
-        }
-
-        public static void DrawBox(Vector3 origin, Vector3 halfExtents, Quaternion orientation, Color color, float duration)
+        public static void DrawBox(Vector3 origin, Vector3 halfExtents, Quaternion orientation, Color color, float duration = 0f)
         {
             DrawBox(new Box(origin, halfExtents, orientation), color, duration);
         }
 
-        public static void DrawBox(Box box, Color color)
-        {
-            DrawBox(box, color, 0f);
-        }
-
-        public static void DrawBox(Box box, Color color, float duration)
+        public static void DrawBox(Box box, Color color, float duration = 0f)
         {
             Debug.DrawLine(box.FrontTopLeft, box.FrontTopRight, color, duration);
             Debug.DrawLine(box.FrontTopRight, box.FrontBottomRight, color, duration);
@@ -129,7 +119,7 @@ namespace Akela.Tools
         //This should work for all cast types
         private static Vector3 CastCenterOnCollision(Vector3 origin, Vector3 direction, float hitInfoDistance)
         {
-            return origin + (direction.normalized * hitInfoDistance);
+            return origin + direction.normalized * hitInfoDistance;
         }
 
         private static Vector3 RotatePointAroundPivot(Vector3 point, Vector3 pivot, Quaternion rotation)
