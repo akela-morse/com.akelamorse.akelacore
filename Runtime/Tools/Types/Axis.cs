@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 namespace Akela.Tools
-{    
+{
     public enum Axis
     {
         [InspectorName("X-Axis")] X,
@@ -37,8 +37,7 @@ namespace Akela.Tools
         public static Vector3 RightRelative(this Axis axis) => axis switch
         {
             Axis.X => Vector3.back,
-            Axis.Y => Vector3.right,
-            Axis.Z => Vector3.right,
+            Axis.Y or Axis.Z => Vector3.right,
             _ => Vector3.zero,
         };
     }

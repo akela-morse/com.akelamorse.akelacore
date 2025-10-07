@@ -117,7 +117,7 @@ namespace Akela.Motion
             transform.localEulerAngles = Vector3.LerpUnclamped(_startRotation, _endRotation, lerp);
             transform.localScale = Vector3.LerpUnclamped(_startScale, _endScale, lerp);
 
-            if (_lerpDirection < 0 && lerp <= 0f || _lerpDirection > 0 && lerp >= 1f)
+            if (_lerpDirection < 0 && Progression <= 0f || _lerpDirection > 0 && Progression >= 1f)
                 StopAnimation();
         }
 

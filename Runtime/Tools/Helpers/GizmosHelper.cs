@@ -153,6 +153,17 @@ namespace Akela.Tools
                 }
             }
         }
+
+        public static void DrawCone(Vector3 peak, Vector3 axis, float angle, float minRange, float maxRange)
+        {
+            var tan = Mathf.Tan(angle);
+
+            using (new Handles.DrawingScope(Gizmos.color, Gizmos.matrix))
+            {
+                Handles.DrawWireDisc(peak + axis * minRange, axis, minRange * tan);
+                Handles.DrawWireDisc(peak + axis * maxRange, axis, maxRange * tan);
+            }
+        }
     }
 }
 #endif

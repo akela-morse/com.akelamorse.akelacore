@@ -8,7 +8,7 @@ namespace AkelaEditor.Tools
     [CustomPropertyDrawer(typeof(EulerAnglesAttribute))]
     internal class EulerAnglesDrawer : PropertyDrawer
     {
-        private Dictionary<string, Vector3> _internalVector3Value = new();
+        private readonly Dictionary<string, Vector3> _internalVector3Value = new();
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
