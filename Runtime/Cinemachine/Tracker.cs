@@ -15,10 +15,10 @@ namespace Akela.Cinemachine
     public sealed partial class Tracker
     {
         [InternalMethod]
-        private delegate void InitStateInfoDelegate(CinemachineComponentBase component, float deltaTime, BindingMode bindingMode, Vector3 up);
+        private delegate void InitStateInfoDelegate(CinemachineComponentBase component, float deltaTime, BindingMode bindingMode, Vector3 targetOffset, Vector3 up);
 
         [InternalMethod]
-        private delegate void TrackTargetDelegate(CinemachineComponentBase component, float deltaTime, Vector3 up, Vector3 desiredCameraOffset, in TrackerSettings settings, ref CameraState cameraState, out Vector3 outTargetPosition, out Quaternion outTargetOrient);
+        private delegate void TrackTargetDelegate(CinemachineComponentBase component, float deltaTime, Vector3 up, Vector3 desiredCameraOffset, in TrackerSettings settings, Vector3 targetOffset, ref CameraState cameraState, out Vector3 outTargetPosition, out Quaternion outTargetOrient);
 
         [InternalMethod]
         private delegate Vector3 GetOffsetForMinimumTargetDistanceDelegate(CinemachineComponentBase component, Vector3 dampedTargetPos, Vector3 cameraOffset, Vector3 cameraFwd, Vector3 up, Vector3 actualTargetPos);
@@ -27,10 +27,10 @@ namespace Akela.Cinemachine
         private delegate void OnTargetObjectWarpedDelegate(Vector3 positionDelta);
 
         [InternalMethod]
-        private delegate Quaternion GetReferenceOrientationDelegate(CinemachineComponentBase component, BindingMode bindingMode, Vector3 worldUp, ref CameraState cameraState);
+        private delegate Quaternion GetReferenceOrientationDelegate(CinemachineComponentBase component, BindingMode bindingMode, Vector3 targetOffset, Vector3 worldUp, ref CameraState cameraState);
 
         [InternalMethod]
-        private delegate void OnForceCameraPositionDelegate(CinemachineComponentBase component, BindingMode bindingMode, ref CameraState newState);
+        private delegate void OnForceCameraPositionDelegate(CinemachineComponentBase component, BindingMode bindingMode, Vector3 targetOffset, ref CameraState newState);
     }
 }
 #endif

@@ -37,7 +37,7 @@
         },
         {
             "name": "com.unity.cinemachine",
-            "expression": "3.1.4",
+            "expression": "3.1.5",
             "define": "AKELA_CINEMACHINE"
         },
         {
