@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
@@ -19,7 +20,7 @@ namespace AkelaAnalyser
         const string HIDEFIELD_SYMBOL_NAME = "UnityEngine.HideInInspector";
 
         const string SINGLETON_SYMBOL_NAME = "Akela.Behaviours.SingletonAttribute";
-        const string DEPENDENCY_SYMBOL_NAME = "Akela.Behaviours.WithDependenciesAttribute";
+        const string FROMTHIS_SYMBOL_NAME = "Akela.Behaviours.FromThisAttribute";
         const string FROMPARENTS_SYMBOL_NAME = "Akela.Behaviours.FromParentsAttribute";
         const string FROMCHILDREN_SYMBOL_NAME = "Akela.Behaviours.FromChildrenAttribute";
         const string MONITOR_SYMBOL_NAME = "Akela.Behaviours.GenerateHashForEveryFieldAttribute";
@@ -47,7 +48,7 @@ namespace AkelaAnalyser
             ProcessWrapperClasses(ref context, symbols.Where(x => !x.IsAbstract));
         }
 
-        private void ProcessSerializableClasses(ref GeneratorExecutionContext context, IEnumerable<INamedTypeSymbol> symbols)
+        private static void ProcessSerializableClasses(ref GeneratorExecutionContext context, IEnumerable<INamedTypeSymbol> symbols)
         {
             foreach (var symbol in symbols)
             {
@@ -62,19 +63,6 @@ namespace AkelaAnalyser
                                 continue;
 
                             context.AddSource($"{symbol.Name}_singleton.g.cs", SourceText.From(GenerateSingleton(symbol), Encoding.UTF8));
-                            break;
-
-                        case DEPENDENCY_SYMBOL_NAME:
-                            if (!SymbolIsInstantiableFrom(symbol, MONOBEHAVIOUR_SYMBOL_NAME))
-                                continue;
-
-                            var dependencyContainerType = attr.ConstructorArguments.Length > 0 ? attr.ConstructorArguments[0].Value as INamedTypeSymbol : null;
-                            var sourceString = GenerateDependencies(context, symbol, dependencyContainerType);
-
-                            if (string.IsNullOrEmpty(sourceString))
-                                continue;
-
-                            context.AddSource($"{symbol.Name}_dependencies.g.cs", SourceText.From(sourceString, Encoding.UTF8));
                             break;
 
                         case MONITOR_SYMBOL_NAME:
@@ -92,10 +80,41 @@ namespace AkelaAnalyser
                             break;
                     }
                 }
+
+                // Dependencies check
+                if (SymbolIsInstantiableFrom(symbol, MONOBEHAVIOUR_SYMBOL_NAME))
+                {
+                    var dependencyFields = symbol.GetMembers()
+                        .Where(x =>
+                            x.Kind == SymbolKind.Field
+                        )
+                        .Cast<IFieldSymbol>()
+                        .Where(x =>
+                            (
+                                x.Type is INamedTypeSymbol y && SymbolIsInstantiableFrom(y, COMPONENT_SYMBOL_NAME) ||
+                                x.Type is IArrayTypeSymbol z && SymbolIsInstantiableFrom((INamedTypeSymbol)z.ElementType, COMPONENT_SYMBOL_NAME)
+                            ) &&
+                            FieldIsSerializable(x)
+                        )
+                        .Select(x => (
+                                field: x,
+                                attr: x.GetAttributes()
+                                    .Select(a => a.AttributeClass?.ToDisplayString())
+                                    .Where(a => a == FROMTHIS_SYMBOL_NAME || a == FROMCHILDREN_SYMBOL_NAME || a == FROMPARENTS_SYMBOL_NAME)
+                            )
+                        )
+                        .Where(x => x.attr.Count() == 1)
+                        .Select(x => (x.field, x.attr.First()));
+
+                    var sourceString = GenerateDependencies(symbol, dependencyFields);
+
+                    if (!string.IsNullOrEmpty(sourceString))
+                        context.AddSource($"{symbol.Name}_dependencies.g.cs", SourceText.From(sourceString, Encoding.UTF8));
+                }
             }
         }
 
-        private void ProcessWrapperClasses(ref GeneratorExecutionContext context, IEnumerable<INamedTypeSymbol> symbols)
+        private static void ProcessWrapperClasses(ref GeneratorExecutionContext context, IEnumerable<INamedTypeSymbol> symbols)
         {
             foreach (var symbol in symbols)
             {
@@ -115,7 +134,7 @@ namespace AkelaAnalyser
         }
 
         #region Contextual Generators
-        private string GenerateSingleton(INamedTypeSymbol symbol)
+        private static string GenerateSingleton(INamedTypeSymbol symbol)
         {
             var source = new StringBuilder();
 
@@ -142,45 +161,12 @@ namespace AkelaAnalyser
             return source.ToString();
         }
 
-        private string GenerateDependencies(GeneratorExecutionContext context, INamedTypeSymbol symbol, INamedTypeSymbol dependencyContainerType)
+        [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
+        private static string GenerateDependencies(INamedTypeSymbol symbol, IEnumerable<(IFieldSymbol f, string a)> fields)
         {
-            // Sanity check
-            if
-            (
-                dependencyContainerType == null ||
-                dependencyContainerType.DeclaredAccessibility != Accessibility.Public ||
-                !dependencyContainerType.IsValueType ||
-                dependencyContainerType.IsGenericType ||
-                !dependencyContainerType.IsSerializable
-            )
-            {
-                context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor(
-                        "AKELIB1101", // 1000 - com.akela.core ; 0100 - Akela.Behaviours
-                        "Invalid behaviour dependencies",
-                        "Type {0} cannot be used as a dependency container for component {1}. A dependency container must be a public, serializable, non-generic value type (struct).",
-                        "Akela.Behaviours",
-                        DiagnosticSeverity.Error,
-                        true),
-                    symbol.Locations.FirstOrDefault(),
-                    dependencyContainerType?.ToDisplayString() ?? "undefined",
-                    symbol.ToDisplayString()
-                ));
-
+            // Sanity Check
+            if (!fields.Any())
                 return null;
-            }
-
-            // Get all fields from the container
-            var containerFields = dependencyContainerType.GetMembers()
-                .Where(x =>
-                    x.Kind == SymbolKind.Field &&
-                    !x.IsStatic &&
-                    x.DeclaredAccessibility == Accessibility.Public
-                )
-                .Cast<IFieldSymbol>()
-                .Where(x =>
-                    x.Type is INamedTypeSymbol y && SymbolIsInstantiableFrom(y, COMPONENT_SYMBOL_NAME) ||
-                    x.Type is IArrayTypeSymbol z && SymbolIsInstantiableFrom((INamedTypeSymbol)z.ElementType, COMPONENT_SYMBOL_NAME)
-                );
 
             // Generate source
             var source = new StringBuilder();
@@ -195,87 +181,50 @@ namespace AkelaAnalyser
 
             source.Append(
                 $@"
-        [SerializeField, HideInInspector] protected {dependencyContainerType.ToDisplayString()} dep;
-        
         public void OnAfterDeserialize() {{ }}
         
         public void OnBeforeSerialize()
         {{
 #if UNITY_EDITOR
-            if (!this)
+            if (!this.gameObject)
                 return;
-
-            dep = new {dependencyContainerType.ToDisplayString()}
-            {{"
+"
             );
 
-            bool fromParents = false, fromChildren = false;
-
-            foreach (var field in containerFields)
+            foreach (var dependencyField in fields)
             {
                 string methodCall;
 
-                var fieldAttributes = field.GetAttributes();
-                var hasParentAttr = fieldAttributes.Any(x => x.AttributeClass?.ToDisplayString() == FROMPARENTS_SYMBOL_NAME);
-                var hasChildAttr = fieldAttributes.Any(x => x.AttributeClass?.ToDisplayString() == FROMCHILDREN_SYMBOL_NAME);
-
-                if (hasParentAttr && hasChildAttr)
+                if (dependencyField.a == FROMCHILDREN_SYMBOL_NAME)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor(
-                            "AKELIB1102", // 1000 - com.akela.core ; 0100 - Akela.Behaviours
-                            "Invalid behaviour dependencies",
-                            "Using both [FromParents] and [FromChildren] on a dependency container field is not allowed.",
-                            "Akela.Behaviours",
-                            DiagnosticSeverity.Error,
-                            true),
-                        field.Locations.FirstOrDefault()
-                    ));
-
-                    continue;
-                }
-
-                if (!fromParents && hasParentAttr)
-                {
-                    fromParents = true;
-                    fromChildren = false;
-                }
-                else if (!fromChildren && hasChildAttr)
-                {
-                    fromChildren = true;
-                    fromParents = false;
-                }
-
-                if (fromChildren)
-                {
-                    if (field.Type is IArrayTypeSymbol arraySymbol)
+                    if (dependencyField.f.Type is IArrayTypeSymbol arraySymbol)
                         methodCall = $"GetComponentsInChildren<{arraySymbol.ElementType.ToDisplayString()}>";
                     else
-                        methodCall = $"GetComponentInChildren<{field.Type.ToDisplayString()}>";
+                        methodCall = $"GetComponentInChildren<{dependencyField.f.Type.ToDisplayString()}>";
                 }
-                else if (fromParents)
+                else if (dependencyField.a == FROMPARENTS_SYMBOL_NAME)
                 {
-                    if (field.Type is IArrayTypeSymbol arraySymbol)
+                    if (dependencyField.f.Type is IArrayTypeSymbol arraySymbol)
                         methodCall = $"GetComponentsInParent<{arraySymbol.ElementType.ToDisplayString()}>";
                     else
-                        methodCall = $"GetComponentInParent<{field.Type.ToDisplayString()}>";
+                        methodCall = $"GetComponentInParent<{dependencyField.f.Type.ToDisplayString()}>";
                 }
                 else
                 {
-                    if (field.Type is IArrayTypeSymbol arraySymbol)
+                    if (dependencyField.f.Type is IArrayTypeSymbol arraySymbol)
                         methodCall = $"GetComponents<{arraySymbol.ElementType.ToDisplayString()}>";
                     else
-                        methodCall = $"GetComponent<{field.Type.ToDisplayString()}>";
+                        methodCall = $"GetComponent<{dependencyField.f.Type.ToDisplayString()}>";
                 }
 
                 source.Append(
                     $@"
-                {field.Name} = {methodCall}(),"
+            {dependencyField.f.Name} = {methodCall}();"
                 );
             }
 
             source.Append(
                 $@"
-            }};
 #endif
         }}"
             );
@@ -285,7 +234,7 @@ namespace AkelaAnalyser
             return source.ToString();
         }
 
-        private string GenerateMonitoringHash(INamedTypeSymbol symbol)
+        private static string GenerateMonitoringHash(INamedTypeSymbol symbol)
         {
             var source = new StringBuilder();
 
@@ -348,7 +297,7 @@ using UnityEngine;
             return source.ToString();
         }
 
-        private string GenerateHideScriptFieldEditor(INamedTypeSymbol symbol)
+        private static string GenerateHideScriptFieldEditor(INamedTypeSymbol symbol)
         {
             var source = new StringBuilder();
 
@@ -379,7 +328,8 @@ using UnityEditor;
             return source.ToString();
         }
 
-        private string GenerateWrapperDelegates(INamedTypeSymbol symbol, string neighbouringType, string typeName)
+        [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
+        private static string GenerateWrapperDelegates(INamedTypeSymbol symbol, string neighbouringType, string typeName)
         {
             var source = new StringBuilder();
 
@@ -416,6 +366,7 @@ using System.Reflection;
                 var methodIsPrivate = attr.NamedArguments.Where(x => x.Key == "IsPrivate").Select(x => x.Value).FirstOrDefault().Value as bool? == true;
 
                 string methodName;
+
                 if (attr.NamedArguments.Any(x => x.Key == "MethodName"))
                     methodName = attr.NamedArguments.First(x => x.Key == "MethodName").Value.ToString();
                 else
@@ -550,6 +501,7 @@ using System.Reflection;
     {fullModifierList} partial class {symbol.Name}");
 
             string genericConstraints;
+
             if (symbol.IsGenericType)
             {
                 var genericParameters = "<" +
@@ -691,8 +643,7 @@ using System.Reflection;
 
             switch (field.Type.TypeKind)
             {
-                case TypeKind.Enum:
-                    return true;
+                case TypeKind.Enum: return true;
 
                 case TypeKind.Class:
                     return field.Type.SpecialType == SpecialType.System_String ||
@@ -711,8 +662,7 @@ using System.Reflection;
                                SymbolIsInstantiableFrom(elemType, UNITYOBJECT_SYMBOL_NAME)
                            );
 
-                default:
-                    return false;
+                default: return false;
             }
         }
 
@@ -721,6 +671,7 @@ using System.Reflection;
             do
             {
                 yield return leaf;
+
                 leaf = leaf.BaseType;
             }
             while (leaf != null);
