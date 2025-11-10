@@ -103,7 +103,7 @@ namespace Akela.ExtendedPhysics
             {
                 _subColliders[i].isTrigger = isTrigger;
                 _subColliders[i].providesContacts = providesContacts;
-                _subColliders[i].material = material;
+                _subColliders[i].sharedMaterial = material;
                 _subColliders[i].layerOverridePriority = layerOverridePriority;
                 _subColliders[i].includeLayers = includeLayers;
                 _subColliders[i].excludeLayers = excludeLayers;

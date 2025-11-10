@@ -150,7 +150,7 @@ namespace AkelaAnalyser
                 $@"
         public static {symbol.Name} Main {{ get; private set; }}
 
-        public void InitialiseBehaviour()
+        void IInitialisableBehaviour.InitialiseBehaviour()
         {{
             Main = this;
         }}"
@@ -172,7 +172,8 @@ namespace AkelaAnalyser
             var source = new StringBuilder();
 
             source.Append(
-                @"using UnityEngine;
+                @"#if UNITY_EDITOR
+using UnityEngine;
 
 "
             );
@@ -181,11 +182,10 @@ namespace AkelaAnalyser
 
             source.Append(
                 $@"
-        public void OnAfterDeserialize() {{ }}
+        void ISerializationCallbackReceiver.OnAfterDeserialize() {{ }}
         
-        public void OnBeforeSerialize()
+        void ISerializationCallbackReceiver.OnBeforeSerialize()
         {{
-#if UNITY_EDITOR
             if (!this.gameObject)
                 return;
 "
@@ -225,11 +225,15 @@ namespace AkelaAnalyser
 
             source.Append(
                 $@"
-#endif
         }}"
             );
 
             AppendClassFooter(source, symbol);
+
+            source.Append(
+                $@"
+#endif"
+                );
 
             return source.ToString();
         }
