@@ -186,7 +186,7 @@ using UnityEngine;
         
         void ISerializationCallbackReceiver.OnBeforeSerialize()
         {{
-            if (!this.gameObject)
+            if (!this || !this.gameObject)
                 return;
 "
             );
