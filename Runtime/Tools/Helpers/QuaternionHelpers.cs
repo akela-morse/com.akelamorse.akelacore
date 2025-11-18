@@ -20,5 +20,22 @@ namespace Akela.Tools
 
             return customToTarget;
         }
+
+        public static Vector3 AngularVelocity(Quaternion previousRotation, Quaternion currentRotation)
+        {
+            const float epsilon = 1023.5f / 1024.0f;
+
+            var q = currentRotation * Quaternion.Inverse(previousRotation);
+
+            var absQ = Mathf.Abs(q.w);
+
+            if (absQ > epsilon)
+                return Vector3.zero;
+
+            var angle = Mathf.Acos(absQ);
+            var gain = Mathf.Sign(q.w) * 2f * angle / (Mathf.Sin(angle) * Time.deltaTime);
+
+            return new Vector3(q.x * gain, q.y * gain, q.z * gain);
+        }
     }
 }
