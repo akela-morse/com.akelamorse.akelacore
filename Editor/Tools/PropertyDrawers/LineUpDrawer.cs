@@ -1,4 +1,6 @@
-﻿using Akela.Tools;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Akela.Tools;
 using UnityEditor;
 using UnityEngine;
 
@@ -14,18 +16,18 @@ namespace AkelaEditor.Tools
             var prevWidth = EditorGUIUtility.labelWidth;
             var attr = (LineUpAttribute)attribute;
 
-            var count = 0;
-            var index = 0;
-
-            foreach (SerializedProperty unused in property.Copy())
-                count++;
-
-            var propRect = EditorGUI.PrefixLabel(position, label);
+            var propRect = attr.noPrefix ? position : EditorGUI.PrefixLabel(position, label);
 
             EditorGUIUtility.labelWidth = propRect.width / 6f;
 
+            using var unused = property.Copy();
+            var count = GetDirectChildren(unused).Count();
+            var index = 0;
+
             var previousRect = Rect.zero;
-            foreach (SerializedProperty prop in property.Copy())
+
+            using var copy = property.Copy();
+            foreach (var prop in GetDirectChildren(copy))
             {
                 var currentRect = new Rect(propRect);
                 currentRect.x += (previousRect.width + MARGIN) * index;
@@ -35,7 +37,7 @@ namespace AkelaEditor.Tools
                 else
                     currentRect.width = (propRect.width - MARGIN * (count - 1)) / count;
 
-                GUIContent propertyLabel = attr.Labels != null && attr.Labels.Length > index ? new(attr.Labels[index]) : new();
+                GUIContent propertyLabel = attr.Labels != null && attr.Labels.Length > index && !string.IsNullOrEmpty(attr.Labels[index]) ? new(attr.Labels[index]) : new();
 
                 EditorGUI.PropertyField(currentRect, prop, propertyLabel);
 
@@ -45,6 +47,19 @@ namespace AkelaEditor.Tools
             }
 
             EditorGUIUtility.labelWidth = prevWidth;
+        }
+
+        private static IEnumerable<SerializedProperty> GetDirectChildren(SerializedProperty parent)
+        {
+            var dots = parent.propertyPath.Count(c => c == '.');
+
+            foreach (SerializedProperty inner in parent)
+            {
+                var isDirectChild = inner.propertyPath.Count(c => c == '.') == dots + 1;
+
+                if (isDirectChild)
+                    yield return inner;
+            }
         }
     }
 }
