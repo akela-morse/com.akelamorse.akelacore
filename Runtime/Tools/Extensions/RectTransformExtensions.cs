@@ -45,7 +45,7 @@ namespace Akela.Tools
 
     public static class RectTransformExtensions
     {
-        public static void SetAnchor(this RectTransform source, AnchorPresets allign, int offsetX = 0, int offsetY = 0)
+        public static void SetAnchor(this RectTransform source, AnchorPresets allign, float offsetX = 0f, float offsetY = 0f)
         {
             source.anchoredPosition = new(offsetX, offsetY);
 
