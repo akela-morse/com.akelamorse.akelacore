@@ -186,7 +186,7 @@ using UnityEngine;
         
         void ISerializationCallbackReceiver.OnBeforeSerialize()
         {{
-            if (!this || !this.gameObject)
+            if (UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode || !this || !this.gameObject)
                 return;
 "
             );
