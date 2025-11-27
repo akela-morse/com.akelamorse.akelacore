@@ -38,6 +38,13 @@ namespace Akela.Motion
             PlayingState = TransformAnimationPlayingState.Playing;
         }
 
+        public void ChangeDirection(bool reverse)
+        {
+            PlayingState = TransformAnimationPlayingState.Playing;
+
+            _animationDirection = (sbyte)(reverse ? -1 : 1);
+        }
+
         public void Stop()
         {
             if (PlayingState == TransformAnimationPlayingState.Stopped)

@@ -45,6 +45,13 @@ namespace Akela.Motion
             PlayingState = TransformAnimationPlayingState.Playing;
         }
 
+        public void ChangeDirection(bool reverse)
+        {
+            PlayingState = TransformAnimationPlayingState.Playing;
+
+            _lerpDirection = (sbyte)(reverse ? -1 : 1);
+        }
+
         public void Stop()
         {
             if (PlayingState == TransformAnimationPlayingState.Stopped)
@@ -86,11 +93,15 @@ namespace Akela.Motion
         }
 
         #region Component Messages
-        private void Start()
+        private void Awake()
         {
             _startPosition = transform.localPosition;
             _startRotation = transform.localEulerAngles;
             _startScale = transform.localScale;
+        }
+
+        private void Start()
+        {
 #if UNITY_EDITOR
             if (_playOnStart && Application.isPlaying)
 #else
