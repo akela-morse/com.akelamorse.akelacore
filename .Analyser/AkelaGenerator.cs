@@ -90,11 +90,11 @@ namespace AkelaAnalyser
                         )
                         .Cast<IFieldSymbol>()
                         .Where(x =>
+                            FieldIsSerializable(x) &&
                             (
                                 x.Type is INamedTypeSymbol y && SymbolIsInstantiableFrom(y, COMPONENT_SYMBOL_NAME) ||
                                 x.Type is IArrayTypeSymbol z && SymbolIsInstantiableFrom((INamedTypeSymbol)z.ElementType, COMPONENT_SYMBOL_NAME)
-                            ) &&
-                            FieldIsSerializable(x)
+                            )
                         )
                         .Select(x => (
                                 field: x,
@@ -655,12 +655,12 @@ using System.Reflection;
                            SymbolIsInstantiableFrom((INamedTypeSymbol)field.Type, UNITYOBJECT_SYMBOL_NAME);
 
                 case TypeKind.Struct:
-                    return (field.Type.IsUnmanagedType && !field.Type.IsTupleType && field.Type.Kind != SymbolKind.PointerType) ||
+                    return field.Type.IsUnmanagedType && !field.Type.IsTupleType && field.Type.Kind != SymbolKind.PointerType ||
                            ((INamedTypeSymbol)field.Type).IsSerializable ||
                            field.Type.ContainingNamespace.ToDisplayString() == UNITY_NAMESPACE;
 
                 case TypeKind.Array:
-                    return ((IArrayTypeSymbol)field.Type).ElementType is INamedTypeSymbol elemType &&
+                    return ((IArrayTypeSymbol)field.Type).Rank == 1 && ((IArrayTypeSymbol)field.Type).ElementType is INamedTypeSymbol elemType &&
                            (
                                elemType.IsSerializable ||
                                SymbolIsInstantiableFrom(elemType, UNITYOBJECT_SYMBOL_NAME)
