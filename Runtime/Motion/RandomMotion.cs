@@ -9,6 +9,9 @@ namespace Akela.Motion
     [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/RandomMotion Icon.png")]
     [AddComponentMenu("Motion/Random Motion", 5)]
     public class RandomMotion : TickBehaviour
+#if UNITY_EDITOR
+        , INotifyUpdatedInEditor
+#endif
     {
         #region Component Fields
         [SerializeField] float _radius = 1f;
@@ -36,7 +39,7 @@ namespace Akela.Motion
             SetPos(deltaTime);
         }
 #if UNITY_EDITOR
-        private void OnValidate()
+        void INotifyUpdatedInEditor.UpdatedInEditor()
         {
             if (_radius < 0f)
                 _radius = 0f;

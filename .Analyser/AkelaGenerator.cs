@@ -174,19 +174,19 @@ namespace AkelaAnalyser
             source.Append(
                 @"#if UNITY_EDITOR
 using UnityEngine;
+using UnityEditor;
+using Akela.Behaviours;
 
 "
             );
 
-            AppendClassHeader(source, symbol, "ISerializationCallbackReceiver");
+            AppendClassHeader(source, symbol, "INotifyUpdatedInEditor");
 
             source.Append(
                 $@"
-        void ISerializationCallbackReceiver.OnAfterDeserialize() {{ }}
-        
-        void ISerializationCallbackReceiver.OnBeforeSerialize()
+        void INotifyUpdatedInEditor.UpdatedInEditor()
         {{
-            if (UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode || !this || !this.gameObject)
+            if (EditorApplication.isPlayingOrWillChangePlaymode || !this || !this.gameObject)
                 return;
 "
             );

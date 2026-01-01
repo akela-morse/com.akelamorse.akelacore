@@ -10,6 +10,9 @@ namespace Akela.ExtendedPhysics
     [AddComponentMenu("Physics/Raycaster", 100)]
     [TickOptions(TickUpdateType.None, TickUpdateType.Update, TickUpdateType.LateUpdate, TickUpdateType.FixedUpdate, TickUpdateType.AnimatorMove)]
     public class Raycaster : TickBehaviour
+#if UNITY_EDITOR
+        , INotifyUpdatedInEditor
+#endif
     {
         public enum RaycastShape
         {
@@ -209,7 +212,7 @@ namespace Akela.ExtendedPhysics
             _layerMask = (LayerMask)LayerMask.GetMask("Default");
         }
 
-        private void OnValidate()
+        void INotifyUpdatedInEditor.UpdatedInEditor()
         {
             if (_maxDistance < 0f)
                 _maxDistance = 0f;

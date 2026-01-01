@@ -8,6 +8,9 @@ namespace Akela.Optimisations
     [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/CullingElement Icon.png")]
     [AddComponentMenu("Optimisation/Culling Element", 1)]
     public class CullingElement : TickBehaviour, ICullingElement
+#if UNITY_EDITOR
+        , INotifyUpdatedInEditor
+#endif
     {
         #region Component Fields
         [SerializeField] Var<CullingSystem> _system;
@@ -84,7 +87,7 @@ namespace Akela.Optimisations
             _sphereRadius = 2f;
         }
 
-        private void OnValidate()
+        void INotifyUpdatedInEditor.UpdatedInEditor()
         {
             if (_sphereRadius < 0f)
                 _sphereRadius = 0f;

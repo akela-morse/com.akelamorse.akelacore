@@ -10,6 +10,9 @@ namespace Akela.Triggers
     [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/DelayTrigger Icon.png")]
     [AddComponentMenu("Triggers/Delay Trigger", 6)]
     public class DelayTrigger : MonoBehaviour, ITrigger
+#if UNITY_EDITOR
+        , INotifyUpdatedInEditor
+#endif
     {
         #region Component Fields
         [SerializeField] float _time;
@@ -56,7 +59,7 @@ namespace Akela.Triggers
         }
 
 #if  UNITY_EDITOR
-        private void OnValidate()
+        void INotifyUpdatedInEditor.UpdatedInEditor()
         {
             if (_time < 0f)
                 _time = 0f;

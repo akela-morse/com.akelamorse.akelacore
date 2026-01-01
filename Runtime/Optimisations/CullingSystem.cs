@@ -2,6 +2,9 @@ using System.Collections;
 using Akela.Globals;
 using UnityEngine;
 using UnityEngine.Assertions;
+#if UNITY_EDITOR
+using Akela.Behaviours;
+#endif
 
 namespace Akela.Optimisations
 {
@@ -9,6 +12,9 @@ namespace Akela.Optimisations
     [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/CullingSystem Icon.png")]
     [AddComponentMenu("Optimisation/Culling System", 0)]
     public class CullingSystem : MonoBehaviour
+#if UNITY_EDITOR
+        , INotifyUpdatedInEditor
+#endif
     {
         private const int MAX_ELEMENT_COUNT = 50;
 
@@ -114,7 +120,7 @@ namespace Akela.Optimisations
             _maxiumCullingDistance = 200f;
         }
 
-        private void OnValidate()
+        void INotifyUpdatedInEditor.UpdatedInEditor()
         {
             if (_maxiumCullingDistance < 0f)
                 _maxiumCullingDistance = 0f;

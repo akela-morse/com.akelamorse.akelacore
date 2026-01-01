@@ -9,6 +9,9 @@ namespace Akela.Motion
     [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/TransformDriver Icon.png")]
     [AddComponentMenu("Motion/Transform Driver", 1)]
     public class TransformDriver : TickBehaviour
+#if UNITY_EDITOR
+        , INotifyUpdatedInEditor
+#endif
     {
         private enum TransformProperty
         {
@@ -111,7 +114,7 @@ namespace Akela.Motion
         }
 
 #if UNITY_EDITOR
-        private void OnValidate()
+        void INotifyUpdatedInEditor.UpdatedInEditor()
         {
             if (_drivingLimits.x > _drivingLimits.y)
                 _drivingLimits.y = _drivingLimits.x;
