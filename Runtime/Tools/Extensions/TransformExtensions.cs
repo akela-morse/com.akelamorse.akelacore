@@ -9,32 +9,43 @@ namespace Akela.Tools
     {
         public static IEnumerable<Transform> LoopRecursively(this Transform root)
         {
-            foreach (Transform t in root)
+            for (var i = 0; i < root.childCount; ++i)
             {
+                var t = root.GetChild(i);
+
                 yield return t;
 
-                if (t.childCount > 0)
-                {
-                    foreach (var tChild in t.LoopRecursively())
-                        yield return tChild;
-                }
+                foreach (var tChild in t.LoopRecursively())
+                    yield return tChild;
             }
+        }
+
+		public static Transform FindChild(this Transform root, Func<Transform, bool> predicate)
+        {
+            for (var i = 0; i < root.childCount; ++i)
+            {
+                var t = root.GetChild(i);
+
+                if (predicate(t))
+                    return t;
+            }
+
+            return null;
         }
 
         public static Transform FindChildRecursive(this Transform root, Func<Transform, bool> predicate)
         {
-            foreach (Transform t in root)
+            for (var i = 0; i < root.childCount; ++i)
             {
+                var t = root.GetChild(i);
+
                 if (predicate(t))
                     return t;
 
-                if (t.childCount > 0)
-                {
-                    var child = t.FindChildRecursive(predicate);
+                var tChild = t.FindChildRecursive(predicate);
 
-                    if (child)
-                        return child;
-                }
+                if (tChild)
+                    return tChild;
             }
 
             return null;
@@ -61,8 +72,12 @@ namespace Akela.Tools
         {
             trans.gameObject.layer = layer;
 
-            foreach (Transform child in trans)
+            for (var i = 0; i < trans.childCount; ++i)
+            {
+                var child = trans.GetChild(i);
+
                 child.SetLayerRecursively(layer);
+            }
         }
 
         public static void SetGlobalScale(this Transform transform, Vector3 globalScale)
