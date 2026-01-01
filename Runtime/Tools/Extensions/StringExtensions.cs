@@ -97,10 +97,15 @@ namespace Akela.Tools
 
                     // Step 6
                     d[i, j] = Math.Min(
-                        Math.Min(d[i - 1, j] + 1, d[i, j - 1] + 1),
-                        d[i - 1, j - 1] + cost);
+                        Math.Min(
+                            d[i - 1, j] + 1, 
+                            d[i, j - 1] + 1
+                        ),
+                        d[i - 1, j - 1] + cost
+                    );
                 }
             }
+
             // Step 7
             return d[n, m];
         }
