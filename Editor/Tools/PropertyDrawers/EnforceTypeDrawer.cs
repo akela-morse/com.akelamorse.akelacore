@@ -17,9 +17,13 @@ namespace AkelaEditor.Tools
 
             var attr = (EnforceTypeAttribute)attribute;
 
+            var dnd = Event.current.type is EventType.DragUpdated or EventType.DragPerform;
+
             EditorGUI.BeginChangeCheck();
 
-            var obj = EditorGUI.ObjectField(position, label, property.objectReferenceValue, attr.type, attr.allowSceneObjects);
+            var obj = dnd ?
+                EditorGUI.ObjectField(position, label, property.objectReferenceValue, typeof(Object), attr.allowSceneObjects) :
+                EditorGUI.ObjectField(position, label, property.objectReferenceValue, attr.type, attr.allowSceneObjects);
 
             if (EditorGUI.EndChangeCheck())
             {

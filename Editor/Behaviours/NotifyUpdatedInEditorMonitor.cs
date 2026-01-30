@@ -1,4 +1,5 @@
-﻿using Akela.Behaviours;
+﻿using System.Linq;
+using Akela.Behaviours;
 using UnityEditor;
 using UnityEngine;
 
@@ -10,6 +11,18 @@ namespace AkelaEditor
         static NotifyUpdatedInEditorMonitor()
         {
             ObjectChangeEvents.changesPublished += ChangesPublished;
+            AssemblyReloadEvents.afterAssemblyReload += AssemblyReload;
+        }
+
+        private static void AssemblyReload()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode)
+                return;
+
+            var notifiers = Object.FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None).OfType<INotifyUpdatedInEditor>();
+
+            foreach (var notifier in notifiers)
+                notifier.UpdatedInEditor();
         }
 
         private static void ChangesPublished(ref ObjectChangeEventStream stream)

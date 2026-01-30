@@ -11,7 +11,7 @@ namespace AkelaEditor.Tools
         {
             if (property.propertyType != SerializedPropertyType.Integer)
             {
-                GUI.Label(position, "Use [EulerAngles] with Int32 fields.");
+                GUI.Label(position, "Use [Layer] with Int32 fields.");
                 return;
             }
 

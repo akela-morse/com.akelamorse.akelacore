@@ -9,9 +9,9 @@ namespace Akela.Tools
             return new Vector3(v.x, 0f, v.y);
         }
 
-        public static Vector3 ToTopviewVector3(this Vector2Int v)
+        public static Vector3Int ToTopviewVector3(this Vector2Int v)
         {
-            return new Vector3(v.x, 0f, v.y);
+            return new Vector3Int(v.x, 0, v.y);
         }
 
         public static Vector2 SnapToCardinalDirection(this Vector2 v)

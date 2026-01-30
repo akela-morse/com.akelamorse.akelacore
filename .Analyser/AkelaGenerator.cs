@@ -15,14 +15,14 @@ namespace AkelaAnalyser
         const string UNITYOBJECT_SYMBOL_NAME = "UnityEngine.Object";
         const string MONOBEHAVIOUR_SYMBOL_NAME = "UnityEngine.MonoBehaviour";
         const string SCRIPTABLEOBJECT_SYMBOL_NAME = "UnityEngine.ScriptableObject";
-        const string COMPONENT_SYMBOL_NAME = "UnityEngine.Component";
+        // const string COMPONENT_SYMBOL_NAME = "UnityEngine.Component";
         const string SERIALIZEFIELD_SYMBOL_NAME = "UnityEngine.SerializeField";
         const string HIDEFIELD_SYMBOL_NAME = "UnityEngine.HideInInspector";
 
         const string SINGLETON_SYMBOL_NAME = "Akela.Behaviours.SingletonAttribute";
-        const string FROMTHIS_SYMBOL_NAME = "Akela.Behaviours.FromThisAttribute";
-        const string FROMPARENTS_SYMBOL_NAME = "Akela.Behaviours.FromParentsAttribute";
-        const string FROMCHILDREN_SYMBOL_NAME = "Akela.Behaviours.FromChildrenAttribute";
+        // const string FROMTHIS_SYMBOL_NAME = "Akela.Behaviours.FromThisAttribute";
+        // const string FROMPARENTS_SYMBOL_NAME = "Akela.Behaviours.FromParentsAttribute";
+        // const string FROMCHILDREN_SYMBOL_NAME = "Akela.Behaviours.FromChildrenAttribute";
         const string MONITOR_SYMBOL_NAME = "Akela.Behaviours.GenerateHashForEveryFieldAttribute";
         const string HIDESCRIPTFIELD_SYMBOL_NAME = "Akela.Behaviours.HideScriptFieldAttribute";
         const string INTERNAL_WRAPPER_SYMBOL_NAME = "Akela.Tools.InternalWrapperAttribute";
@@ -82,35 +82,35 @@ namespace AkelaAnalyser
                 }
 
                 // Dependencies check
-                if (SymbolIsInstantiableFrom(symbol, MONOBEHAVIOUR_SYMBOL_NAME))
-                {
-                    var dependencyFields = symbol.GetMembers()
-                        .Where(x =>
-                            x.Kind == SymbolKind.Field
-                        )
-                        .Cast<IFieldSymbol>()
-                        .Where(x =>
-                            FieldIsSerializable(x) &&
-                            (
-                                x.Type is INamedTypeSymbol y && SymbolIsInstantiableFrom(y, COMPONENT_SYMBOL_NAME) ||
-                                x.Type is IArrayTypeSymbol z && SymbolIsInstantiableFrom((INamedTypeSymbol)z.ElementType, COMPONENT_SYMBOL_NAME)
-                            )
-                        )
-                        .Select(x => (
-                                field: x,
-                                attr: x.GetAttributes()
-                                    .Select(a => a.AttributeClass?.ToDisplayString())
-                                    .Where(a => a == FROMTHIS_SYMBOL_NAME || a == FROMCHILDREN_SYMBOL_NAME || a == FROMPARENTS_SYMBOL_NAME)
-                            )
-                        )
-                        .Where(x => x.attr.Count() == 1)
-                        .Select(x => (x.field, x.attr.First()));
-
-                    var sourceString = GenerateDependencies(symbol, dependencyFields);
-
-                    if (!string.IsNullOrEmpty(sourceString))
-                        context.AddSource($"{symbol.Name}_dependencies.g.cs", SourceText.From(sourceString, Encoding.UTF8));
-                }
+                // if (SymbolIsInstantiableFrom(symbol, MONOBEHAVIOUR_SYMBOL_NAME))
+                // {
+                //     var dependencyFields = symbol.GetMembers()
+                //         .Where(x =>
+                //             x.Kind == SymbolKind.Field
+                //         )
+                //         .Cast<IFieldSymbol>()
+                //         .Where(x =>
+                //             FieldIsSerializable(x) &&
+                //             (
+                //                 x.Type is INamedTypeSymbol y && SymbolIsInstantiableFrom(y, COMPONENT_SYMBOL_NAME) ||
+                //                 x.Type is IArrayTypeSymbol z && SymbolIsInstantiableFrom((INamedTypeSymbol)z.ElementType, COMPONENT_SYMBOL_NAME)
+                //             )
+                //         )
+                //         .Select(x => (
+                //                 field: x,
+                //                 attr: x.GetAttributes()
+                //                     .Select(a => a.AttributeClass?.ToDisplayString())
+                //                     .Where(a => a == FROMTHIS_SYMBOL_NAME || a == FROMCHILDREN_SYMBOL_NAME || a == FROMPARENTS_SYMBOL_NAME)
+                //             )
+                //         )
+                //         .Where(x => x.attr.Count() == 1)
+                //         .Select(x => (x.field, x.attr.First()));
+                //
+                //     var sourceString = GenerateDependencies(symbol, dependencyFields);
+                //
+                //     if (!string.IsNullOrEmpty(sourceString))
+                //         context.AddSource($"{symbol.Name}_dependencies.g.cs", SourceText.From(sourceString, Encoding.UTF8));
+                // }
             }
         }
 
@@ -161,82 +161,82 @@ namespace AkelaAnalyser
             return source.ToString();
         }
 
-        [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
-        private static string GenerateDependencies(INamedTypeSymbol symbol, IEnumerable<(IFieldSymbol f, string a)> fields)
-        {
-            // Sanity Check
-            if (!fields.Any())
-                return null;
-
-            // Generate source
-            var source = new StringBuilder();
-
-            source.Append(
-                @"#if UNITY_EDITOR
-using UnityEngine;
-using UnityEditor;
-using Akela.Behaviours;
-
-"
-            );
-
-            AppendClassHeader(source, symbol, "INotifyUpdatedInEditor");
-
-            source.Append(
-                $@"
-        void INotifyUpdatedInEditor.UpdatedInEditor()
-        {{
-            if (EditorApplication.isPlayingOrWillChangePlaymode || !this || !this.gameObject)
-                return;
-"
-            );
-
-            foreach (var dependencyField in fields)
-            {
-                string methodCall;
-
-                if (dependencyField.a == FROMCHILDREN_SYMBOL_NAME)
-                {
-                    if (dependencyField.f.Type is IArrayTypeSymbol arraySymbol)
-                        methodCall = $"GetComponentsInChildren<{arraySymbol.ElementType.ToDisplayString()}>";
-                    else
-                        methodCall = $"GetComponentInChildren<{dependencyField.f.Type.ToDisplayString()}>";
-                }
-                else if (dependencyField.a == FROMPARENTS_SYMBOL_NAME)
-                {
-                    if (dependencyField.f.Type is IArrayTypeSymbol arraySymbol)
-                        methodCall = $"GetComponentsInParent<{arraySymbol.ElementType.ToDisplayString()}>";
-                    else
-                        methodCall = $"GetComponentInParent<{dependencyField.f.Type.ToDisplayString()}>";
-                }
-                else
-                {
-                    if (dependencyField.f.Type is IArrayTypeSymbol arraySymbol)
-                        methodCall = $"GetComponents<{arraySymbol.ElementType.ToDisplayString()}>";
-                    else
-                        methodCall = $"GetComponent<{dependencyField.f.Type.ToDisplayString()}>";
-                }
-
-                source.Append(
-                    $@"
-            {dependencyField.f.Name} = {methodCall}();"
-                );
-            }
-
-            source.Append(
-                $@"
-        }}"
-            );
-
-            AppendClassFooter(source, symbol);
-
-            source.Append(
-                $@"
-#endif"
-                );
-
-            return source.ToString();
-        }
+//         [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
+//         private static string GenerateDependencies(INamedTypeSymbol symbol, IEnumerable<(IFieldSymbol f, string a)> fields)
+//         {
+//             // Sanity Check
+//             if (!fields.Any())
+//                 return null;
+//
+//             // Generate source
+//             var source = new StringBuilder();
+//
+//             source.Append(
+//                 @"#if UNITY_EDITOR
+// using UnityEngine;
+// using UnityEditor;
+// using Akela.Behaviours;
+//
+// "
+//             );
+//
+//             AppendClassHeader(source, symbol, "INotifyUpdatedInEditor");
+//
+//             source.Append(
+//                 $@"
+//         void INotifyUpdatedInEditor.UpdatedInEditor()
+//         {{
+//             if (EditorApplication.isPlayingOrWillChangePlaymode || !this || !this.gameObject)
+//                 return;
+// "
+//             );
+//
+//             foreach (var dependencyField in fields)
+//             {
+//                 string methodCall;
+//
+//                 if (dependencyField.a == FROMCHILDREN_SYMBOL_NAME)
+//                 {
+//                     if (dependencyField.f.Type is IArrayTypeSymbol arraySymbol)
+//                         methodCall = $"GetComponentsInChildren<{arraySymbol.ElementType.ToDisplayString()}>";
+//                     else
+//                         methodCall = $"GetComponentInChildren<{dependencyField.f.Type.ToDisplayString()}>";
+//                 }
+//                 else if (dependencyField.a == FROMPARENTS_SYMBOL_NAME)
+//                 {
+//                     if (dependencyField.f.Type is IArrayTypeSymbol arraySymbol)
+//                         methodCall = $"GetComponentsInParent<{arraySymbol.ElementType.ToDisplayString()}>";
+//                     else
+//                         methodCall = $"GetComponentInParent<{dependencyField.f.Type.ToDisplayString()}>";
+//                 }
+//                 else
+//                 {
+//                     if (dependencyField.f.Type is IArrayTypeSymbol arraySymbol)
+//                         methodCall = $"GetComponents<{arraySymbol.ElementType.ToDisplayString()}>";
+//                     else
+//                         methodCall = $"GetComponent<{dependencyField.f.Type.ToDisplayString()}>";
+//                 }
+//
+//                 source.Append(
+//                     $@"
+//             {dependencyField.f.Name} = {methodCall}();"
+//                 );
+//             }
+//
+//             source.Append(
+//                 $@"
+//         }}"
+//             );
+//
+//             AppendClassFooter(source, symbol);
+//
+//             source.Append(
+//                 $@"
+// #endif"
+//                 );
+//
+//             return source.ToString();
+//         }
 
         private static string GenerateMonitoringHash(INamedTypeSymbol symbol)
         {

@@ -13,6 +13,11 @@ namespace Akela.Optimisations
 
         private IObjectPool<PooledPrefab> _pool;
 
+        public T Peek<T>() where T: class
+        {
+            return _prefab.GetComponentFromCache<T>();
+        }
+
         public PooledPrefab Make()
         {
             return Make(_prefab.transform.position, _prefab.transform.rotation, null);
@@ -23,17 +28,12 @@ namespace Akela.Optimisations
             return Make(position, _prefab.transform.rotation, null);
         }
 
-        public PooledPrefab Make(Vector3 position, Quaternion rotation)
-        {
-            return Make(position, rotation, null);
-        }
-
         public PooledPrefab Make(Transform parent)
         {
             return Make(parent.position, parent.rotation, parent);
         }
 
-        public PooledPrefab Make(Vector3 position, Quaternion rotation, Transform parent)
+        public PooledPrefab Make(Vector3 position, Quaternion rotation, Transform parent = null)
         {
             CreatePoolIfNecessary();
 
@@ -71,17 +71,20 @@ namespace Akela.Optimisations
             return newPooledPrefab;
         }
 
-        private void OnGetObject(PooledPrefab pooledPrefab)
+        private static void OnGetObject(PooledPrefab pooledPrefab)
         {
+            pooledPrefab.StopAllCoroutines();
+
+            pooledPrefab.gameObject.SetActive(false); // This is to reset calls to OnDisable and OnEnable
             pooledPrefab.gameObject.SetActive(true);
         }
 
-        private void OnReleasedObject(PooledPrefab pooledPrefab)
+        private static void OnReleasedObject(PooledPrefab pooledPrefab)
         {
             pooledPrefab.gameObject.SetActive(false);
         }
 
-        private void OnDestroyObject(PooledPrefab pooledPrefab)
+        private static void OnDestroyObject(PooledPrefab pooledPrefab)
         {
             Destroy(pooledPrefab.gameObject);
         }

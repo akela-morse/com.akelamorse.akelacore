@@ -26,7 +26,7 @@ namespace Akela.Tools
             a = Vector3.Project(a, projectionVector);
             b = Vector3.Project(b, projectionVector);
 
-            return Vector3.Dot((b - a).normalized, (c - b).normalized) < 0f && Vector3.Dot((a - b).normalized, (c - a).normalized) < 0f;
+            return Vector3.Dot(b - a, c - b) < 0f && Vector3.Dot(a - b, c - a) < 0f;
         }
 
         public static Vector3 RotateAround(this Vector3 point, Vector3 pivot, Quaternion rotation)
@@ -36,7 +36,7 @@ namespace Akela.Tools
 
         public static Vector3 RotateAround(this Vector3 point, Vector3 pivot, Vector3 angles)
         {
-            return RotateAround(point, pivot, Quaternion.Euler(angles));
+            return point.RotateAround(pivot, Quaternion.Euler(angles));
         }
 
         public static Vector3 Inverse(this Vector3 v)

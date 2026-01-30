@@ -41,8 +41,10 @@ namespace Akela.Tools
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void FirstSceneLoaded()
         {
-            var newGo = new GameObject("[Component Loader]");
-            newGo.hideFlags = HideFlags.HideAndDontSave;
+            var newGo = new GameObject("[Component Loader]")
+            {
+                hideFlags = HideFlags.HideAndDontSave
+            };
 
             Main = newGo.AddComponent<ComponentLoaderBehaviour>();
         }
