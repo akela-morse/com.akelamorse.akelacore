@@ -20,7 +20,8 @@ namespace Akela.Tools
 
             var instanceId = behaviour.gameObject.GetInstanceID();
 
-            _cache.Add(instanceId, component);
+            if (!_cache.TryAdd(instanceId, component))
+                return;
 
             behaviour.destroyCancellationToken.Register(() => _cache.Remove(instanceId));
         }

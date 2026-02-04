@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Pool;
+using UnityEngine.SceneManagement;
 
 namespace Akela.Optimisations
 {
@@ -7,13 +8,13 @@ namespace Akela.Optimisations
     public class PrefabPool : ScriptableObject
     {
         #region Component Fields
-        [SerializeField] PooledPrefab _prefab;
-        [SerializeField] int _maxSize = 100;
+        [SerializeField] private PooledPrefab _prefab;
+        [SerializeField] private int _maxSize = 100;
         #endregion
 
         private IObjectPool<PooledPrefab> _pool;
 
-        public T Peek<T>() where T: class
+        public T Peek<T>() where T : class
         {
             return _prefab.GetComponentFromCache<T>();
         }
@@ -54,13 +55,29 @@ namespace Akela.Optimisations
         }
 #endif
 
+        #region Component Fields
+        private void Awake()
+        {
+            SceneManager.sceneUnloaded -= ChangedScene;
+            SceneManager.sceneUnloaded += ChangedScene;
+        }
+        #endregion
+
         #region Private Methods
+        private void ChangedScene(Scene _)
+        {
+            if (_pool == null)
+                return;
+
+            _pool.Clear();
+        }
+
         private void CreatePoolIfNecessary()
         {
             if (_pool != null)
                 return;
 
-            _pool = new ObjectPool<PooledPrefab>(OnCreateObject, OnGetObject, OnReleasedObject, OnDestroyObject, maxSize: _maxSize);
+            _pool = new ObjectPool<PooledPrefab>(OnCreateObject, OnGetObject, OnReleasedObject, maxSize: _maxSize);
         }
 
         private PooledPrefab OnCreateObject()
@@ -82,11 +99,6 @@ namespace Akela.Optimisations
         private static void OnReleasedObject(PooledPrefab pooledPrefab)
         {
             pooledPrefab.gameObject.SetActive(false);
-        }
-
-        private static void OnDestroyObject(PooledPrefab pooledPrefab)
-        {
-            Destroy(pooledPrefab.gameObject);
         }
         #endregion
     }

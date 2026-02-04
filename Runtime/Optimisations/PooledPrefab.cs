@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Akela.Bridges;
 using Akela.Tools;
 using UnityEngine;
@@ -46,9 +47,6 @@ namespace Akela.Optimisations
 
         public void ReleaseToPool()
         {
-            if (_releaseToPool != ReleaseBehaviour.Manually)
-                return;
-
             ReleaseNow();
         }
 
