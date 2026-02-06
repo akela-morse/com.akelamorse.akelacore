@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-#if UNITY_EDITOR
 using Object = UnityEngine.Object;
-#endif
 
 namespace Akela.Tools
 {
@@ -25,7 +23,7 @@ namespace Akela.Tools
                 }
 #endif
 
-                ComponentLoaderBehaviour.Main.GetInstancesOfType += e => value(e.OfType<T>());
+                ComponentLoaderSubscriber.GetInstancesOfType += e => value(e.OfType<T>());
             }
             remove
             {
@@ -34,46 +32,25 @@ namespace Akela.Tools
         }
     }
 
-    internal sealed class ComponentLoaderBehaviour : MonoBehaviour
+    internal static class ComponentLoaderSubscriber
     {
-        internal static ComponentLoaderBehaviour Main { get; private set; }
-
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void FirstSceneLoaded()
         {
-            var newGo = new GameObject("[Component Loader]")
-            {
-                hideFlags = HideFlags.HideAndDontSave
-            };
-
-            Main = newGo.AddComponent<ComponentLoaderBehaviour>();
-        }
-
-        internal event Action<MonoBehaviour[]> GetInstancesOfType;
-
-        private void Awake()
-        {
-            DontDestroyOnLoad(this);
-        }
-
-        private void OnEnable()
-        {
+            SceneManager.sceneLoaded -= SceneLoaded;
             SceneManager.sceneLoaded += SceneLoaded;
         }
 
-        private void OnDestroy()
-        {
-            SceneManager.sceneLoaded -= SceneLoaded;
-        }
+        internal static event Action<MonoBehaviour[]> GetInstancesOfType;
 
-        private void SceneLoaded(Scene scene, LoadSceneMode mode)
+        private static void SceneLoaded(Scene scene, LoadSceneMode mode)
         {
 #if UNITY_EDITOR
             foreach (var delayedRegistration in DelayedRegistration.GetAllDelayedRegistrations())
                 GetInstancesOfType += delayedRegistration;
 #endif
 
-            GetInstancesOfType?.Invoke(FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None));
+            GetInstancesOfType?.Invoke(Object.FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None));
         }
     }
 

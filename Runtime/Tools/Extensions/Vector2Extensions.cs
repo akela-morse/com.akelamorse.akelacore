@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Runtime.CompilerServices;
+using UnityEngine;
 
 namespace Akela.Tools
 {
@@ -23,8 +24,28 @@ namespace Akela.Tools
 
             if (absV.x > absV.y)
                 return v.x > 0f ? Vector2.right : Vector2.left;
+
+            return v.y > 0f ? Vector2.up : Vector2.down;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void NormalizeWithMagnitude(this ref Vector2 v, float magnitude)
+        {
+            if (magnitude > 9.999999747378752E-06)
+                v /= magnitude;
             else
-                return v.y > 0f ? Vector2.up : Vector2.down;
+                v = Vector2.zero;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void GetNormalizedAndMagnitude(this Vector2 v, out Vector2 normalized, out float magnitude)
+        {
+            magnitude = v.magnitude;
+
+            if (magnitude > 9.999999747378752E-06)
+                normalized = v / magnitude;
+            else
+                normalized = Vector2.zero;
         }
     }
 }

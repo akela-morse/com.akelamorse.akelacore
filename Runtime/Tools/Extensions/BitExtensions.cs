@@ -14,25 +14,25 @@ namespace Akela.Tools
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsBitSet(this int n, int nthBit)
         {
-            return (n & GetBitMask(nthBit)) != 0;
+            return (n & nthBit.GetBitMask()) != 0;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int SetBit(this int n, int nthBit)
         {
-            return n | GetBitMask(nthBit);
+            return n | nthBit.GetBitMask();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int ClearBit(this int n, int nthBit)
         {
-            return n & ~GetBitMask(nthBit);
+            return n & ~nthBit.GetBitMask();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int ToggleBit(this int n, int nthBit)
         {
-            return n ^ GetBitMask(nthBit);
+            return n ^ nthBit.GetBitMask();
         }
 
         public static bool ApplyBit(this ref int n, int nthBit, bool set)

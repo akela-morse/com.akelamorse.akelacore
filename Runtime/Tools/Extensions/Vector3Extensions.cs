@@ -103,5 +103,25 @@ namespace Akela.Tools
 
             return v.z > 0f ? Vector3.forward : Vector3.back;
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void NormalizeWithMagnitude(this ref Vector3 v, float magnitude)
+        {
+            if (magnitude > 9.999999747378752E-06)
+                v /= magnitude;
+            else
+                v = Vector3.zero;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void GetNormalizedAndMagnitude(this Vector3 v, out Vector3 normalized, out float magnitude)
+        {
+            magnitude = Vector3.Magnitude(v);
+
+            if (magnitude > 9.999999747378752E-06)
+                normalized = v / magnitude;
+            else
+                normalized = Vector3.zero;
+        }
     }
 }
