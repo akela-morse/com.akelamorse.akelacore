@@ -125,6 +125,14 @@ namespace Akela.Tools
             }
         }
 
+        public static void DrawCircle(Vector3 position, Vector3 normal, float radius)
+        {
+            using (new Handles.DrawingScope(Gizmos.color, Gizmos.matrix))
+            {
+                Handles.DrawWireDisc(position, normal, radius);
+            }
+        }
+
         public static void DrawViewportSphere(Vector3 position, float radius)
         {
             using (new Handles.DrawingScope(Gizmos.color, Gizmos.matrix))

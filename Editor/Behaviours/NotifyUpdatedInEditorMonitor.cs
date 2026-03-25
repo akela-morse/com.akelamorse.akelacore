@@ -11,10 +11,10 @@ namespace AkelaEditor
         static NotifyUpdatedInEditorMonitor()
         {
             ObjectChangeEvents.changesPublished += ChangesPublished;
-            AssemblyReloadEvents.afterAssemblyReload += AssemblyReload;
+            AssemblyReloadEvents.afterAssemblyReload += UpdateEverything;
         }
 
-        private static void AssemblyReload()
+        private static void UpdateEverything()
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode)
                 return;
@@ -34,43 +34,90 @@ namespace AkelaEditor
             {
                 var type = stream.GetEventType(i);
 
-                if (type == ObjectChangeKind.CreateGameObjectHierarchy)
+                switch (type)
                 {
-                    stream.GetCreateGameObjectHierarchyEvent(i, out var data);
-
-                    var gameObject = EditorUtility.InstanceIDToObject(data.instanceId) as GameObject;
-
-                    if (gameObject)
+                    case ObjectChangeKind.CreateGameObjectHierarchy:
                     {
-                        foreach (var notifier in gameObject.GetComponents<INotifyUpdatedInEditor>())
-                            notifier.UpdatedInEditor();
+                        stream.GetCreateGameObjectHierarchyEvent(i, out var data);
+
+                        var gameObject = EditorUtility.InstanceIDToObject(data.instanceId) as GameObject;
+
+                        if (gameObject)
+                        {
+                            foreach (var notifier in gameObject.GetComponents<INotifyUpdatedInEditor>())
+                                notifier.UpdatedInEditor();
+                        }
+
+                        break;
                     }
-                }
-                else if (type == ObjectChangeKind.ChangeGameObjectStructure)
-                {
-                    stream.GetChangeGameObjectStructureEvent(i, out var data);
 
-                    var gameObject = EditorUtility.InstanceIDToObject(data.instanceId) as GameObject;
-
-                    if (gameObject)
+                    case ObjectChangeKind.ChangeGameObjectStructure:
                     {
-                        foreach (var notifier in gameObject.GetComponents<INotifyUpdatedInEditor>())
-                            notifier.UpdatedInEditor();
+                        stream.GetChangeGameObjectStructureEvent(i, out var data);
+
+                        var gameObject = EditorUtility.InstanceIDToObject(data.instanceId) as GameObject;
+
+                        if (gameObject)
+                        {
+                            foreach (var notifier in gameObject.GetComponents<INotifyUpdatedInEditor>())
+                                notifier.UpdatedInEditor();
+                        }
+
+                        break;
                     }
-                }
-                else if (type == ObjectChangeKind.ChangeGameObjectOrComponentProperties)
-                {
-                    stream.GetChangeGameObjectOrComponentPropertiesEvent(i, out var data);
 
-                    if (EditorUtility.InstanceIDToObject(data.instanceId) is INotifyUpdatedInEditor notifier)
-                        notifier.UpdatedInEditor();
-                }
-                else if (type == ObjectChangeKind.ChangeAssetObjectProperties)
-                {
-                    stream.GetChangeAssetObjectPropertiesEvent(i, out var data);
+                    case ObjectChangeKind.ChangeGameObjectOrComponentProperties:
+                    {
+                        stream.GetChangeGameObjectOrComponentPropertiesEvent(i, out var data);
 
-                    if (EditorUtility.InstanceIDToObject(data.instanceId) is INotifyUpdatedInEditor notifier)
-                        notifier.UpdatedInEditor();
+                        if (EditorUtility.InstanceIDToObject(data.instanceId) is INotifyUpdatedInEditor notifier)
+                            notifier.UpdatedInEditor();
+
+                        break;
+                    }
+
+                    case ObjectChangeKind.ChangeAssetObjectProperties:
+                    {
+                        stream.GetChangeAssetObjectPropertiesEvent(i, out var data);
+
+                        if (EditorUtility.InstanceIDToObject(data.instanceId) is INotifyUpdatedInEditor notifier)
+                            notifier.UpdatedInEditor();
+
+                        break;
+                    }
+
+                    case ObjectChangeKind.ChangeChildrenOrder:
+                    {
+                        stream.GetChangeChildrenOrderEvent(i, out var data);
+
+                        var gameObject = EditorUtility.InstanceIDToObject(data.instanceId) as GameObject;
+
+                        if (gameObject)
+                        {
+                            foreach (var notifier in gameObject.GetComponentsInChildren<INotifyUpdatedInEditor>())
+                                notifier.UpdatedInEditor();
+                        }
+
+                        break;
+                    }
+
+                    case ObjectChangeKind.UpdatePrefabInstances:
+                    {
+                        stream.GetUpdatePrefabInstancesEvent(i, out var data);
+
+                        for (var j = 0; j < data.instanceIds.Length; ++j)
+                        {
+                            var gameObject = EditorUtility.InstanceIDToObject(data.instanceIds[j]) as GameObject;
+
+                            if (gameObject)
+                            {
+                                foreach (var notifier in gameObject.GetComponentsInChildren<INotifyUpdatedInEditor>())
+                                    notifier.UpdatedInEditor();
+                            }
+                        }
+
+                        break;
+                    }
                 }
             }
         }

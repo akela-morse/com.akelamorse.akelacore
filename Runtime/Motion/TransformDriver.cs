@@ -5,13 +5,9 @@ using UnityEngine;
 namespace Akela.Motion
 {
     [HideScriptField, ExecuteInEditMode, DisallowMultipleComponent]
-    [TickOptions(TickUpdateType.Update, TickUpdateType.LateUpdate, TickUpdateType.FixedUpdate, TickUpdateType.AnimatorMove)]
     [Icon("Packages/com.akelamorse.akelacore/Editor/EditorResources/TransformDriver Icon.png")]
     [AddComponentMenu("Motion/Transform Driver", 1)]
     public class TransformDriver : TickBehaviour
-#if UNITY_EDITOR
-        , INotifyUpdatedInEditor
-#endif
     {
         private enum TransformProperty
         {
@@ -47,18 +43,8 @@ namespace Akela.Motion
 
         private Quaternion _referenceRotation;
 
-        #region Component Messages
-        private void Start()
+        public void Evaluate()
         {
-            _referenceRotation = Quaternion.Euler(_referenceValue);
-        }
-
-        protected override void Tick(float deltaTime)
-        {
-#if UNITY_EDITOR
-            if (!didStart)
-                Start();
-#endif
             if (!_drivingTransform)
                 return;
 
@@ -113,16 +99,20 @@ namespace Akela.Motion
             }
         }
 
-#if UNITY_EDITOR
-        void INotifyUpdatedInEditor.UpdatedInEditor()
+        #region Component Messages
+        private void Start()
         {
-            if (_drivingLimits.x > _drivingLimits.y)
-                _drivingLimits.y = _drivingLimits.x;
-
-            if (_drivenLimits.x > _drivenLimits.y)
-                _drivenLimits.y = _drivenLimits.x;
+            _referenceRotation = Quaternion.Euler(_referenceValue);
         }
+
+        protected override void Tick(float deltaTime)
+        {
+#if UNITY_EDITOR
+            if (!didStart)
+                Start();
 #endif
+            Evaluate();
+        }
         #endregion
     }
 }

@@ -9,10 +9,10 @@ namespace Akela.Tools
 #if AKELA_ANIMANCER
         [Animancer.Units.Seconds]
 #endif
-        [SerializeField] float _duration;
+        [SerializeField] protected float _duration;
 
-        [NonSerialized] private float _startTime;
-        [NonSerialized] private bool _hasStarted;
+        [NonSerialized] protected float _startTime;
+        [NonSerialized] protected bool _hasStarted;
 
         public override bool keepWaiting
         {
@@ -40,6 +40,40 @@ namespace Akela.Tools
         }
 
         public static implicit operator float(SerializedWaitForSeconds other)
+        {
+            return other._duration;
+        }
+    }
+
+    [Serializable]
+    public class SerializedWaitForSecondsRealtime : SerializedWaitForSeconds
+    {
+        public override bool keepWaiting
+        {
+            get
+            {
+                if (!_hasStarted)
+                {
+                    _startTime = Time.unscaledTime;
+                    _hasStarted = true;
+                }
+
+                if (Time.unscaledTime - _startTime >= _duration)
+                {
+                    _hasStarted = false;
+                    return false;
+                }
+
+                return true;
+            }
+        }
+
+        public static implicit operator SerializedWaitForSecondsRealtime(float other)
+        {
+            return new SerializedWaitForSecondsRealtime { _duration = other };
+        }
+
+        public static implicit operator float(SerializedWaitForSecondsRealtime other)
         {
             return other._duration;
         }
