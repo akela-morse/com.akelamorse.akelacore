@@ -2,17 +2,16 @@
 using Unity.Cinemachine;
 using UnityEngine;
 using static Unity.Cinemachine.CinemachineFreeLookModifier;
-using static Unity.Cinemachine.InputAxisControllerBase<Unity.Cinemachine.CinemachineInputAxisController.Reader>;
 
 namespace Akela.Tools
 {
-    public readonly struct CinemachineAxisControllers
+    public readonly struct CinemachineAxisControllers<T> where T : IInputAxisReader, new()
     {
-        public readonly Controller orbitX;
-        public readonly Controller orbitY;
-        public readonly Controller orbitScale;
+        public readonly InputAxisControllerBase<T>.Controller orbitX;
+        public readonly InputAxisControllerBase<T>.Controller orbitY;
+        public readonly InputAxisControllerBase<T>.Controller orbitScale;
 
-        public CinemachineAxisControllers(Controller orbitX, Controller orbitY, Controller orbitScale)
+        public CinemachineAxisControllers(InputAxisControllerBase<T>.Controller orbitX, InputAxisControllerBase<T>.Controller orbitY, InputAxisControllerBase<T>.Controller orbitScale)
         {
             this.orbitX = orbitX;
             this.orbitY = orbitY;
@@ -22,9 +21,9 @@ namespace Akela.Tools
 
     public static class CinemachineExtensions
     {
-        public static CinemachineAxisControllers GetControls(this CinemachineInputAxisController axisController)
+        public static CinemachineAxisControllers<T> GetControls<T>(this InputAxisControllerBase<T> axisController) where T : IInputAxisReader, new()
         {
-            Controller orbitX = null, orbitY = null, orbitScale = null;
+            InputAxisControllerBase<T>.Controller orbitX = null, orbitY = null, orbitScale = null;
 
             foreach (var controller in axisController.Controllers)
             {
@@ -36,7 +35,7 @@ namespace Akela.Tools
                     orbitScale = controller;
             }
 
-            return new CinemachineAxisControllers(orbitX, orbitY, orbitScale);
+            return new(orbitX, orbitY, orbitScale);
         }
 
         public static T GetModifier<T>(this CinemachineFreeLookModifier freeLookModifier) where T : Modifier
