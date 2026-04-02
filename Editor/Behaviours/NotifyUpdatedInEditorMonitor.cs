@@ -70,8 +70,25 @@ namespace AkelaEditor
                     {
                         stream.GetChangeGameObjectOrComponentPropertiesEvent(i, out var data);
 
-                        if (EditorUtility.InstanceIDToObject(data.instanceId) is INotifyUpdatedInEditor notifier)
-                            notifier.UpdatedInEditor();
+                        var obj = EditorUtility.InstanceIDToObject(data.instanceId);
+
+                        var gameObject = obj as GameObject;
+
+                        if (gameObject)
+                        {
+                            foreach (var notifier in gameObject.GetComponents<INotifyUpdatedInEditor>())
+                                notifier.UpdatedInEditor();
+                        }
+                        else
+                        {
+                            var component = obj as Component;
+
+                            if (component)
+                            {
+                                foreach (var notifier in component.gameObject.GetComponents<INotifyUpdatedInEditor>())
+                                    notifier.UpdatedInEditor();
+                            }
+                        }
 
                         break;
                     }
@@ -80,8 +97,25 @@ namespace AkelaEditor
                     {
                         stream.GetChangeAssetObjectPropertiesEvent(i, out var data);
 
-                        if (EditorUtility.InstanceIDToObject(data.instanceId) is INotifyUpdatedInEditor notifier)
-                            notifier.UpdatedInEditor();
+                        var obj = EditorUtility.InstanceIDToObject(data.instanceId);
+
+                        var gameObject = obj as GameObject;
+
+                        if (gameObject)
+                        {
+                            foreach (var notifier in gameObject.GetComponents<INotifyUpdatedInEditor>())
+                                notifier.UpdatedInEditor();
+                        }
+                        else
+                        {
+                            var component = obj as Component;
+
+                            if (component)
+                            {
+                                foreach (var notifier in component.gameObject.GetComponents<INotifyUpdatedInEditor>())
+                                    notifier.UpdatedInEditor();
+                            }
+                        }
 
                         break;
                     }

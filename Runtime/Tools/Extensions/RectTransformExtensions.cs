@@ -13,7 +13,7 @@ namespace Akela.Tools
         MiddleRight,
 
         BottomLeft,
-        BottonCenter,
+        BottomCenter,
         BottomRight,
         BottomStretch,
 
@@ -86,7 +86,7 @@ namespace Akela.Tools
                     source.anchorMax = new Vector2(0, 0);
                     break;
 
-                case AnchorPresets.BottonCenter:
+                case AnchorPresets.BottomCenter:
                     source.anchorMin = new Vector2(0.5f, 0);
                     source.anchorMax = new Vector2(0.5f, 0);
                     break;
