@@ -15,10 +15,7 @@ namespace Akela.Behaviours
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static void FirstSceneLoaded()
         {
-            var newGo = new GameObject("[Field Change Monitor]")
-            {
-                hideFlags = HideFlags.HideAndDontSave
-            };
+            var newGo = new GameObject("[Field Change Monitor]");
 
             newGo.AddComponent<SerializedFieldChangeMonitor>();
         }
