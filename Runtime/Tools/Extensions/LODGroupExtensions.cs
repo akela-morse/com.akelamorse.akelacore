@@ -6,7 +6,7 @@ namespace Akela.Tools
 {
     public static class LODGroupExtensions
     {
-        //Return the LODGroup component with a renderer pointing to a specific GameObject. If the GameObject is not part of a LODGroup, returns null 
+        //Return the LODGroup component with a renderer pointing to a specific GameObject. If the GameObject is not part of a LODGroup, returns null
         static public LODGroup GetParentLODGroup(this Renderer renderer)
         {
             var LODGroupParent = renderer.GetComponentInParent<LODGroup>();
@@ -40,11 +40,11 @@ namespace Akela.Tools
         }
 
 
-        //returns the currently visible LOD level of a specific LODGroup, from a specific camera. If no camera is define, uses the Camera.current.
+        //returns the currently visible LOD level of a specific LODGroup, from a specific camera. If no camera is define, uses the Camera.main.
         public static int GetVisibleLOD(this LODGroup lodGroup, Camera camera = null)
         {
             var lods = lodGroup.GetLODs();
-            var relativeHeight = GetRelativeHeight(lodGroup, camera == null ? Camera.current : camera);
+            var relativeHeight = GetRelativeHeight(lodGroup, camera == null ? Camera.main : camera);
 
             var lodIndex = lodGroup.lodCount - 1;
 
