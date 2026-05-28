@@ -9,7 +9,16 @@ namespace Akela.Tools
 
         private readonly Func<T> _activator;
 
-        public T Value => _reference ??= _activator();
+        public T Value
+        {
+            get
+            {
+                if (!_reference)
+                    _reference = _activator();
+
+                return _reference;
+            }
+        }
 
         public LazyUnityObject(Func<T> activator)
         {
