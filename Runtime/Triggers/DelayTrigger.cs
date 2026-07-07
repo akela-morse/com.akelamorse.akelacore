@@ -11,7 +11,7 @@ namespace Akela.Triggers
     [AddComponentMenu("Triggers/Delay Trigger", 6)]
     public class DelayTrigger : MonoBehaviour, ITrigger
 #if UNITY_EDITOR
-        , INotifyUpdatedInEditor
+        , INotifyInspectorUpdate
 #endif
     {
         #region Component Fields
@@ -59,7 +59,7 @@ namespace Akela.Triggers
         }
 
 #if  UNITY_EDITOR
-        void INotifyUpdatedInEditor.UpdatedInEditor()
+        void INotifyInspectorUpdate.UpdatedInInspector()
         {
             if (_time < 0f)
                 _time = 0f;

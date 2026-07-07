@@ -1,10 +1,12 @@
-﻿using UnityEngine;
+﻿using System.Runtime.CompilerServices;
+using UnityEngine;
 using UnityEngine.AI;
 
 namespace Akela.Tools
 {
     public static class NavMeshAgentExtensions
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool HasReachedDestination(this NavMeshAgent agent)
         {
             return !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance && (!agent.hasPath || agent.desiredVelocity == Vector3.zero);

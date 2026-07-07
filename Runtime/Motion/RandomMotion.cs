@@ -10,7 +10,7 @@ namespace Akela.Motion
     [AddComponentMenu("Motion/Random Motion", 5)]
     public class RandomMotion : TickBehaviour
 #if UNITY_EDITOR
-        , INotifyUpdatedInEditor
+        , INotifyInspectorUpdate
 #endif
     {
         #region Component Fields
@@ -39,7 +39,7 @@ namespace Akela.Motion
             SetPos(deltaTime);
         }
 #if UNITY_EDITOR
-        void INotifyUpdatedInEditor.UpdatedInEditor()
+        void INotifyInspectorUpdate.UpdatedInInspector()
         {
             if (_radius < 0f)
                 _radius = 0f;

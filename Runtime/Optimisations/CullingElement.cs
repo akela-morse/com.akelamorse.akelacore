@@ -9,7 +9,7 @@ namespace Akela.Optimisations
     [AddComponentMenu("Optimisation/Culling Element", 1)]
     public class CullingElement : TickBehaviour, ICullingElement
 #if UNITY_EDITOR
-        , INotifyUpdatedInEditor
+        , INotifyInspectorUpdate
 #endif
     {
         #region Component Fields
@@ -87,7 +87,7 @@ namespace Akela.Optimisations
             _sphereRadius = 2f;
         }
 
-        void INotifyUpdatedInEditor.UpdatedInEditor()
+        void INotifyInspectorUpdate.UpdatedInInspector()
         {
             if (_sphereRadius < 0f)
                 _sphereRadius = 0f;

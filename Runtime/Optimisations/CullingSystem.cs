@@ -13,7 +13,7 @@ namespace Akela.Optimisations
     [AddComponentMenu("Optimisation/Culling System", 0)]
     public class CullingSystem : MonoBehaviour
 #if UNITY_EDITOR
-        , INotifyUpdatedInEditor
+        , INotifyInspectorUpdate
 #endif
     {
         private const int MAX_ELEMENT_COUNT = 50;
@@ -120,7 +120,7 @@ namespace Akela.Optimisations
             _maxiumCullingDistance = 200f;
         }
 
-        void INotifyUpdatedInEditor.UpdatedInEditor()
+        void INotifyInspectorUpdate.UpdatedInInspector()
         {
             if (_maxiumCullingDistance < 0f)
                 _maxiumCullingDistance = 0f;
