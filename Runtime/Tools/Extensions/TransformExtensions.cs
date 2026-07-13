@@ -181,5 +181,4 @@ namespace Akela.Tools
             return _directionCache[0];
         }
     }
-    }
 }
