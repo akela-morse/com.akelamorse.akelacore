@@ -7,6 +7,8 @@ namespace Akela.Tools
 {
     public static class TransformExtensions
     {
+        private static readonly Vector3[] _directionCache = new Vector3[6];
+
         public static IEnumerable<Transform> LoopRecursively(this Transform root)
         {
             for (var i = 0; i < root.childCount; ++i)
@@ -20,7 +22,7 @@ namespace Akela.Tools
             }
         }
 
-		public static Transform FindChild(this Transform root, Func<Transform, bool> predicate)
+        public static Transform FindChild(this Transform root, Func<Transform, bool> predicate)
         {
             for (var i = 0; i < root.childCount; ++i)
             {
@@ -143,34 +145,41 @@ namespace Akela.Tools
 
         public static Vector3 GuessHeading(this Transform transform, Transform reference)
         {
-            return GetClosestToDirection(transform, reference == transform ? Vector3.forward : reference.forward);
+            if (reference == transform)
+                return GetClosestToDirection(transform, Vector3.forward);
+
+            return transform.InverseTransformDirection(GetClosestToDirection(transform, reference.forward));
         }
 
         public static Vector3 GuessUp(this Transform transform, Transform reference)
         {
-            return GetClosestToDirection(transform, reference == transform ? Vector3.up : reference.up);
+            if (reference == transform)
+                return GetClosestToDirection(transform, Vector3.up);
+
+            return transform.InverseTransformDirection(GetClosestToDirection(transform, reference.up));
         }
 
         public static Vector3 GuessRight(this Transform transform, Transform reference)
         {
-            return GetClosestToDirection(transform, reference == transform ? Vector3.right : reference.right);
+            if (reference == transform)
+                return GetClosestToDirection(transform, Vector3.right);
+
+            return transform.InverseTransformDirection(GetClosestToDirection(transform, reference.right));
         }
 
         private static Vector3 GetClosestToDirection(Transform transform, Vector3 direction)
         {
-            var directions = new List<Vector3>
-            {
-                transform.right,
-                transform.up,
-                transform.forward,
-                -transform.right,
-                -transform.up,
-                -transform.forward
-            };
+            _directionCache[0] = transform.right;
+            _directionCache[1] = transform.up;
+            _directionCache[2] = transform.forward;
+            _directionCache[3] = -transform.right;
+            _directionCache[4] = -transform.up;
+            _directionCache[5] = -transform.forward;
 
-            directions.Sort((a, b) => Vector3.Angle(a, direction).CompareTo(Vector3.Angle(b, direction)));
+            Array.Sort(_directionCache, (a, b) => Vector3.Angle(a, direction).CompareTo(Vector3.Angle(b, direction)));
 
-            return directions.First();
+            return _directionCache[0];
         }
+    }
     }
 }
