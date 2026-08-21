@@ -46,7 +46,7 @@ namespace Akela.ExtendedPhysics
 
         public Quaternion Orientation { get => _orientation; set => _orientation = value; }
         public float MaxDistance { get => _maxDistance; set => _maxDistance = value; }
-        public Vector3 Direction { get => _castSpace == Space.Self ? transform.TransformDirection(_direction) : _direction; set => _direction = value.normalized; }
+        public Vector3 Direction { get => _castSpace == Space.Self ? transform.TransformDirection(_direction) : _direction; set => _direction = value; }
         public Quaternion WorldOrientation => Quaternion.LookRotation(Direction) * _orientation;
 
         public void RaycastNow(bool sendEvents = true)
@@ -160,14 +160,14 @@ namespace Akela.ExtendedPhysics
             {
                 case RaycastShape.Sphere:
                     Gizmos.color = new(.33f, .85f, 1f);
-                    Gizmos.DrawWireSphere(ray.origin, _radius);
+                    GizmosHelper.DrawViewportSphere(ray.origin, _radius);
 
                     if (_numberOfHits > 0)
                     {
                         Gizmos.color = new(1f, .67f, .1f);
 
                         for (var i = 0; i < _numberOfHits; ++i)
-                            Gizmos.DrawWireSphere(ray.GetPoint(_hits[i].distance), _radius);
+                            GizmosHelper.DrawViewportSphere(ray.GetPoint(_hits[i].distance), _radius);
                     }
                     break;
 
