@@ -8,24 +8,51 @@ namespace Akela.Tools
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float SqrDistance(Vector3 a, Vector3 b)
         {
-            return (a - b).sqrMagnitude;
+            return Vector3.SqrMagnitude(a - b);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector3 ClosestPointOnLineSegment(Vector3 v, Vector3 a, Vector3 b)
+        {
+            var wander = v - a;
+            var span = b - a;
+
+            var t = Mathf.Clamp01(Vector3.Dot(wander, span) / span.sqrMagnitude);
+
+            return a + t * span;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float SqrDistanceToLineSegment(Vector3 v, Vector3 a, Vector3 b)
+        {
+            return SqrDistance(ClosestPointOnLineSegment(v, a, b), v);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float DistanceToLineSegment(Vector3 v, Vector3 a, Vector3 b)
+        {
+            return Vector3.Distance(ClosestPointOnLineSegment(v, a, b), v);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float GreatCircleDistance(Vector3 from, Vector3 to, float radius = 1f)
         {
             return Mathf.Acos(Vector3.Dot(from.normalized, to.normalized)) * radius;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float GreatCircleDistance(Vector3 from, Vector3 to, Vector3 center, float radius = 1f)
         {
             return GreatCircleDistance(from - center, to - center, radius);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 ScaleInverse(Vector3 a, Vector3 b)
         {
             return Vector3.Scale(a, b.Inverse());
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector2 Rotate2D(Vector2 v, float degrees)
         {
             var sin = Mathf.Sin(degrees * Mathf.Deg2Rad);
@@ -39,11 +66,13 @@ namespace Akela.Tools
             return v;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector2Int Rotate2D(Vector2Int v, float degrees)
         {
             return Vector2Int.RoundToInt(Rotate2D((Vector2)v, degrees));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector2 SmoothStep(Vector2 from, Vector2 to, float t)
         {
             var dt = (double)Mathf.Clamp01(t);
@@ -51,6 +80,7 @@ namespace Akela.Tools
             return to * (float)dt + from * (1f - (float)dt);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 SmoothStep(Vector3 from, Vector3 to, float t)
         {
             var dt = (double)Mathf.Clamp01(t);
@@ -58,6 +88,7 @@ namespace Akela.Tools
             return to * (float)dt + from * (1f - (float)dt);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector4 SmoothStep(Vector4 from, Vector4 to, float t)
         {
             var dt = (double)Mathf.Clamp01(t);
