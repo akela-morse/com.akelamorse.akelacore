@@ -9,13 +9,13 @@ namespace Akela.Tools
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool HasReachedDestination(this NavMeshAgent agent)
         {
-            return !agent.pathPending && agent.remainingDistance <= Mathf.Min(.001f, agent.stoppingDistance) && (!agent.hasPath || agent.desiredVelocity == Vector3.zero);
+            return !agent.pathPending && agent.remainingDistance <= Mathf.Max(.001f, agent.stoppingDistance) && (!agent.hasPath || agent.desiredVelocity == Vector3.zero);
         }
 
         public static bool WarpPreservePath(this NavMeshAgent agent, Vector3 position)
         {
             var hasDest = !agent.HasReachedDestination();
-            var dest =  agent.destination;
+            var dest = agent.destination;
 
             if (!agent.Warp(position))
                 return false;
@@ -40,7 +40,7 @@ namespace Akela.Tools
                 return false;
 
             var hasDest = !agent.HasReachedDestination();
-            var dest =  agent.destination;
+            var dest = agent.destination;
 
             if (!agent.Warp(position))
                 return false;
