@@ -10,9 +10,9 @@ namespace Akela.Behaviours
         : ISerializationCallbackReceiver
 #endif
     {
-#if UNITY_EDITOR
         void UpdatedInInspector();
 
+#if UNITY_EDITOR
         void ISerializationCallbackReceiver.OnAfterDeserialize() { }
 
         void ISerializationCallbackReceiver.OnBeforeSerialize()
@@ -21,11 +21,16 @@ namespace Akela.Behaviours
                 EditorApplication.isPlayingOrWillChangePlaymode ||
                 EditorApplication.isCompiling ||
                 EditorApplication.isUpdating ||
-                this is not Component ||
-                !(Component)this ||
-                !((Component)this).gameObject ||
-                !((Component)this).gameObject.scene.IsValid() ||
-                !((Component)this).gameObject.scene.GetPhysicsScene().IsValid()
+                this is not Component and not ScriptableObject ||
+                this is Component component && (
+                    !component ||
+                    !component.gameObject ||
+                    !component.gameObject.scene.IsValid() ||
+                    !component.gameObject.scene.GetPhysicsScene().IsValid()
+                ) ||
+                this is ScriptableObject scriptableObject && (
+                    !scriptableObject
+                )
             )
                 return;
 

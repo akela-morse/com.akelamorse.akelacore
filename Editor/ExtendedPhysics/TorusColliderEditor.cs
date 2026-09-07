@@ -14,7 +14,7 @@ namespace AkelaEditor.ExtendedPhysics
     {
         private readonly SphereBoundsHandle _innerRadiusHandle = new();
         private readonly SphereBoundsHandle _outerRadiusHandle = new();
-        private readonly SphereBoundsHandle[] _heightHandles = new SphereBoundsHandle[] { new(), new(), new(), new() };
+        private readonly SphereBoundsHandle[] _heightHandles = { new(), new(), new(), new() };
 
         private GUIContent _toolIcon;
         private bool _toolActive;
