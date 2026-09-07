@@ -22,12 +22,12 @@ namespace Akela.Motion
 
         public TransformAnimationPlayingState PlayingState { get; private set; } = TransformAnimationPlayingState.Stopped;
         public float Time { get; private set; }
+        public float Duration { get; private set; }
 
         public TransformAnimation TransformAnimation => _transformAnimation;
-        public float Duration => _transformAnimation.Duration();
 
 #if UNITY_EDITOR
-        public bool ControlledByEditor { get; set; }
+        internal bool ControlledByEditor { get; set; }
 #endif
 
         public void Play()
@@ -67,7 +67,7 @@ namespace Akela.Motion
         {
             Time = 0f;
 
-            if (!_transformAnimation.IsValid)
+            if (!_transformAnimation || !_transformAnimation.IsValid)
                 return;
 
             _transformAnimation.GetFirstKey(out var pos, out var rot, out var scale);
@@ -80,9 +80,9 @@ namespace Akela.Motion
 
         public void SetPositionAtEnd()
         {
-            Time = _transformAnimation.Duration();
+            Time = _transformAnimation ? _transformAnimation.Duration() : 0f;
 
-            if (!_transformAnimation.IsValid)
+            if (!_transformAnimation || !_transformAnimation.IsValid)
                 return;
 
             _transformAnimation.GetLastKey(out var pos, out var rot, out var scale);
@@ -99,6 +99,8 @@ namespace Akela.Motion
         {
             if (!_transformAnimation || !_transformAnimation.IsValid)
                 return;
+
+            Duration = _transformAnimation.Duration();
 
             _transformAnimation.GetFirstKey(out var pos, out var rot, out var scale);
             transform.localPosition = pos;
@@ -123,19 +125,16 @@ namespace Akela.Motion
             if (PlayingState != TransformAnimationPlayingState.Playing || !_transformAnimation || !_transformAnimation.IsValid)
                 return;
 
-            Time += _animationDirection * deltaTime * _speedMultiplier;
+            Time = Mathf.Clamp(Time + _animationDirection * deltaTime * _speedMultiplier, 0f, Duration);
 
             var ended = !_transformAnimation.Evaluate(Time, out var pos, out var rot, out var scale);
-
-            if (ended)
-            {
-                StopAnimation();
-                return;
-            }
 
             transform.localPosition = pos;
             transform.localEulerAngles = rot;
             transform.localScale = scale;
+
+            if (ended)
+                StopAnimation();
         }
 
 #if UNITY_EDITOR

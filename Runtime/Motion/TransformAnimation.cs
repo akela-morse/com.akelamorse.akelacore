@@ -21,14 +21,14 @@ namespace Akela.Motion
         public TransformAnimationKey[] keys;
         #endregion
 
-        public bool IsValid => keys != null && keys.Length > 0;
+        public bool IsValid => keys is { Length: > 0 };
 
         public float Duration()
         {
             var totalDuration = 0f;
 
-            foreach (var key in keys)
-                totalDuration += key.duration;
+            for (var i = 0; i < keys.Length; i++)
+                totalDuration += keys[i].duration;
 
             return totalDuration;
         }
@@ -52,26 +52,26 @@ namespace Akela.Motion
 
             var additionalTime = 0f;
 
-            foreach (var key in keys)
+            for (var i = 0; i < keys.Length; i++)
             {
-                additionalTime += key.duration;
+                additionalTime += keys[i].duration;
 
                 if (time > additionalTime)
                 {
-                    position = key.position;
-                    eulerRotation = key.rotation;
-                    scale = key.scale;
+                    position = keys[i].position;
+                    eulerRotation = keys[i].rotation;
+                    scale = keys[i].scale;
 
                     continue;
                 }
 
                 var delta = additionalTime - time;
-                var percent = 1f - delta / key.duration;
-                var value = key.fromToCurve.Evaluate(percent);
+                var percent = keys[i].duration == 0f ? 1f : 1f - delta / keys[i].duration;
+                var value = keys[i].fromToCurve.Evaluate(percent);
 
-                position = Vector3.Lerp(position, key.position, value);
-                eulerRotation = Vector3.Lerp(eulerRotation, key.rotation, value);
-                scale = Vector3.Lerp(scale, key.scale, value);
+                position = Vector3.Lerp(position, keys[i].position, value);
+                eulerRotation = Vector3.Lerp(eulerRotation, keys[i].rotation, value);
+                scale = Vector3.Lerp(scale, keys[i].scale, value);
 
                 return true;
             }
