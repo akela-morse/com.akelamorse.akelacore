@@ -1,5 +1,6 @@
 ﻿using Akela.Behaviours;
 using Akela.Globals;
+using Akela.Tools;
 using UnityEditor;
 using UnityEngine;
 
@@ -13,22 +14,28 @@ namespace Akela.Motion
     {
         #region Component Fields
         [Space]
-        [SerializeField] Vector3 _endPosition;
-        [SerializeField] Vector3 _endRotation;
-        [SerializeField] Vector3 _endScale = Vector3.one;
-        [SerializeField] Var<AnimationCurve> _curve = AnimationCurve.Linear(0f, 0f, 1f, 1f);
+        [SerializeField] private Vector3 _endPosition;
+        [SerializeField, EulerAngles] private Quaternion _endRotation = Quaternion.identity;
+        [SerializeField] private Vector3 _endScale = Vector3.one;
+        [SerializeField] private Var<AnimationCurve> _curve = AnimationCurve.Linear(0f, 0f, 1f, 1f);
 
         [Header("Motion Settings")]
-        public bool _playOnStart;
-        [SerializeField] float _motionTime = 1f;
-        [SerializeField] bool _loop;
-        [SerializeField] TransformAnimationEndState _endState;
+        [SerializeField] private bool _playOnStart;
+        [SerializeField] private float _motionTime = 1f;
+        [SerializeField] private bool _loop;
+        [SerializeField] private TransformAnimationEndState _endState;
         #endregion
 
         private sbyte _lerpDirection = 1;
         private Vector3 _startPosition;
-        private Vector3 _startRotation;
+        private Quaternion _startRotation;
         private Vector3 _startScale;
+
+        public Vector3 endPosition { get => _endPosition; set => _endPosition = value; }
+        public Quaternion endRotation { get => _endRotation; set => _endRotation = value; }
+        public Vector3 endScale { get => _endScale; set => _endScale = value; }
+        public bool playOnStart { get => _playOnStart; set => _playOnStart = value; }
+        public float motionTime { get => _motionTime; set => _motionTime = value; }
 
         public TransformAnimationPlayingState PlayingState { get; private set; } = TransformAnimationPlayingState.Stopped;
         public float Progression { get; private set; }
@@ -70,10 +77,17 @@ namespace Akela.Motion
             PlayingState = TransformAnimationPlayingState.Paused;
         }
 
+        public void ResetStartPosition()
+        {
+            transform.GetLocalPositionAndRotation(out _startPosition, out _startRotation);
+
+            _startScale = transform.localScale;
+        }
+
         public void SetPositionAtStart()
         {
-            transform.localPosition = _startPosition;
-            transform.localEulerAngles = _startRotation;
+            transform.SetLocalPositionAndRotation(_startPosition, _startRotation);
+
             transform.localScale = _startScale;
 
             Progression = 0f;
@@ -82,8 +96,8 @@ namespace Akela.Motion
 
         public void SetPositionAtEnd()
         {
-            transform.localPosition = _endPosition;
-            transform.localEulerAngles = _endRotation;
+            transform.SetLocalPositionAndRotation(_endPosition, _endRotation);
+
             transform.localScale = _endScale;
 
             Progression = 1f;
@@ -95,9 +109,7 @@ namespace Akela.Motion
         #region Component Messages
         private void Awake()
         {
-            _startPosition = transform.localPosition;
-            _startRotation = transform.localEulerAngles;
-            _startScale = transform.localScale;
+            ResetStartPosition();
         }
 
         private void Start()
@@ -124,8 +136,11 @@ namespace Akela.Motion
 
             var lerp = _curve.Value.Evaluate(Progression);
 
-            transform.localPosition = Vector3.LerpUnclamped(_startPosition, _endPosition, lerp);
-            transform.localEulerAngles = Vector3.LerpUnclamped(_startRotation, _endRotation, lerp);
+            transform.SetLocalPositionAndRotation(
+                Vector3.LerpUnclamped(_startPosition, _endPosition, lerp),
+                Quaternion.LerpUnclamped(_startRotation, _endRotation, lerp)
+            );
+
             transform.localScale = Vector3.LerpUnclamped(_startScale, _endScale, lerp);
 
             if (_lerpDirection < 0 && Progression <= 0f || _lerpDirection > 0 && Progression >= 1f)
@@ -153,16 +168,14 @@ namespace Akela.Motion
             switch (_endState)
             {
                 case TransformAnimationEndState.Stay:
-                    transform.localPosition = _endPosition;
-                    transform.localEulerAngles = _endRotation;
+                    transform.SetLocalPositionAndRotation(_endPosition, _endRotation);
                     transform.localScale = _endScale;
 
                     Progression = 1f;
                     break;
 
                 case TransformAnimationEndState.Reset:
-                    transform.localPosition = _startPosition;
-                    transform.localEulerAngles = _startRotation;
+                    transform.SetLocalPositionAndRotation(_startPosition, _startRotation);
                     transform.localScale = _startScale;
 
                     Progression = 0f;
@@ -171,8 +184,7 @@ namespace Akela.Motion
                 case TransformAnimationEndState.Reverse:
                     if (_lerpDirection > 0)
                     {
-                        transform.localPosition = _endPosition;
-                        transform.localEulerAngles = _endRotation;
+                        transform.SetLocalPositionAndRotation(_endPosition, _endRotation);
                         transform.localScale = _endScale;
 
                         Progression = 1f;
@@ -180,8 +192,7 @@ namespace Akela.Motion
                     }
                     else
                     {
-                        transform.localPosition = _startPosition;
-                        transform.localEulerAngles = _startRotation;
+                        transform.SetLocalPositionAndRotation(_startPosition, _startRotation);
                         transform.localScale = _startScale;
 
                         Progression = 0f;

@@ -10,12 +10,12 @@ namespace Akela.Motion
     public class TransformAnimator : TickBehaviour
     {
         #region Component Fields
-        [SerializeField] TransformAnimation _transformAnimation;
+        [SerializeField] private TransformAnimation _transformAnimation;
         [Header("Animation Settings")]
-        public bool _playOnStart;
-        [SerializeField] float _speedMultiplier = 1f;
-        [SerializeField] bool _loop;
-        [SerializeField] TransformAnimationEndState _endState;
+        [SerializeField] private bool _playOnStart;
+        [SerializeField] private float _speedMultiplier = 1f;
+        [SerializeField] private bool _loop;
+        [SerializeField] private TransformAnimationEndState _endState;
         #endregion
 
         private sbyte _animationDirection = 1;
@@ -71,8 +71,8 @@ namespace Akela.Motion
                 return;
 
             _transformAnimation.GetFirstKey(out var pos, out var rot, out var scale);
-            transform.localPosition = pos;
-            transform.localEulerAngles = rot;
+
+            transform.SetLocalPositionAndRotation(pos, rot);
             transform.localScale = scale;
 
             _animationDirection = 1;
@@ -86,8 +86,8 @@ namespace Akela.Motion
                 return;
 
             _transformAnimation.GetLastKey(out var pos, out var rot, out var scale);
-            transform.localPosition = pos;
-            transform.localEulerAngles = rot;
+
+            transform.SetLocalPositionAndRotation(pos, rot);
             transform.localScale = scale;
 
             if (_endState == TransformAnimationEndState.Reverse)
@@ -103,8 +103,8 @@ namespace Akela.Motion
             Duration = _transformAnimation.Duration();
 
             _transformAnimation.GetFirstKey(out var pos, out var rot, out var scale);
-            transform.localPosition = pos;
-            transform.localEulerAngles = rot;
+
+            transform.SetLocalPositionAndRotation(pos, rot);
             transform.localScale = scale;
 
 #if UNITY_EDITOR
@@ -129,8 +129,7 @@ namespace Akela.Motion
 
             var ended = !_transformAnimation.Evaluate(Time, out var pos, out var rot, out var scale);
 
-            transform.localPosition = pos;
-            transform.localEulerAngles = rot;
+            transform.SetLocalPositionAndRotation(pos, rot);
             transform.localScale = scale;
 
             if (ended)
@@ -155,21 +154,22 @@ namespace Akela.Motion
             if (!_loop)
                 PlayingState = TransformAnimationPlayingState.Stopped;
 
-            Vector3 pos, rot, scale;
+            Vector3 pos, scale;
+            Quaternion rot;
 
             switch (_endState)
             {
                 case TransformAnimationEndState.Stay:
                     _transformAnimation.GetLastKey(out pos, out rot, out scale);
-                    transform.localPosition = pos;
-                    transform.localEulerAngles = rot;
+
+                    transform.SetLocalPositionAndRotation(pos, rot);
                     transform.localScale = scale;
                     break;
 
                 case TransformAnimationEndState.Reset:
                     _transformAnimation.GetFirstKey(out pos, out rot, out scale);
-                    transform.localPosition = pos;
-                    transform.localEulerAngles = rot;
+
+                    transform.SetLocalPositionAndRotation(pos, rot);
                     transform.localScale = scale;
 
                     Time = 0f;
@@ -179,8 +179,8 @@ namespace Akela.Motion
                     if (_animationDirection > 0)
                     {
                         _transformAnimation.GetLastKey(out pos, out rot, out scale);
-                        transform.localPosition = pos;
-                        transform.localEulerAngles = rot;
+
+                        transform.SetLocalPositionAndRotation(pos, rot);
                         transform.localScale = scale;
 
                         _animationDirection = -1;
@@ -188,8 +188,8 @@ namespace Akela.Motion
                     else
                     {
                         _transformAnimation.GetFirstKey(out pos, out rot, out scale);
-                        transform.localPosition = pos;
-                        transform.localEulerAngles = rot;
+
+                        transform.SetLocalPositionAndRotation(pos, rot);
                         transform.localScale = scale;
 
                         _animationDirection = 1;
