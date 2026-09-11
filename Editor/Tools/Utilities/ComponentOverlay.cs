@@ -29,15 +29,18 @@ namespace AkelaEditor.Tools
 
         private void CheckComponentIsAvailable()
         {
-            if (Application.isPlaying)
+            if (EditorApplication.isPlayingOrWillChangePlaymode || EditorApplication.isCompiling || EditorApplication.isUpdating)
                 return;
-            
+
             T newComponent = null;
-            
+
             var newState =
                 Selection.activeGameObject &&
                 Selection.activeGameObject.TryGetComponent(out newComponent) &&
                 newComponent.isActiveAndEnabled;
+
+            if (!newComponent || !newComponent.gameObject.scene.IsValid() || !newComponent.gameObject.scene.GetPhysicsScene().IsValid())
+                return;
 
             if (newState != visible)
             {
@@ -47,13 +50,13 @@ namespace AkelaEditor.Tools
                 {
                     target = newComponent;
                     serializedObject = new SerializedObject(target);
-                    
+
                     OnBecomeActive();
                 }
                 else
                 {
                     OnBecomeInactive();
-                    
+
                     target = null;
                     serializedObject = null;
                 }
@@ -62,10 +65,10 @@ namespace AkelaEditor.Tools
             {
                 if (target)
                     OnBecomeInactive();
-                
+
                 target = newComponent;
                 serializedObject = new SerializedObject(target);
-                
+
                 if (target)
                     OnBecomeActive();
             }

@@ -39,6 +39,7 @@ namespace Akela.Motion
 
         public TransformAnimationPlayingState PlayingState { get; private set; } = TransformAnimationPlayingState.Stopped;
         public float Progression { get; private set; }
+        public float EvaluatedProgression => _curve.Value.Evaluate(Progression);
 
 #if UNITY_EDITOR
         public bool ControlledByEditor { get; set; }
